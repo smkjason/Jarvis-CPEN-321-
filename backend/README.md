@@ -30,3 +30,28 @@ somehow find the task id (can do thru web ui, but preferably thru aws-cli)
 
 useful to describe service:
 ` aws ecs describe-services --service arn:aws:ecs:us-east-2:754427858209:service/jarvis-cpen-321-service --cluster jarvis-cpen-321`
+
+
+# API
+
+## User
+ - create new user
+ - upload location information
+ - add friend
+ - see friends
+ - see events
+ - create new event
+ - user information
+ - logout (invalidate token)
+
+## Chat
+ - send message
+ - receive message
+ - chat information
+
+## Event
+- access information (people going, location, chat urls)
+- upload location information for event
+- request other user's location information
+- add people
+- remove people
