@@ -29,7 +29,7 @@ somehow find the task id (can do thru web ui, but preferably thru aws-cli)
 
 
 useful to describe service:
-` aws ecs describe-services --service arn:aws:ecs:us-east-2:754427858209:service/jarvis-cpen-321-service --cluster jarvis-cpen-321`
+`aws ecs describe-services --service arn:aws:ecs:us-east-2:754427858209:service/jarvis-cpen-321-service --cluster jarvis-cpen-321`
 
 
 # API
