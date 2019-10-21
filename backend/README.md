@@ -144,6 +144,21 @@ All of these commands needs to have the user's google api key, since that's how 
  - chat information
 
 ## Event
+```json
+{
+    "start_time":"0:00",
+    "end_time":"23:00",
+    "repeat_days": [0,3,5],
+    "repeat_until": 1290801901,
+    "name": "name of event",
+    "single_event": true,
+    "weight": 3
+}
+```
+start_time, end_time can be either strings representating a clock time as shown above, or as a unix timestamp if single_event = true.
+repeat_days and repeat_until represents time we want to repeat the event for, and which days of the week the events are repeating
+weight is used for when the user enters in free slots, and our app will calculate when they are free
+
  - create new event
  - access information (people going, location, chat urls)
  - upload location information for event
