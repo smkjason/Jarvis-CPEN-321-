@@ -1,3 +1,5 @@
+const UserFunctions = require('./app/user')
+
 function routes(app){
     //all our routes can go here
     app.get("/", function(req, res) {
@@ -18,7 +20,21 @@ function routes(app){
     })
 
     app.get("/user", function(reg, res){
-        res.send("HELLO USER!!!!");
+        res.send("HELLO USER!!!!")
+    })
+
+    app.post("/create_test_user", function(req, res){
+        UserFunctions.createTestUser(req.body)
+            .then(function(user){
+                console.log("user created??")
+                res.status(200)
+                res.send()
+            })
+            .catch(function(err){
+                console.log('error returned')
+                res.status(500)
+                res.send()
+            })
     })
 }
 
