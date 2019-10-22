@@ -5,10 +5,14 @@ const data = require("./src/data/mongodb")
 
 const express = require("express")
 const https = require("https")
+const bodyParser = require('body-parser')
+
 const app = express()
 
 //init rest api routes
 routes.routes(app)
+//parse json
+app.use(bodyParser)
 
 //load the configs, and then configure everything
 configs = config.loadConfigs()
