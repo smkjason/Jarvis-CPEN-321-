@@ -1,15 +1,24 @@
 const MongoClient = require('mongodb').MongoClient
+const mongoose = require('mongoose')
 
-var mongo_client
-var mongodb_conn_string
+var mongoClient
+var mongodbConnString
 
 function init(config){
-    mongodb_conn_string = config.mongodb_conn_string
-    mongo_client = new MongoClient(mongodb_conn_string, {
-        useNewUrlParser: true
-    })
-    mongo_client
-    mongo_client.connect()
+    // mongodbConnString = config.mongodbConnString
+    // mongoClient = new MongoClient(mongodbConnString, {
+    //     useNewUrlParser: true
+    // })
+    // mongoClient
+    // mongoClient.connect()
+    //     .then(
+    //         console.log("successfully connected")
+    //     )
+    //     .catch(err => {
+    //         console.log("err occurred!")
+    //     })
+    
+    mongoose.connect("mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/test")
         .then(
             console.log("successfully connected")
         )
@@ -19,7 +28,7 @@ function init(config){
 }
 
 function deinit(){
-    mongo_client.close()
+    mongoClient.close()
 }
 
 module.exports = {
