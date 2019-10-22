@@ -165,3 +165,7 @@ weight is used for when the user enters in free slots, and our app will calculat
  - request other user's location information
  - add people
  - remove people
+
+
+
+***We can use refresh tokens to obtain more information
