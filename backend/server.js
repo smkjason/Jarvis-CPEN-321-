@@ -1,7 +1,7 @@
 //dependencies
 const config = require("./src/configs")
 const routes = require("./src/routes")
-const data = require("./src/data/mongodb")
+const data = require("./src/data/db")
 
 const express = require("express")
 const https = require("https")
@@ -9,10 +9,10 @@ const bodyParser = require('body-parser')
 
 const app = express()
 
+//parse json
+app.use(bodyParser.json())
 //init rest api routes
 routes.routes(app)
-//parse json
-app.use(bodyParser)
 
 //load the configs, and then configure everything
 configs = config.loadConfigs()
