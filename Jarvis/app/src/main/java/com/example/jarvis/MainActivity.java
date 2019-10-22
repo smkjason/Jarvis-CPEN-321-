@@ -3,6 +3,7 @@ package com.example.jarvis;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
@@ -42,7 +44,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestServerAuthCode(serverClientId)
                 .requestEmail()
                 .build();
 
@@ -50,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
+    /* Add this if we would like */
 //    @Override
 //    protected void onStart() {
 //        super.onStart();
@@ -71,6 +77,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+//            try {
+//                GoogleSignInAccount account = task.getResult(ApiException.class);
+//                String authCode = account.getServerAuthCode();
+//
+//                // Show signed-un UI
+//                //updateUI(account);
+//                Intent intent = new Intent(MainActivity.this, LoggedIn.class);
+//                startActivity(intent);
+//                // TODO(developer): send code to server and exchange for access/refresh/ID tokens
+//            } catch (ApiException e) {
+//                Log.w("Error", "Sign-in failed", e);
+//                //updateUI(null);
+//            }
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
