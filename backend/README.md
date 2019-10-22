@@ -34,15 +34,109 @@ useful to describe service:
 
 # API
 
-## User
+## User: `/user/`
+All of these commands needs to have the user's google api key, since that's how our server will check if it is actually the user
  - create new user
+    `POST /user`
+    expects:
+    ```json
+    {
+        "email":"<email",
+        "jwt_token":"<token>",
+        "username":"<username>"
+    }
+    ```
+    returns:
+    ```json
+    {
+        "response":{
+            "id":"<id>"
+        }
+    }
+    ```
+
  - upload location information
+    `POST /user/<id>/location`
+    expects: 
+    ```json
+    {
+        "latitude":"string float",
+        "longitude":"string float"
+    }
+    ```
+
  - add friend
+    `POST /user/<id>/friend_request
+    expects:
+    ```json
+    {
+        "from":"<user_id>"
+    }
+    ```
+    backend needs to validate from person
+    returns 
+    ```json
+    {
+        "response": "pending"
+    }
+    ```
+
  - see friends
+    `GET /user/<id>/friends`
+    returns
+    ```json
+    {
+        "response":[
+            "<id>","<id>"...
+        ]
+    }
+    ```
+
  - see events
- - create new event
+    `GET /user/<id>/events`
+    returns (maybe shouldn't be as detailed, maybe user id should be returned instead):
+    ```json
+    {
+        "response":[
+            {
+                "id":"<id>",
+                "name":"",
+                "start_time":"<unix timestamp>",
+                "duration":"<duration in seconds>",
+                "status": "pending, active, passed",
+                "owner":"<email>",
+                "accepted":["<email>"...],
+                "invited": ["<email>", "<email>", ...],
+                "chat_url":"<url>"
+            },
+            ...
+        ]
+    }
+
  - user information
+    `GET /user/<id>` OR `GET /user/<id>/schedule`
+    ```json
+    {
+        "response":{
+            "id":"<id>",
+            "username":"<name>",
+            "schedule":[
+                {
+                    (a bunch of events)
+                }
+            ]
+        }
+    }
+    ```
+    returns generic user information
+
  - logout (invalidate token)
+    `PUT /user/<id>/logout`
+    ```json
+    {
+        "response": "success"
+    }
+    ```
 
 ## Chat
  - send message
@@ -50,8 +144,24 @@ useful to describe service:
  - chat information
 
 ## Event
-- access information (people going, location, chat urls)
-- upload location information for event
-- request other user's location information
-- add people
-- remove people
+```json
+{
+    "start_time":"0:00",
+    "end_time":"23:00",
+    "repeat_days": [0,3,5],
+    "repeat_until": 1290801901,
+    "name": "name of event",
+    "single_event": true,
+    "weight": 3
+}
+```
+start_time, end_time can be either strings representating a clock time as shown above, or as a unix timestamp if single_event = true.
+repeat_days and repeat_until represents time we want to repeat the event for, and which days of the week the events are repeating
+weight is used for when the user enters in free slots, and our app will calculate when they are free
+
+ - create new event
+ - access information (people going, location, chat urls)
+ - upload location information for event
+ - request other user's location information
+ - add people
+ - remove people
