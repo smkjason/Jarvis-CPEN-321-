@@ -13,6 +13,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -22,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class LoggedIn extends AppCompatActivity {
 
     ImageView UserPhoto;
-    TextView Username, Useremail;
+    TextView Username, Useremail, UserID;
     Button Signout;
 
     GoogleSignInClient mGoogleSignInClient;
@@ -32,7 +34,10 @@ public class LoggedIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loggedin);
 
+        String serverClientID = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestServerAuthCode(serverClientID)
                 .requestEmail()
                 .build();
 
@@ -68,6 +73,7 @@ public class LoggedIn extends AppCompatActivity {
 
             Username.setText(personName);
             Useremail.setText(personEmail);
+            UserID.setText(personId);
             Glide.with(this).load(String.valueOf(personPhoto)).into(UserPhoto);
         }
     }
