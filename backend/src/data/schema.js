@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const Mixed = Schema.Types.Mixed
-const ObjectId = Schema.Types.ObjectId
 let validator = require('validator')
 
 let eventSchema = new Schema({
@@ -11,13 +10,16 @@ let eventSchema = new Schema({
     repeat_until: Number,
     name: String,
     single_event: Boolean,
-    user: String
+    owner: String
 })
 
 let userModel = new Schema({
     name: String,
-    google_key: String,
-    id: ObjectId
+    google_token: String,
+    refresh_token: String,
+    id: String,
+    pw_hash: String,
+    salt: String
 })
 
 module.exports = {

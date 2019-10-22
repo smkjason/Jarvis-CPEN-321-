@@ -2,40 +2,41 @@ const UserFunctions = require('./app/user')
 
 function routes(app){
     //all our routes can go here
-    app.get("/", function(req, res) {
-        res.send("Hello World test111asdjflkajsdfjadsjfsajlkfjsa")
+    app.get("/", function(_, res) {
+        res.send("Hello World! This is the backend for the calendar app")
     })
 
-    app.get("/env", function(req, res){
+    app.get("/env", function(_, res){
         res.send(process.env.ENV)
     })
 
-    //do oauth
-    app.get("/oauth/auth", function(req, res) {
-        //result = 
-        res.send({})
-    })
-    app.get("/oauth/start", function(req, res) {
-        res.send({})
+    //get the user, with a valid api token
+    //returns 401 if token expired
+    app.get("/user/:name", function(req, res){
+        resolvePromise(UserFunctions.getUser(req.params.name, req.query.google_key))
     })
 
-    app.get("/user", function(reg, res){
-        res.send("HELLO USER!!!!")
+    //update the user google api token, need password for that
+    app.put("/refresh_user/:name", function(req, res){
+        resolvePromise(UserFunctions.refreshUser(req.params.name, req.body.pw))
     })
 
-    app.post("/create_test_user", function(req, res){
-        UserFunctions.createTestUser(req.body)
-            .then(function(user){
-                console.log("user created??")
-                res.status(200)
-                res.send()
-            })
-            .catch(function(err){
-                console.log('error returned')
-                res.status(500)
-                res.send()
-            })
+    app.post("/user", function(req, res){
+        resolvePromise(UserFunctions.createUser(req.body), res)
     })
+}
+
+function resolvePromise(promise, res){
+    promise
+        .then(function(user){
+            res.status(200)
+            res.send(user)
+        })
+        .catch(function(err){
+            console.log('error returned')
+            res.status(500)
+            res.send({err: err})
+        })
 }
 
 module.exports = {
