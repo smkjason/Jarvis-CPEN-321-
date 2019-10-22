@@ -10,7 +10,8 @@ let eventSchema = new Schema({
     repeat_until: Number,
     name: String,
     single_event: Boolean,
-    owner: String
+    owner: String,
+    google: Boolean
 })
 
 let userModel = new Schema({
