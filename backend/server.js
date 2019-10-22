@@ -1,7 +1,7 @@
 //dependencies
 const config = require("./src/configs")
 const routes = require("./src/routes")
-const data = require("./src/data/mongodb")
+const data = require("./src/data/db")
 
 const express = require("express")
 const https = require("https")

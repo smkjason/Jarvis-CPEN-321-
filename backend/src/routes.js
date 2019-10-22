@@ -13,12 +13,12 @@ function routes(app){
     //get the user, with a valid api token
     //returns 401 if token expired
     app.get("/user/:name", function(req, res){
-        resolvePromise(UserFunctions.getUser(req.params.name, req.query.google_key))
+        resolvePromise(UserFunctions.getUser(req.params.name, req.query.google_key), res)
     })
 
     //update the user google api token, need password for that
     app.put("/refresh_user/:name", function(req, res){
-        resolvePromise(UserFunctions.refreshUser(req.params.name, req.body.pw))
+        resolvePromise(UserFunctions.refreshUser(req.params.name, req.body.pw), res)
     })
 
     app.post("/user", function(req, res){
