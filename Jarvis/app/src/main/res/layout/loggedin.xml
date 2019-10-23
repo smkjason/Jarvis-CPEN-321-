@@ -86,5 +86,16 @@
         android:layout_marginBottom="77dp"
         android:text="TextView" />
 
+    <Button
+        android:id="@+id/CreateEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/Userphoto"
+        android:layout_alignBottom="@id/Userphoto"
+        android:layout_alignParentBottom="false"
+        android:layout_marginLeft="254dp"
+        android:layout_marginBottom="226dp"
+        android:text="Create" />
+
 
 </RelativeLayout>

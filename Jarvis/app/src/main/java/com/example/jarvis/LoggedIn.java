@@ -55,6 +55,7 @@ public class LoggedIn extends AppCompatActivity {
 
     Button Send;
     Button View_Calendar;
+    Button CreateEvent;
 
     GoogleSignInClient mGoogleSignInClient;
 
@@ -80,6 +81,7 @@ public class LoggedIn extends AppCompatActivity {
         Send = findViewById(R.id.urlconnection);
         View_Calendar = findViewById(R.id.button);
         backendMessage = findViewById(R.id.backendMessage);
+        CreateEvent = findViewById(R.id.CreateEvent);
 
         Signout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +116,17 @@ public class LoggedIn extends AppCompatActivity {
                 switch (view.getId()){
                     case R.id.urlconnection:
                         sendMessage();
+                        break;
+                }
+            }
+        });
+
+        CreateEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.CreateEvent:
+                        GoToCreateEvent();
                         break;
                 }
             }
@@ -185,6 +198,11 @@ public class LoggedIn extends AppCompatActivity {
 
     private void goToCalendar(){
         Intent intent = new Intent(LoggedIn.this, View_Calendar.class);
+        startActivity(intent);
+    }
+
+    private void GoToCreateEvent(){
+        Intent intent = new Intent(LoggedIn.this, Create_Event.class);
         startActivity(intent);
     }
 
