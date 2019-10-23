@@ -57,6 +57,8 @@ public class LoggedIn extends AppCompatActivity {
     Button View_Calendar;
     Button CreateEvent;
 
+    Button Revoke;
+
     GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -80,6 +82,7 @@ public class LoggedIn extends AppCompatActivity {
         Signout = findViewById(R.id.sign_out_button);
         Send = findViewById(R.id.urlconnection);
         View_Calendar = findViewById(R.id.button);
+        Revoke = findViewById(R.id.Revoke);
         backendMessage = findViewById(R.id.backendMessage);
         CreateEvent = findViewById(R.id.CreateEvent);
 
@@ -105,6 +108,17 @@ public class LoggedIn extends AppCompatActivity {
                 switch (view.getId()){
                     case R.id.button:
                         goToCalendar();
+                        break;
+                }
+            }
+        });
+
+        Revoke.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()){
+                    case R.id.Revoke:
+                        revokeAccess();
                         break;
                 }
             }
@@ -211,7 +225,8 @@ public class LoggedIn extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        // ...
+                        Toast.makeText(LoggedIn.this, "Account Revoked!", Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 });
     }

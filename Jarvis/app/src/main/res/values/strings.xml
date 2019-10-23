@@ -3,9 +3,9 @@
     <string name="server_client_id">
         282394539630-06ith7hfdo2cqeok6g487s0slqh7ah8c.apps.googleusercontent.com
     </string>
-    <string name="project_id">
-        jarvis-cpen321
-    </string>
+<!--    <string name="project_id">-->
+<!--        jarvis-cpen321-->
+<!--    </string>-->
 
     <string name="auth_uri">
         https://accounts.google.com/o/oauth2/auth
