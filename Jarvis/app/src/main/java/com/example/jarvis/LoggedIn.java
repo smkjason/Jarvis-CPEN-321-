@@ -59,7 +59,6 @@ public class LoggedIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loggedin);
 
-        String serverClientID = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
 //                .requestServerAuthCode(serverClientID)
@@ -180,5 +179,15 @@ public class LoggedIn extends AppCompatActivity {
     private void goToCalendar(){
         Intent intent = new Intent(LoggedIn.this, View_Calendar.class);
         startActivity(intent);
+    }
+
+    private void revokeAccess() {
+        mGoogleSignInClient.revokeAccess()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                    }
+                });
     }
 }
