@@ -1,5 +1,6 @@
 package com.example.jarvis;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ public class LoggedIn extends AppCompatActivity {
     Button Signout;
 
     Button Send;
+    Button View_Calendar;
 
     GoogleSignInClient mGoogleSignInClient;
 
@@ -57,7 +59,6 @@ public class LoggedIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loggedin);
 
-        String serverClientID = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
 //                .requestServerAuthCode(serverClientID)
@@ -72,6 +73,7 @@ public class LoggedIn extends AppCompatActivity {
         Useremail = findViewById(R.id.usergmail);
         Signout = findViewById(R.id.sign_out_button);
         Send = findViewById(R.id.urlconnection);
+        View_Calendar = findViewById(R.id.button);
 
         Signout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +83,21 @@ public class LoggedIn extends AppCompatActivity {
                     case R.id.sign_out_button:
                         signOut();
                         break;
-                    // ...
+
+//                    case R.id.button:
+//                        goToCalendar();
+//                        break;// ...
+                }
+            }
+        });
+
+        View_Calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()){
+                    case R.id.button:
+                        goToCalendar();
+                        break;
                 }
             }
         });
@@ -156,6 +172,21 @@ public class LoggedIn extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(LoggedIn.this, "Logged Out", Toast.LENGTH_LONG).show();
                         finish();
+                    }
+                });
+    }
+
+    private void goToCalendar(){
+        Intent intent = new Intent(LoggedIn.this, View_Calendar.class);
+        startActivity(intent);
+    }
+
+    private void revokeAccess() {
+        mGoogleSignInClient.revokeAccess()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
                     }
                 });
     }
