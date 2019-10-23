@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                // .requestIdToken(serverClientId)
 //                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
 //                .requestServerAuthCode(serverClientId)
+                .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
                 .requestEmail()
                 .build();
 
