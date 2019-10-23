@@ -67,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        String serverClientId = getString(R.string.server_client_id);
+//        String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
-                .requestServerAuthCode(serverClientId)
+//                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+//                .requestServerAuthCode(serverClientId)
                 .requestEmail()
                 .build();
 
@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-
             handleSignInResult(task);
         }
     }
@@ -111,27 +110,27 @@ public class MainActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            String authCode = account.getServerAuthCode(); //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
+            //String authCode = account.getServerAuthCode(); //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
             // Signed in successfully, show authenticated UI.
             Intent intent = new Intent(MainActivity.this, LoggedIn.class);
             startActivity(intent);
 
-            /* Send the authentication code to backend server */
-            try{
-                URL url = new URL("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
-                HttpURLConnection URLconnection = (HttpURLConnection) url.openConnection();
-                URLconnection.setRequestMethod("POST");
-                URLconnection.setDoOutput(true);
-                URLconnection.setChunkedStreamingMode(0);
-
-                OutputStream output = URLconnection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "UTF-8"));
-                writer.write(authCode);
-
-                URLconnection.disconnect();
-            }catch (IOException e){
-                Log.w("Error", "Connection Error");
-            }
+//            /* Send the authentication code to backend server */
+//            try{
+//                URL url = new URL("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+//                HttpURLConnection URLconnection = (HttpURLConnection) url.openConnection();
+//                URLconnection.setRequestMethod("POST");
+//                URLconnection.setDoOutput(true);
+//                URLconnection.setChunkedStreamingMode(0);
+//
+//                OutputStream output = URLconnection.getOutputStream();
+//                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "UTF-8"));
+//                writer.write(authCode);
+//
+//                URLconnection.disconnect();
+//            }catch (IOException e){
+//                Log.w("Error", "Connection Error");
+//            }
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.

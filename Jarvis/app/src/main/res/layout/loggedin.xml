@@ -48,5 +48,15 @@
         android:layout_marginBottom="160dp"
         android:text="Sign Out" />
 
+    <Button
+        android:id="@+id/urlconnection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="307dp"
+        android:onClick="SendMessage"
+        android:text="Send" />
+
 
 </RelativeLayout>

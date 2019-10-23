@@ -1,7 +1,9 @@
 package com.example.jarvis;
 
 import android.net.Uri;
+import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,13 +20,20 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoggedIn extends AppCompatActivity {
 
     ImageView UserPhoto;
-    TextView Username, Useremail, UserID;
+    TextView Username, Useremail/*, UserID*/;
     Button Signout;
 
     GoogleSignInClient mGoogleSignInClient;
@@ -36,8 +45,8 @@ public class LoggedIn extends AppCompatActivity {
 
         String serverClientID = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
-                .requestServerAuthCode(serverClientID)
+//                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+//                .requestServerAuthCode(serverClientID)
                 .requestEmail()
                 .build();
 
@@ -61,6 +70,26 @@ public class LoggedIn extends AppCompatActivity {
                 }
             }
         });
+//
+//        public void SendMessage(View view){
+//
+//            try {
+//                URL url = new URL("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+//                HttpURLConnection urlconnect = (HttpURLConnection) url.openConnection();
+//
+//                urlconnect.setRequestMethod("POST");
+//                urlconnect.setDoOutput(true);
+//                urlconnect.setChunkedStreamingMode(0);
+//
+//                OutputStream output = urlconnect.getOutputStream();
+//                BufferedWriter writer_2 = new BufferedWriter(new OutputStreamWriter(output, "UTF-8"));
+//                writer_2.write("Hello Can I write?? ");
+//            }catch (IOException e){
+//                Log.w("ERROR", "Cant Connect to the URL");
+//            }
+//
+//        }
+
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
@@ -73,7 +102,7 @@ public class LoggedIn extends AppCompatActivity {
 
             Username.setText(personName);
             Useremail.setText(personEmail);
-            UserID.setText(personId);
+            //UserID.setText(personId);
             Glide.with(this).load(String.valueOf(personPhoto)).into(UserPhoto);
         }
     }
