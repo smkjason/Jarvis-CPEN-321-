@@ -15,9 +15,24 @@
 ### To pick up a new deploy
 Assuming docker is set up with AWS (`aws ecr get-login --no-include-email --region us-east-2`)
 
+#### Docker
+Build Image:
+- `sudo docker build -t 754427858209.dkr.ecr.us-east-2.amazonaws.com/jarvis-cpen-321:latest .`
+
+List and Run:
+- `sudo docker images`
+- `docker run -p 80:3000 <image id>`
+
+List and kill running images:
+- `sudo docker container ls`
+- `sudo docker kill <container id>`
+
 Useful: https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html
 
 Run:
+- `aws ecr get-login --no-include-email`
+to get login
+
 - `sudo docker push 754427858209.dkr.ecr.us-east-2.amazonaws.com/jarvis-cpen-321`
 somehow find the task id (can do thru web ui, but preferably thru aws-cli)
 
@@ -29,7 +44,8 @@ somehow find the task id (can do thru web ui, but preferably thru aws-cli)
 
 
 useful to describe service:
-`aws ecs describe-services --service arn:aws:ecs:us-east-2:754427858209:service/jarvis-cpen-321-service --cluster jarvis-cpen-321`
+- `aws ecs describe-services --service arn:aws:ecs:us-east-2:754427858209:service/jarvis-cpen-321-service --cluster jarvis-cpen-321`
+- `aws ecs list-tasks --cluster jarvis-cpen-321`
 
 
 # API
