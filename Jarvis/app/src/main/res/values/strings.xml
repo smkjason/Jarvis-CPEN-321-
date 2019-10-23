@@ -3,7 +3,6 @@
     <string name="server_client_id">
         282394539630-06ith7hfdo2cqeok6g487s0slqh7ah8c.apps.googleusercontent.com
     </string>
-
     <string name="project_id">
         jarvis-cpen321
     </string>
@@ -18,5 +17,19 @@
 
     <string name="auth_provider_x509_cert_url">
         https://www.googleapis.com/oauth2/v1/certs
+    </string>
+
+    <string name="Title">
+        Notification
+    </string>
+    <string name="Content">
+        New Notification
+    </string>
+
+    <string name="channel_name">
+        Jarvis
+    </string>
+    <string name="channel_description">
+        channel_description
     </string>
 </resources>

@@ -2,13 +2,18 @@ package com.example.jarvis;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -53,6 +58,29 @@ public class MainActivity extends AppCompatActivity {
 
     SignInButton signin;
     int RC_SIGN_IN = 0;
+//    String CHANNEL_ID = "See Channel";
+//
+//    /* Create the Notification Channel */
+//    private void createNotificationChannel() {
+//        // Create the NotificationChannel, but only on API 26+ because
+//        // the NotificationChannel class is new and not in the support library
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            /* Set Channel Name */
+//            CharSequence name = getString(R.string.channel_name);
+//            /* Set Channel Description */
+//            String description = getString(R.string.channel_description);
+//            /* Must set importance for Android 8.0 or above */
+//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+//
+//            /* Create the Channel */
+//            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+//            channel.setDescription(description);
+//            // Register the channel with the system; you can't change the importance
+//            // or other notification behaviors after this
+//            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+//            notificationManager.createNotificationChannel(channel);
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +99,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+//
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+//                .setSmallIcon(R.drawable.ic_launcher_foreground)
+//                .setContentTitle(getString(R.string.Title))
+//                .setContentText(getString(R.string.Content))
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-               // .requestIdToken(serverClientId)
-//                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
+                .requestIdToken(serverClientId)
+                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
                 .requestServerAuthCode(serverClientId)
                 .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
                 .requestEmail()
@@ -127,19 +161,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        new BackendTask().execute();
+//        new BackendTask().execute();
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-//            String idToken = account.getIdToken();
-//            //String authCode = account.getServerAuthCode();
-//
+            String idToken = account.getIdToken();
+            String authCode = account.getServerAuthCode();
+
+//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+
+            new communicateBackend(idToken, authCode).execute();
+
+
 //            HttpClient httpClient = new DefaultHttpClient();
-//            HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+//            HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/test_user");
 //
 //            try {
-//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+//                UrlEncodedFormEntity urlencodedformentity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
+//                urlencodedformentity.setContentType("application/json");
 //                nameValuePairs.add(new BasicNameValuePair("idToken", idToken));
-//                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//                nameValuePairs.add(new BasicNameValuePair("AuthCode", authCode));
+//                httpPost.setEntity(urlencodedformentity);
+//                httpPost.setHeader("Content-Type", "application/json");
 //
 //                HttpResponse response = httpClient.execute(httpPost);
 //                int statusCode = response.getStatusLine().getStatusCode();
@@ -149,6 +192,8 @@ public class MainActivity extends AppCompatActivity {
 //                Log.e("Error", "Error sending ID token to backend.", e);
 //            } catch (IOException e) {
 //                Log.e("Error", "Error sending ID token to backend.", e);
+//            }catch (Exception e){
+//                Log.e("Error", "I caught some exception.", e);
 //            }
              //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
             // Signed in successfully, show authenticated UI.
@@ -182,34 +227,89 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private class BackendTask extends AsyncTask<Void, Void, Void> {
+//    private class BackendTask extends AsyncTask<Void, Void, Void> {
+//        @Override
+//        protected Void doInBackground(Void... v) {
+//            HttpClient client = new DefaultHttpClient();
+//            HttpGet request = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+//
+//            try {
+//                HttpResponse response = client.execute(request);
+//
+//// Get the response
+//                BufferedReader rd = new BufferedReader
+//                        (new InputStreamReader(
+//                                response.getEntity().getContent()));
+//
+//                String line = "";
+//                while ((line = rd.readLine()) != null) {
+//                    System.out.println(line);
+//                }
+//            } catch (java.io.IOException e) {
+//                Log.w("Error", "Connection Error");
+//            }
+//            return null;
+//        }
+//
+//
+//        protected void onProgressUpdate() {
+//        }
+//
+//        protected void onPostExecute() {
+//
+//        }
+//    }
+
+    private class communicateBackend extends AsyncTask<Void, Void, Void> {
+
+        String idToken;
+        String authCode;
+
+        communicateBackend(String idToken, String authCode) {
+            this.idToken = idToken;
+            this.authCode = authCode;
+        }
+
         @Override
         protected Void doInBackground(Void... v) {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
 
             try {
-                HttpResponse response = client.execute(request);
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/test_user");
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                UrlEncodedFormEntity urlencodedformentity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
+                urlencodedformentity.setContentType("application/json");
+                nameValuePairs.add(new BasicNameValuePair("idToken", idToken));
+                Log.i("Information", "idToken is: " + idToken);
+                Log.i("Information", "urlencodedformentity is: " + urlencodedformentity);
+                nameValuePairs.add(new BasicNameValuePair("AuthCode", authCode));
+                Log.i("Information", "authCode is: " + authCode);
+                httpPost.setEntity(urlencodedformentity);
+                httpPost.setHeader("Content-Type", "application/json");
 
-// Get the response
-                BufferedReader rd = new BufferedReader
-                        (new InputStreamReader(
-                                response.getEntity().getContent()));
-
-                String line = "";
-                while ((line = rd.readLine()) != null) {
-                    System.out.println(line);
-                }
-            } catch (java.io.IOException e) {
-                Log.w("Error", "Connection Error");
+                HttpResponse response = httpClient.execute(httpPost);
+                int statusCode = response.getStatusLine().getStatusCode();
+                final String responseBody = EntityUtils.toString(response.getEntity());
+                Log.i("Information", "Signed in as: " + responseBody);
+            } catch (ClientProtocolException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (IOException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (Exception e) {
+                Log.e("Error", "I caught some exception.", e);
             }
             return null;
         }
 
-        protected void onProgressUpdate() {
-        }
 
         protected void onPostExecute() {
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(MainActivity.this, "Sent stuff to backend on the background", Toast.LENGTH_LONG).show();
+            super.onPostExecute(aVoid);
 
         }
     }
