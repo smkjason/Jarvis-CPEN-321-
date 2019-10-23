@@ -18,9 +18,6 @@ let userModel = new Schema({
     name: String,
     google_token: String,
     refresh_token: String,
-    id: String,
-    pw_hash: String,
-    salt: String
 })
 
 module.exports = {

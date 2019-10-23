@@ -1,4 +1,5 @@
 const UserFunctions = require('./app/user')
+const EventFunctions = require('./data/event')
 
 function routes(app){
     //all our routes can go here
@@ -16,13 +17,16 @@ function routes(app){
         resolvePromise(UserFunctions.getUser(req.params.name, req.query.google_key), res)
     })
 
-    //update the user google api token, need password for that
-    app.put("/refresh_user/:name", function(req, res){
-        resolvePromise(UserFunctions.refreshUser(req.params.name, req.body.pw), res)
-    })
-
     app.post("/user", function(req, res){
         resolvePromise(UserFunctions.createUser(req.body), res)
+    })
+
+    app.post("/test_user", function(req, res){
+        res.send(req.body)
+    })
+
+    app.post("/demo_calculate_times", function(req, res){
+        res.send(EventFunctions.demoCalculateTime(req.body))
     })
 }
 

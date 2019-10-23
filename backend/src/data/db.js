@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 
-var mongoClient
-
 function init(config){
     mongoose.connect("mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/test", {
         useNewUrlParser: true
@@ -15,7 +13,7 @@ function init(config){
 }
 
 function deinit(){
-    mongoClient.close()
+    mongoose.disconnect()
 }
 
 module.exports = {

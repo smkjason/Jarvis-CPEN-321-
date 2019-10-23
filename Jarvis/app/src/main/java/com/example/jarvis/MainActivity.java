@@ -32,6 +32,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -41,8 +42,10 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.mortbay.util.IO;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -161,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+//        new BackendTask().execute();
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
@@ -225,11 +229,46 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class communicateBackend extends AsyncTask<Void, Void, Void>{
+
+//    private class BackendTask extends AsyncTask<Void, Void, Void> {
+//        @Override
+//        protected Void doInBackground(Void... v) {
+//            HttpClient client = new DefaultHttpClient();
+//            HttpGet request = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+//
+//            try {
+//                HttpResponse response = client.execute(request);
+//
+//// Get the response
+//                BufferedReader rd = new BufferedReader
+//                        (new InputStreamReader(
+//                                response.getEntity().getContent()));
+//
+//                String line = "";
+//                while ((line = rd.readLine()) != null) {
+//                    System.out.println(line);
+//                }
+//            } catch (java.io.IOException e) {
+//                Log.w("Error", "Connection Error");
+//            }
+//            return null;
+//        }
+//
+//
+//        protected void onProgressUpdate() {
+//        }
+//
+//        protected void onPostExecute() {
+//
+//        }
+//    }
+
+    private class communicateBackend extends AsyncTask<Void, Void, Void> {
 
         String idToken;
         String authCode;
-        communicateBackend(String idToken, String authCode){
+
+        communicateBackend(String idToken, String authCode) {
             this.idToken = idToken;
             this.authCode = authCode;
         }
@@ -258,10 +297,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("Error", "Error sending ID token to backend.", e);
             } catch (IOException e) {
                 Log.e("Error", "Error sending ID token to backend.", e);
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.e("Error", "I caught some exception.", e);
             }
             return null;
+        }
+
+
+        protected void onPostExecute() {
+
         }
 
         @Override
@@ -271,6 +315,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
 
 }
