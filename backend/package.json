@@ -15,6 +15,7 @@
     "express": "^4.17.1",
     "google-auth-library": "^5.5.1",
     "googleapis": "^43.0.0",
+    "moment": "^2.24.0",
     "mongodb": "^3.3.3",
     "mongoose": "^5.7.6",
     "pbkdf2": "^3.0.17",
