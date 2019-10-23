@@ -6,6 +6,7 @@ import androidx.core.app.NotificationCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Entity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -33,9 +34,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+import org.json.JSONStringer;
 import org.mortbay.util.IO;
 
 import java.io.BufferedReader;
@@ -58,29 +62,28 @@ public class MainActivity extends AppCompatActivity {
 
     SignInButton signin;
     int RC_SIGN_IN = 0;
-//    String CHANNEL_ID = "See Channel";
-//
-//    /* Create the Notification Channel */
-//    private void createNotificationChannel() {
-//        // Create the NotificationChannel, but only on API 26+ because
-//        // the NotificationChannel class is new and not in the support library
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            /* Set Channel Name */
-//            CharSequence name = getString(R.string.channel_name);
-//            /* Set Channel Description */
-//            String description = getString(R.string.channel_description);
-//            /* Must set importance for Android 8.0 or above */
-//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-//
-//            /* Create the Channel */
-//            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-//            channel.setDescription(description);
-//            // Register the channel with the system; you can't change the importance
-//            // or other notification behaviors after this
-//            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-//            notificationManager.createNotificationChannel(channel);
-//        }
-//    }
+    String CHANNEL_ID = "See Channel";
+
+    /* Create the Notification Channel */
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            /* Set Channel Name */
+            CharSequence name = getString(R.string.channel_name);
+            /* Set Channel Description */
+            String description = getString(R.string.channel_description);
+            /* Must set importance for Android 8.0 or above */
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            /* Create the Channel */
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -275,16 +278,15 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 HttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/test_user");
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-                UrlEncodedFormEntity urlencodedformentity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
-                urlencodedformentity.setContentType("application/json");
-                nameValuePairs.add(new BasicNameValuePair("idToken", idToken));
+                HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user");
+
+                JSONObject json = new JSONObject();
+                json.put("idToken", idToken);
+                json.put("code", authCode);
                 Log.i("Information", "idToken is: " + idToken);
-                Log.i("Information", "urlencodedformentity is: " + urlencodedformentity);
-                nameValuePairs.add(new BasicNameValuePair("AuthCode", authCode));
+//                Log.i("Information", "urlencodedformentity is: " + urlencodedformentity);
                 Log.i("Information", "authCode is: " + authCode);
-                httpPost.setEntity(urlencodedformentity);
+                httpPost.setEntity(new StringEntity(json.toString()));
                 httpPost.setHeader("Content-Type", "application/json");
 
                 HttpResponse response = httpClient.execute(httpPost);

@@ -26,6 +26,8 @@
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/usergmail"
+        android:layout_alignRight="@id/usergmail"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="189dp"
@@ -39,7 +41,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="236dp"
-        android:layout_marginEnd="88dp"
+        android:layout_marginEnd="68dp"
         android:text="Gmail: Usermail" />
 
     <Button
@@ -74,6 +76,17 @@
         android:text="View my Calendar"
         android:textColor="#FF5722" />
 
+
+    <Button
+        android:id="@+id/Revoke"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="42dp"
+        android:text="Revoke" />
+
     <TextView
         android:id="@+id/backendMessage"
         android:layout_width="315dp"
@@ -85,6 +98,7 @@
         android:layout_marginLeft="-170dp"
         android:layout_marginBottom="77dp"
         android:text="TextView" />
+
 
 
 </RelativeLayout>
