@@ -1,6 +1,11 @@
+const CONFIGS = require('../../server')
+const OAuth2Client = require('google-auth-library').OAuth2Client
+const client = new OAuth2Client(CONFIGS.FRONT_END_CLIENT_ID)
+
+const axios = require('axios')
 let schema = require('../data/schema')
 var pbkdf2 = require('pbkdf2')
-let uuid = require('uuid/v1')
+
 
 const User = schema.UserModel
 
@@ -10,52 +15,49 @@ function getUser(name, key){
     return User.findOne({name: name})
 }
 
-function refreshUser(username, pw){
-    return verifyPw(username, pw)
-    // return new Promise(function(resolve, reject){
-    //     console.log('about to verify pw!')
-    //     if(user = verifyPw(username, pw)){
-    //         console.log("pw verified! time to refresh password!")
-    //         //TODO: refresh password
-    //         resolve(user)
-    //     } else {
-    //         reject({err: "error occurred"})
-    //     }
-    // })
-}
-
 //will have a return json
 function createUser(json){
-    //error check if name already exists
-    //verify user googleAPI token
-    if(!json.google_token && !json.refresh_token) 
-        return new Promise(function(_, reject){reject({err: "no tokens!"})})
-    let salt = uuid().substring(0, 10)
-    pw_hash = pbkdf2.pbkdf2Sync(json.pw, salt, 2, 32)
-    json.pw_hash = pw_hash
-    json.salt = salt
-    let user = new User(json)
-    return user.save()
-}
-
-//returns user on success, else returns null
-function verifyPw(name, pw){
     return new Promise(function(resolve, reject){
-        User.findOne({name: name})
-            .then(function(user){
-                if(user.pw_hash == pbkdf2.pbkdf2Sync(pw, user.salt, 2, 32)) 
-                    return resolve(user)
-                console.log("o no they don't match")
-                reject(null)
+        verifyAndRetrieveToken(json.idToken, json.code)
+            .then(function(userInfo){
+                user = new User(userInfo)
+                user.save().then(resolve).catch(reject)
             })
-            .fail(function(err){
-                reject(null)
-            })
+            .catch(reject)
     })
 }
+
+function verifyAndRetrieveToken(token, code){
+    return new Promise(function(resolve, reject){
+            client.verifyIdToken({
+            idToken: token, 
+            audience: FRONT_END_CLIENT_ID
+        }).then(function(ticket){
+            //ticket should be verified, lets retrieve the code now
+            axios.post('https://www.googleapis.com/oauth2/v4/token', {
+                code: code,
+                cient_id: CONFIGS.CLIENT_ID,
+                client_secret: CONFIGS.CLIENT_SECRET,
+                grant_type: 'authorization_code'
+            }).then(function(response){
+                console.log(payload)
+                //we did it! return all of the information in a json for our create user function to parse
+                var payload = ticket.getPayload()
+                resolve({
+                    email: payload.sub,
+                    refresh_token: response.data.refresh_token,
+                    google_token: response.data.access_token,
+                    expires: response.data.expires_in + Date.now()
+                })
+            }).catch(function(err){
+                reject(err)
+            })
+        }).catch(function(err){reject(err)})
+    })
+}
+
 
 module.exports = {
     createUser,
     getUser,
-    refreshUser
 }
