@@ -3,6 +3,7 @@ package com.example.jarvis;
 import android.content.Intent;
 import android.net.Uri;
 import android.net.UrlQuerySanitizer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,13 +27,16 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -46,7 +50,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class LoggedIn extends AppCompatActivity {
 
     ImageView UserPhoto;
-    TextView Username, Useremail/*, UserID*/;
+    TextView Username, Useremail, backendMessage;
     Button Signout;
 
     Button Send;
@@ -59,9 +63,10 @@ public class LoggedIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loggedin);
 
+        String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
-//                .requestServerAuthCode(serverClientID)
+                .requestServerAuthCode(serverClientId)
                 .requestEmail()
                 .build();
 
@@ -74,6 +79,7 @@ public class LoggedIn extends AppCompatActivity {
         Signout = findViewById(R.id.sign_out_button);
         Send = findViewById(R.id.urlconnection);
         View_Calendar = findViewById(R.id.button);
+        backendMessage = findViewById(R.id.backendMessage);
 
         Signout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +118,7 @@ public class LoggedIn extends AppCompatActivity {
                 }
             }
         });
-
+        new BackendTask().execute();
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
             String personName = acct.getDisplayName();
@@ -124,6 +130,7 @@ public class LoggedIn extends AppCompatActivity {
 
             Username.setText(personName);
             Useremail.setText(personEmail);
+            //backendMessage.setText("TEST");
             //UserID.setText(personId);
             Glide.with(this).load(String.valueOf(personPhoto)).into(UserPhoto);
         }
@@ -189,5 +196,40 @@ public class LoggedIn extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+
+    private class BackendTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... v) {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+            String message = "";
+            try {
+                HttpResponse response = client.execute(request);
+
+// Get the response
+                BufferedReader rd = new BufferedReader
+                        (new InputStreamReader(
+                                response.getEntity().getContent()));
+
+                String line = "";
+                while ((line = rd.readLine()) != null) {
+                    message += line;
+                    System.out.println(message);
+                }
+            } catch (java.io.IOException e) {
+                Log.w("Error", "Connection Error");
+            }
+            return message;
+        }
+
+
+        protected void onProgressUpdate() {
+        }
+
+        protected void onPostExecute(String message) {
+            //System.out.println(message);
+            backendMessage.setText(message);
+        }
     }
 }

@@ -74,5 +74,17 @@
         android:text="View my Calendar"
         android:textColor="#FF5722" />
 
+    <TextView
+        android:id="@+id/backendMessage"
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/username"
+        android:layout_alignBottom="@id/Userphoto"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="false"
+        android:layout_marginLeft="-170dp"
+        android:layout_marginBottom="77dp"
+        android:text="TextView" />
+
 
 </RelativeLayout>

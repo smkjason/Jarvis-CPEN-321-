@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Jarvis</string>
     <string name="server_client_id">
-282394539630-06ith7hfdo2cqeok6g487s0slqh7ah8c.apps.googleusercontent.com
+        282394539630-06ith7hfdo2cqeok6g487s0slqh7ah8c.apps.googleusercontent.com
     </string>
     <string name="project_id">
         jarvis-cpen321
