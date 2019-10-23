@@ -23,20 +23,20 @@ var sum = [0,0,1,0,0,0,0,0,0,0,
 
 //list of list of events
 //only need to grab start/end_time for each user
-// function calculateBestTimeslot(listEvents){
+function calculateBestTimeslot(listEvents){
 
-// 	//incrementing through each user to get start/end time
-// 	for(var x = 0; x < listEvents.size; x++){
-// 		start_time = listEvents[x].end_time;
-// 		end_time = listEvents[x].start_time;
-// 		start_to_end.push(start_time - end_time);
-// 		//increment the intervals of meet up time
-// 		while(start_to_end > 0){
-// 			sum[start_time] += 1;
-// 			start_to_end--;
-// 			start_time++;
-// 		} 
-// 	 }
+	//incrementing through each user to get start/end time
+	for(var x = 0; x < listEvents.size; x++){
+		start_time = listEvents[x].end_time;
+		end_time = listEvents[x].start_time;
+		start_to_end.push(start_time - end_time);
+		//increment the intervals of meet up time
+		while(start_to_end > 0){
+			sum[start_time] += 1;
+			start_to_end--;
+			start_time++;
+		} 
+	 }
 
 //after finish adding the start/end time to sum
 //need to check for intervals to meet up
@@ -65,9 +65,9 @@ for (var i = 0; i < sum.length; i++){
 //interval now contains the available meet up times
 //conver this back to string and return
 
-// console.log(sum);
-// console.log(sum.length);
-// console.log(interval);
+console.log(sum);
+console.log(sum.length);
+console.log(interval);
 
 // }
 
