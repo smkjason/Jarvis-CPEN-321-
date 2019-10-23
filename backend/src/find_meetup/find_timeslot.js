@@ -44,23 +44,46 @@ var sum = [0,0,1,0,0,0,0,0,0,0,
 
 flag = 0;
 outer:
-for (var i = 0; i < sum.length; i++){
-	if(sum[i] == 0 && flag == 0){
+// for (var i = 0; i < sum.length; i++){
+// 	if(sum[i] == 0 && flag == 0){
 
-		inner:
-		for(var k = i + 1; k < sum.length - i; k++){
-			if(sum[k] != 0 && k > i + 1){
-				interval.push(i);
-				interval.push(k-1);
-				flag = 1;
-				break inner;
-			} 	
+// 		inner:
+// 		for(var k = i + 1; k < sum.length - i; k++){
+// 			if(sum[k] != 0 && k > i + 1){
+// 				interval.push(i);
+// 				interval.push(k-1);
+// 				flag = 1;
+// 				break inner;
+// 			} 	
+// 		}
+// 	}
+// 	if(i >= k){
+// 		flag = 0;
+// 	}
+// }
+
+var start = 0;
+var set = {}
+for(var i = 1; i < sum.length; i++){
+	if(sum[i] == 0){
+		//starting a new sequence
+		if(sum[i-1] != 0){
+			start = i;
+		}
+	} else {
+		//ending a sequence
+		if(sum[i-1] == 0){
+			//take all the 0s from start - i-1
+			set[start] = i - 1
 		}
 	}
-	if(i >= k){
-		flag = 0;
-	}
 }
+if(sum[sum.length-1] == 0){
+	set[start] = sum.length - 1
+}
+
+console.log(sum)
+console.log(set)
 
 //interval now contains the available meet up times
 //conver this back to string and return
