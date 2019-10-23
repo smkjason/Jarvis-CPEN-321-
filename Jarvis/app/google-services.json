@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "282394539630",
+    "firebase_url": "https://jarvis-cpen321.firebaseio.com",
+    "project_id": "jarvis-cpen321",
+    "storage_bucket": "jarvis-cpen321.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:282394539630:android:083dbc6427759352e2587f",
+        "android_client_info": {
+          "package_name": "com.example.jarvis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "282394539630-tieqegeuslkua9mfhajiuevge5i0mt9j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jarvis",
+            "certificate_hash": "bd1961455c40075ea948035fddc6c247c8a9dbfb"
+          }
+        },
+        {
+          "client_id": "282394539630-dltgbljonos33mprenrdr8t8fle39b1r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_j1bNav-DezvhXPH_feJGQJR5DzJBjUs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "282394539630-dltgbljonos33mprenrdr8t8fle39b1r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

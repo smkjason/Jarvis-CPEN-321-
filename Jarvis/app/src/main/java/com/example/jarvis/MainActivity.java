@@ -6,6 +6,7 @@ import androidx.core.app.NotificationCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Entity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -102,12 +103,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-//
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-//                .setSmallIcon(R.drawable.ic_launcher_foreground)
-//                .setContentTitle(getString(R.string.Title))
-//                .setContentText(getString(R.string.Content))
-//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(this, View_Calendar.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        /* Notification */
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(getString(R.string.Title))
+                .setContentText(getString(R.string.Content))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent) //The intent to go to when tapped
+                .setAutoCancel(true);
+
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -164,61 +174,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-//        new BackendTask().execute();
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
             String authCode = account.getServerAuthCode();
 
-//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-
             new communicateBackend(idToken, authCode).execute();
 
-
-//            HttpClient httpClient = new DefaultHttpClient();
-//            HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/test_user");
-//
-//            try {
-//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-//                UrlEncodedFormEntity urlencodedformentity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
-//                urlencodedformentity.setContentType("application/json");
-//                nameValuePairs.add(new BasicNameValuePair("idToken", idToken));
-//                nameValuePairs.add(new BasicNameValuePair("AuthCode", authCode));
-//                httpPost.setEntity(urlencodedformentity);
-//                httpPost.setHeader("Content-Type", "application/json");
-//
-//                HttpResponse response = httpClient.execute(httpPost);
-//                int statusCode = response.getStatusLine().getStatusCode();
-//                final String responseBody = EntityUtils.toString(response.getEntity());
-//                Log.i("Error", "Signed in as: " + responseBody);
-//            } catch (ClientProtocolException e) {
-//                Log.e("Error", "Error sending ID token to backend.", e);
-//            } catch (IOException e) {
-//                Log.e("Error", "Error sending ID token to backend.", e);
-//            }catch (Exception e){
-//                Log.e("Error", "I caught some exception.", e);
-//            }
              //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
             // Signed in successfully, show authenticated UI.
             Intent intent = new Intent(MainActivity.this, LoggedIn.class);
             startActivity(intent);
-
-//            /* Send the authentication code to backend server */
-//            try{
-//                URL url = new URL("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
-//                HttpURLConnection URLconnection = (HttpURLConnection) url.openConnection();
-//                URLconnection.setRequestMethod("POST");
-//                URLconnection.setDoOutput(true);
-//                URLconnection.setChunkedStreamingMode(0);
-//
-//                OutputStream output = URLconnection.getOutputStream();
-//                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "UTF-8"));
-//                writer.write(authCode);
-//
-//                URLconnection.disconnect();
-//            }catch (IOException e){
-//                Log.w("Error", "Connection Error");
-//            }
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -228,40 +194,6 @@ public class MainActivity extends AppCompatActivity {
             //updateUI(null);
         }
     }
-
-
-//    private class BackendTask extends AsyncTask<Void, Void, Void> {
-//        @Override
-//        protected Void doInBackground(Void... v) {
-//            HttpClient client = new DefaultHttpClient();
-//            HttpGet request = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
-//
-//            try {
-//                HttpResponse response = client.execute(request);
-//
-//// Get the response
-//                BufferedReader rd = new BufferedReader
-//                        (new InputStreamReader(
-//                                response.getEntity().getContent()));
-//
-//                String line = "";
-//                while ((line = rd.readLine()) != null) {
-//                    System.out.println(line);
-//                }
-//            } catch (java.io.IOException e) {
-//                Log.w("Error", "Connection Error");
-//            }
-//            return null;
-//        }
-//
-//
-//        protected void onProgressUpdate() {
-//        }
-//
-//        protected void onPostExecute() {
-//
-//        }
-//    }
 
     private class communicateBackend extends AsyncTask<Void, Void, Void> {
 
