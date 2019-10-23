@@ -1,5 +1,6 @@
 package com.example.jarvis;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -16,6 +17,7 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import org.apache.http.HttpResponse;
@@ -24,6 +26,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.mortbay.util.IO;
@@ -67,8 +70,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-//        String serverClientId = getString(R.string.server_client_id);
+        String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+               // .requestIdToken(serverClientId)
 //                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
 //                .requestServerAuthCode(serverClientId)
                 .requestEmail()
@@ -76,6 +80,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        mGoogleSignInClient.silentSignIn()
+                .addOnCompleteListener(
+                        this,
+                        new OnCompleteListener<GoogleSignInAccount>() {
+                            @Override
+                            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                                handleSignInResult(task);
+                            }
+                        });
     }
 
     /* Add this if we would like */
@@ -110,7 +124,27 @@ public class MainActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            //String authCode = account.getServerAuthCode(); //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
+//            String idToken = account.getIdToken();
+//            //String authCode = account.getServerAuthCode();
+//
+//            HttpClient httpClient = new DefaultHttpClient();
+//            HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+//
+//            try {
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+//                nameValuePairs.add(new BasicNameValuePair("idToken", idToken));
+//                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//                HttpResponse response = httpClient.execute(httpPost);
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                final String responseBody = EntityUtils.toString(response.getEntity());
+//                Log.i("Error", "Signed in as: " + responseBody);
+//            } catch (ClientProtocolException e) {
+//                Log.e("Error", "Error sending ID token to backend.", e);
+//            } catch (IOException e) {
+//                Log.e("Error", "Error sending ID token to backend.", e);
+//            }
+             //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
             // Signed in successfully, show authenticated UI.
             Intent intent = new Intent(MainActivity.this, LoggedIn.class);
             startActivity(intent);
