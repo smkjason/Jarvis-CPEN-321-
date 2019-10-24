@@ -1,4 +1,7 @@
 package com.example.jarvis.Service;
 
-public class MyFirebaseMessagingService {
+import com.google.firebase.messaging.FirebaseMessagingService;
+
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
 }
