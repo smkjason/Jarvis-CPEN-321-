@@ -216,8 +216,8 @@ public class LoggedIn extends AppCompatActivity {
     }
 
     private void GoToCreateEvent(){
-        Intent intent = new Intent(LoggedIn.this, Create_Event.class);
-        startActivity(intent);
+        Intent gotocreateevent = new Intent(LoggedIn.this, Create_Event.class);
+        startActivity(gotocreateevent);
     }
 
     private void revokeAccess() {
