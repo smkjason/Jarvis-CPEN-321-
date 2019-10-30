@@ -25,6 +25,12 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -41,30 +47,19 @@ public class MainActivity extends AppCompatActivity {
 
     GoogleSignInClient mGoogleSignInClient;
 
+    private FirebaseAuth mAuth;
+
+    FirebaseAuth.AuthStateListener mAuthListener;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
     SignInButton signin;
     int RC_SIGN_IN = 0;
-    String CHANNEL_ID = "See Channel";
-
-    /* Create the Notification Channel */
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            /* Set Channel Name */
-            CharSequence name = getString(R.string.channel_name);
-            /* Set Channel Description */
-            String description = getString(R.string.channel_description);
-            /* Must set importance for Android 8.0 or above */
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            /* Create the Channel */
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +67,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         signin = findViewById(R.id.sign_in_button);
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() != null){
+                    startActivity(new Intent(MainActivity.this, home.class));
+                }
+            }
+        };
+
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,21 +89,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // Create an explicit intent for an Activity in your app
-        Intent intent = new Intent(this, View_Calendar.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        /* Notification */
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(getString(R.string.Title))
-                .setContentText(getString(R.string.Content))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent) //The intent to go to when tapped
-                .setAutoCancel(true);
-
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -124,17 +115,6 @@ public class MainActivity extends AppCompatActivity {
                         });
     }
 
-    /* Add this if we would like */
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//
-//        // Check for existing Google Sign In account, if the user is already signed in
-//        // the GoogleSignInAccount will be non-null.
-//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        updateUI(account);
-//    }
-
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -149,7 +129,17 @@ public class MainActivity extends AppCompatActivity {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
+            try{
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+//                handleSignInResult(task);
+            }catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w("Error", "Google sign in failed", e);
+                // ...
+            }
+
         }
     }
 
@@ -226,6 +216,35 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
 
         }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d("Info", "firebaseAuthWithGoogle:" + acct.getId());
+
+        String idToken = acct.getIdToken();
+        String authCode = acct.getServerAuthCode();
+
+        new communicateBackend(idToken, authCode).execute();
+        
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("success", "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+//                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(MainActivity.this, "SignIn Failed", Toast.LENGTH_LONG).show();
+                            Log.w("Error", "signInWithCredential:failure", task.getException());
+                        }
+
+                        // ...
+                    }
+                });
     }
 
 }

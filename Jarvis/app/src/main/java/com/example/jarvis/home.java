@@ -14,11 +14,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.mortbay.jetty.Main;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -30,15 +32,25 @@ public class home extends AppCompatActivity {
 
     Button view_profile, create_event, chatrooms,
             Signout;
+    FirebaseAuth mAuth;
+    FirebaseAuth.AuthStateListener mAuthListener;
 
     TextView backendMessage;
 
     GoogleSignInClient mGoogleSignInClient;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
+
+        mAuth = FirebaseAuth.getInstance();
 
         String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -55,6 +67,14 @@ public class home extends AppCompatActivity {
         chatrooms = findViewById(R.id.go_to_chatroom_bttn);
         Signout = findViewById(R.id.sign_out_button);
 
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() == null){
+                    startActivity(new Intent(home.this, MainActivity.class));
+                }
+            }
+        };
 
         Signout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +82,7 @@ public class home extends AppCompatActivity {
                 switch (view.getId()) {
                     // ...
                     case R.id.sign_out_button:
+                        mAuth.signOut();
                         signOut();
                         break;
                 }
