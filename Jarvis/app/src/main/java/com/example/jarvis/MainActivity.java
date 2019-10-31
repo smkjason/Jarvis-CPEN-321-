@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -31,6 +32,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private DatabaseReference RootRef; //For now it will be using Firebase Database However, we may want to change this root to AWS
 
     FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -71,11 +75,13 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
+        RootRef = FirebaseDatabase.getInstance().getReference();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(firebaseAuth.getCurrentUser() != null){
-                    startActivity(new Intent(MainActivity.this, home.class));
+                    sendUsertoHomeActivity();
                 }
             }
         };
@@ -156,9 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
              //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
             // Signed in successfully, show authenticated UI.
-            Intent intent = new Intent(MainActivity.this, home.class);
-            startActivity(intent);
-
+            sendUsertoHomeActivity();
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -226,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
         String idToken = acct.getIdToken();
         String authCode = acct.getServerAuthCode();
+        final String name = acct.getGivenName();
 
         new communicateBackend(idToken, authCode).execute();
         
@@ -235,20 +240,25 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            /* Add the currentUser to the FirebaseDatabase */
+                            currentUser = mAuth.getCurrentUser();
+                            String UserID = currentUser.getUid();
+                            RootRef.child("Users").child(UserID).setValue(name);
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("success", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(MainActivity.this, home.class);
-                            startActivity(intent);
-//                            updateUI(user);
+                            sendUsertoHomeActivity();
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(MainActivity.this, "SignIn Failed", Toast.LENGTH_LONG).show();
                             Log.w("Error", "signInWithCredential:failure", task.getException());
                         }
-
-                        // ...
                     }
                 });
+    }
+
+    /* Goes to home activity */
+    private void sendUsertoHomeActivity(){
+        Intent intent = new Intent(MainActivity.this, home.class);
+        startActivity(intent);
     }
 }

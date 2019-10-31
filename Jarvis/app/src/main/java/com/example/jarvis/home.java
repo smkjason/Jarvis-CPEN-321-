@@ -94,7 +94,7 @@ public class home extends AppCompatActivity {
                     // ...
                     case R.id.sign_out_button:
                         mAuth.signOut();
-                        finish();
+                        revokeAccess();
                         break;
                 }
             }
@@ -160,6 +160,16 @@ public class home extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(home.this, "Logged Out", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
+    }
+    private void revokeAccess() {
+        mGoogleSignInClient.revokeAccess()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(home.this, "Revoked", Toast.LENGTH_LONG).show();
                         finish();
                     }
                 });
