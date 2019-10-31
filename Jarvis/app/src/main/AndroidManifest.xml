@@ -14,6 +14,7 @@
         <activity android:name=".home"></activity>
         <activity android:name=".View_Calendar"></activity>
         <activity android:name=".view_profile" />
+        <activity android:name=".Create_Event"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

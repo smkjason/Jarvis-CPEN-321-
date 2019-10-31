@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jarvis.Fragments.ChatFragment;
+import com.example.jarvis.Fragments.UserFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -24,9 +26,16 @@ import org.mortbay.jetty.Main;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 public class home extends AppCompatActivity {
 
@@ -51,6 +60,9 @@ public class home extends AppCompatActivity {
         setContentView(R.layout.home);
 
         mAuth = FirebaseAuth.getInstance();
+
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -101,10 +113,19 @@ public class home extends AppCompatActivity {
         create_event.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(home.this, view_profile.class);
+                Intent intent = new Intent(home.this, Create_Event.class);
                 startActivity(intent);
             }
         });
+//        //Fragments
+//        ViewPager viewPager =
+//        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+//
+//        viewPagerAdapter.addFragment(new ChatFragment(), "Chats");
+//        viewPagerAdapter.addFragment(new UserFragment(), "Users");
+//
+//        viewPager.setAdapter(viewPagerAdapter);
+//
 
         new BackendTask().execute();
     }
@@ -155,5 +176,7 @@ public class home extends AppCompatActivity {
                     }
                 });
     }
+
+
 
 }
