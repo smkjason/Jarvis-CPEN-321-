@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
 
     private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
     FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         signin = findViewById(R.id.sign_in_button);
         mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -104,15 +106,15 @@ public class MainActivity extends AppCompatActivity {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        mGoogleSignInClient.silentSignIn()
-                .addOnCompleteListener(
-                        this,
-                        new OnCompleteListener<GoogleSignInAccount>() {
-                            @Override
-                            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                                handleSignInResult(task);
-                            }
-                        });
+//        mGoogleSignInClient.silentSignIn()
+//                .addOnCompleteListener(
+//                        this,
+//                        new OnCompleteListener<GoogleSignInAccount>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+//                                handleSignInResult(task);
+//                            }
+//                        });
     }
 
     private void signIn() {
@@ -143,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /* Probably won't be needing this since moving login to Firebase */
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
@@ -235,6 +238,8 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("success", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(MainActivity.this, home.class);
+                            startActivity(intent);
 //                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -246,5 +251,4 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }

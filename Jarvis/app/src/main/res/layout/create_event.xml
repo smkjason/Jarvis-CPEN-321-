@@ -5,7 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/create_event_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+    </androidx.appcompat.widget.Toolbar>
+
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="75dp"
@@ -16,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chat"
-            android:textSize="50dp"></TextView>
+            android:textSize="50dp"/>
     </com.google.android.material.appbar.AppBarLayout>
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
@@ -33,34 +41,4 @@
         android:id="@+id/viewpager_id"></androidx.viewpager.widget.ViewPager>
 
 
-<!--    <TextView-->
-<!--        android:id="@+id/textView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:gravity="center"-->
-<!--        android:text="Create Event"-->
-<!--        android:textColor="#F44336"-->
-<!--        android:textColorLink="#00241717"-->
-<!--        android:textSize="30sp"-->
-<!--        android:translationY="50dp" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/EventName"-->
-<!--        android:layout_width="244dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:inputType="textPersonName|textCapWords"-->
-<!--        android:text="Event Name"-->
-<!--        android:textSize="18sp"-->
-<!--        android:translationX="100dp"-->
-<!--        android:translationY="100dp" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/Date"-->
-<!--        android:layout_width="244dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:inputType="date"-->
-<!--        android:text="Date"-->
-<!--        android:textSize="18sp"-->
-<!--        android:translationX="100dp"-->
-<!--        android:translationY="100dp" />-->
 </LinearLayout>

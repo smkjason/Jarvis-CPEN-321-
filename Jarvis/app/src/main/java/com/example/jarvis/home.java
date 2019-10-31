@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,13 +31,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+
 
 public class home extends AppCompatActivity {
 
@@ -43,6 +41,8 @@ public class home extends AppCompatActivity {
             Signout;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
+
+    private Toolbar toolbar;
 
     TextView backendMessage;
 
@@ -61,13 +61,12 @@ public class home extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Hello");
 
         String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestScopes(new Scope(Scopes.DRIVE_APPFOLDER))
-//                .requestServerAuthCode(serverClientId)
                 .requestEmail()
                 .build();
 
@@ -95,7 +94,7 @@ public class home extends AppCompatActivity {
                     // ...
                     case R.id.sign_out_button:
                         mAuth.signOut();
-                        signOut();
+                        finish();
                         break;
                 }
             }
@@ -117,15 +116,6 @@ public class home extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-//        //Fragments
-//        ViewPager viewPager =
-//        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-//
-//        viewPagerAdapter.addFragment(new ChatFragment(), "Chats");
-//        viewPagerAdapter.addFragment(new UserFragment(), "Users");
-//
-//        viewPager.setAdapter(viewPagerAdapter);
-//
 
         new BackendTask().execute();
     }
@@ -159,13 +149,11 @@ public class home extends AppCompatActivity {
         }
 
         protected void onPostExecute(String message) {
-            //System.out.println(message);
-            //backendMessage.setText(message);
         }
     }
 
 
-
+    /* Probably not needed anymore because we are now using Firebase login logout */
     private void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
@@ -177,6 +165,28 @@ public class home extends AppCompatActivity {
                 });
     }
 
+    /* This is for drop down menu */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
 
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+
+        if(item.getItemId() == R.id.Settings_menu){
+            /* Do something */
+        }
+        if(item.getItemId() == R.id.Log_out_menu){
+            /* Do something */
+            mAuth.signOut();
+        }
+
+        return true;
+    }
 }

@@ -15,23 +15,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
 import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.widget.Toolbar;
 
 public class Create_Event extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
     private ViewPager viewPager;
+    private Toolbar mtoolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.create_event);
 
+        mtoolbar = (Toolbar) findViewById(R.id.create_event_toolbar);
         tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
         viewPager = (ViewPager) findViewById(R.id.viewpager_id);
+
+        setSupportActionBar(mtoolbar);
+        getSupportActionBar().setTitle("Create_Event");
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         //Add the fragments
