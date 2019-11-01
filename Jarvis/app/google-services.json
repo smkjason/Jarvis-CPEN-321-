@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "282394539630-tiq0ifoor03gv9maddnpbll3gae1iqum.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jarvis",
+            "certificate_hash": "cae7d4fc951e210a18de4d4fb883147d863c462a"
+          }
+        },
+        {
           "client_id": "282394539630-dltgbljonos33mprenrdr8t8fle39b1r.apps.googleusercontent.com",
           "client_type": 3
         }

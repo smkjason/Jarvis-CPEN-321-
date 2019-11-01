@@ -1,5 +1,6 @@
 package com.example.jarvis;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import com.example.jarvis.Fragments.UserFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,9 +39,12 @@ import androidx.appcompat.widget.Toolbar;
 
 
 public class home extends AppCompatActivity {
+    private static final String TAG = "home";
+
+    private static final int ERROR_DIALOG_REQUEST = 9001;
 
     Button view_profile, create_event, chatrooms,
-            Signout;
+            Signout, Map;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -77,6 +83,10 @@ public class home extends AppCompatActivity {
         create_event = findViewById(R.id.create_event_bttn);
         chatrooms = findViewById(R.id.go_to_chatroom_bttn);
         Signout = findViewById(R.id.sign_out_button);
+
+        if (isServicesOK()) { //check if map can operate with this phone
+            init();
+        }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -189,4 +199,38 @@ public class home extends AppCompatActivity {
 
         return true;
     }
+
+    public boolean isServicesOK() {
+        Log.d(TAG,"isServicesOK: checking google services");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(home.this);
+
+        if(available == ConnectionResult.SUCCESS) {
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isServicesOK: Google Play Services is working");
+            return true;
+        }
+        else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
+            //error occurred but we can fix (e.g. version issue
+            Log.d(TAG, "isServicesOK: an error occurred but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(home.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        } else {
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+
+        return false;
+    }
+
+    private void init() {
+        Map = findViewById(R.id.Map_bttn);
+        Map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(home.this, MapActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
 }
