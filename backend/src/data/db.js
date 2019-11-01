@@ -1,7 +1,13 @@
 const mongoose = require('mongoose')
 
-function init(config){
-    mongoose.connect("mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/test", {
+function init(){
+    var dbString = process.env.ENV == "production" ? 
+        "mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/prod" : 
+        "mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/test";
+
+    console.log(dbString)
+
+    mongoose.connect(dbString, {
         useNewUrlParser: true
     })
         .then(

@@ -2,11 +2,6 @@ const EventModel = require('./schema').EventModel
 
 //retrieves calendar events from google, and uploads it to our db
 function uploadEvents(user){
-    //check and authorize api token in user
-
-    //get events from google
-
-    //upoad db
 }
 
 function demoCalculateTime(json){
@@ -16,7 +11,6 @@ function demoCalculateTime(json){
 }
 
 function parseEvents(json){
-    console.log(json)
     res = []
     names = {}
     var i = 0;

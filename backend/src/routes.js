@@ -17,30 +17,19 @@ function routes(app){
         resolvePromise(UserFunctions.getUser(req.params.name, req.query.google_key), res)
     })
 
-    app.post("/user", function(req, res){
-        resolvePromise(UserFunctions.createUser(req.body), res)
-    })
-
-    app.post("/test_user", function(req, res){
-        res.send(req.body)
+    app.post("/user", async function(req, res){
+        try {
+            var user = await UserFunctions.authCreateUser(req.body)
+            res.send(user)
+        } catch(err) {
+            res.status(500)
+            res.send({err: err})
+        }
     })
 
     app.post("/demo_calculate_times", function(req, res){
-        res.send(EventFunctions.demoCalculateTime(req.body))
+        res.send("lol wtf")
     })
-}
-
-function resolvePromise(promise, res){
-    promise
-        .then(function(user){
-            res.status(200)
-            res.send(user)
-        })
-        .catch(function(err){
-            console.log('error returned')
-            res.status(500)
-            res.send({err: err})
-        })
 }
 
 module.exports = {
