@@ -16,7 +16,6 @@ function demoCalculateTime(json){
 }
 
 function parseEvents(json){
-    console.log(json)
     res = []
     names = {}
     var i = 0;

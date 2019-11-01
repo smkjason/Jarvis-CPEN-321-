@@ -164,11 +164,14 @@ All of these commands needs to have the user's google api key, since that's how 
 {
     "start_time":"0:00",
     "end_time":"23:00",
+    "description":"hello this is a description",
     "repeat_days": [0,3,5],
     "repeat_until": 1290801901,
     "name": "name of event",
     "single_event": true,
-    "weight": 3
+    "weight": 3,
+    "owner": "owner",
+    "google": false
 }
 ```
 start_time, end_time can be either strings representating a clock time as shown above, or as a unix timestamp if single_event = true.
