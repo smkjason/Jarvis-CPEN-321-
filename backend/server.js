@@ -17,7 +17,7 @@ routes.routes(app)
 //load the configs, and then configure everything
 configs = config.loadConfigs()
 
-data.init(configs)
+data.init()
 
 // https.createServer(configs, app).listen(443, () => {
 //     console.log("listening...")

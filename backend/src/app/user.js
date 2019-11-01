@@ -30,7 +30,7 @@ async function verifyAndRetrieveToken(token, code){
     payload = ret.getPayload()
 
     //check if this user exists already
-    user = await User.find({email: "random email"})
+    user = await User.findOne({email: payload.email}).exec()
     if(user.email){
         return user;
     } else {

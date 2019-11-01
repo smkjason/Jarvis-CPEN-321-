@@ -5,6 +5,8 @@ function init(){
         "mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/prod" : 
         "mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/test";
 
+    console.log(dbString)
+
     mongoose.connect(dbString, {
         useNewUrlParser: true
     })

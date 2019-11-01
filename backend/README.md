@@ -170,7 +170,7 @@ All of these commands needs to have the user's google api key, since that's how 
     "name": "name of event",
     "single_event": true,
     "weight": 3,
-    "owner": "owner",
+    "owner": "emailofuser@gmail.com",
     "google": false
 }
 ```
