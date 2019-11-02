@@ -244,10 +244,10 @@ public class MainActivity extends AppCompatActivity {
                             /* Add the currentUser to the FirebaseDatabase */
                             currentUser = mAuth.getCurrentUser();
                             String UserID = currentUser.getUid();
-                            RootRef.child("Users").child(UserID).setValue(name);
+                            RootRef.child("Users").child(UserID).child("Name").setValue(name);
+                            RootRef.child("Users").child(UserID).child("UID").setValue(UserID);
                             RootRef.child("Users").child(UserID).child("Latitude").setValue("NA");
                             RootRef.child("Users").child(UserID).child("Longitude").setValue("NA");
-
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("success", "signInWithCredential:success");
                             sendUsertoHomeActivity();

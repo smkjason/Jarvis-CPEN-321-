@@ -1,6 +1,7 @@
 package com.example.jarvis.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 
@@ -11,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.R;
 
 import java.util.ArrayList;
@@ -46,8 +48,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             @Override
             public void onClick(View v) {
                 Log.d("eventItem", "Clicked on " + events.get(position));
-
                 Toast.makeText(mContext, "Going to Event Info...", Toast.LENGTH_LONG).show();
+                /* Go to GroupChat on Click */
+                Intent intent = new Intent (mContext, GroupChatActivity.class);
+                intent.putExtra("Name", events.get(position));
+                mContext.startActivity(intent);
+
             }
         });
     }

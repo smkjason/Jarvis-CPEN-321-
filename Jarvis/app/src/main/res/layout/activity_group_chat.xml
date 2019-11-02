@@ -15,9 +15,9 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
         <TextView
+            android:id="@+id/Toolbar_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="GroupChat">
+            android:layout_height="wrap_content">
         </TextView>
     </androidx.appcompat.widget.Toolbar>
 
@@ -32,7 +32,7 @@
         android:id="@+id/scrollview_groupchat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/GroupChat_AppBar"
+        android:layout_below="@id/GroupChat_ToolBar"
         android:layout_above="@id/GroupChat_LinearLayout">
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,10 +46,11 @@
                 android:padding="10dp"
                 android:textAllCaps="false"
                 android:textSize="20sp"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorPrimaryDark"
                 android:layout_marginStart="2dp"
                 android:layout_marginEnd="2dp"
                 android:layout_marginBottom="50dp"
+                android:bufferType="editable"
                 >
             </TextView>
 
