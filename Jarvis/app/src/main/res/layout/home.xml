@@ -18,6 +18,7 @@
         layout="@layout/toolbar">
     </include>
 
+<<<<<<< HEAD
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="75dp"
@@ -51,12 +52,14 @@
         app:layout_constraintTop_toBottomOf="@id/appbarid"
         />
 
+=======
+>>>>>>> 60d82dcde2db4a8f1034fc90f27332d4775b4d93
     <Button
-        android:id="@+id/Profile_bttn"
+        android:id="@+id/Map_bttn"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginTop="200dp"
-        android:text="Profile"
+        android:text="Map"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,10 +71,10 @@
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:text="View_Profile"
-        app:layout_constraintEnd_toEndOf="@+id/Profile_bttn"
+        app:layout_constraintEnd_toEndOf="@+id/Map_bttn"
         app:layout_constraintHorizontal_bias="0.483"
-        app:layout_constraintStart_toStartOf="@+id/Profile_bttn"
-        app:layout_constraintTop_toBottomOf="@+id/Profile_bttn" />
+        app:layout_constraintStart_toStartOf="@+id/Map_bttn"
+        app:layout_constraintTop_toBottomOf="@+id/Map_bttn" />
 
     <Button
         android:id="@+id/create_event_bttn"
