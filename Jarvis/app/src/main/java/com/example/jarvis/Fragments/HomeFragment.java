@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.jarvis.Create_Event;
+import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.MainActivity;
 import com.example.jarvis.MapActivity;
 import com.example.jarvis.R;
@@ -114,6 +115,14 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), Create_Event.class);
+                startActivity(intent);
+            }
+        });
+
+        chatrooms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), GroupChatActivity.class);
                 startActivity(intent);
             }
         });
