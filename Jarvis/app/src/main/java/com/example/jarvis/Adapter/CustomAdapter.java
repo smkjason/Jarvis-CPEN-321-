@@ -6,24 +6,20 @@ import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.example.jarvis.Model.Events;
 import com.example.jarvis.R;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
-//    private ArrayList<String> eventNames = new ArrayList<>();
     private ArrayList<String> events;
     private Context mContext;
 
@@ -46,11 +42,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         String this_event = events.get(position);
        holder.eventName.setText(this_event);
-//        if(this_event.getImageUrl() == null){
-//            holder.groupChat_image.setImageResource(R.mipmap.ic_launcher);
-//        }else{
-//            Glide.with(mContext).load(this_event.getImageUrl()).into(holder.groupChat_image);
-//        }
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
