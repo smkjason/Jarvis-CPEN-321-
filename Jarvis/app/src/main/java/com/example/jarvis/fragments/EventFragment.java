@@ -1,11 +1,9 @@
-package com.example.jarvis.Fragments;
+package com.example.jarvis.fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,12 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.NumberPicker;
 
-import com.example.jarvis.Adapter.CustomAdapter;
-import com.example.jarvis.Model.Events;
+import com.example.jarvis.adapter.CustomAdapter;
 import com.example.jarvis.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,8 +31,6 @@ public class EventFragment extends Fragment {
 
     private DatabaseReference EventRef;
 
-    private View view;
-    private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private ArrayList<String> mEvents = new ArrayList<>();
 
@@ -77,18 +69,15 @@ public class EventFragment extends Fragment {
         });
     }
 
-    public EventFragment(){
-
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        view = inflater.inflate(R.layout.fragment_event, container, false);
+        View view = inflater.inflate(R.layout.fragment_event, container, false);
         view.setTag(TAG);
 
         // BEGIN_INCLUDE(initializeRecyclerView)
-        recyclerView = view.findViewById(R.id.events_recyclerview);
+        RecyclerView recyclerView = view.findViewById(R.id.events_recyclerview);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);

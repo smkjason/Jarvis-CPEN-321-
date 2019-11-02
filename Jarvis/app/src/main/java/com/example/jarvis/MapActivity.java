@@ -1,6 +1,7 @@
 package com.example.jarvis;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -23,7 +24,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Map;
+
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
+
+    private static final String TAG = "MapActivity";
+
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final float DEFAULT_ZOOM = 15f;
+
+    private Boolean mLocationPermissionsGranted = false;
+    private GoogleMap mMap;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -45,17 +59,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //        mMap.moveCamera(CameraUpdateFactory
 //                .newLatLngZoom(new LatLng(-33.87365, 151.20689), 10));
     }
-
-    private static final String TAG = "MapActivity";
-
-    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static final float DEFAULT_ZOOM = 15f;
-
-    private Boolean mLocationPermissionsGranted = false;
-    private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,9 +140,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         switch(requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE: {
-                if(grantResults.length > 0) {
+                if (grantResults.length > 0) {
                     for (int i = 0; i < grantResults.length; i++) {
-                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             mLocationPermissionsGranted = false;
                             Log.d(TAG, "onRequestPermissionsResult: permission failed");
                             return;
@@ -150,7 +153,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     //initialize map
                     initMap();
                 }
+                break;
             }
+            default: {
+                Toast.makeText(MapActivity.this, "Could not get location", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "onRequestPermissionsResult: permission denied");
+                Intent intent = new Intent(MapActivity.this, Home.class);
+                startActivity(intent);
+            }
+
         }
     }
 

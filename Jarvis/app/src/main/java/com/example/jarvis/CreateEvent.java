@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.Toolbar;
 
-public class Create_Event extends AppCompatActivity {
+public class CreateEvent extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
@@ -31,7 +31,7 @@ public class Create_Event extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private DatabaseReference RootRef;
-    Button create;
+    private Button create;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,11 +91,11 @@ public class Create_Event extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(Create_Event.this, eventName + "is created Successfully...", Toast.LENGTH_LONG).show();
+                                Toast.makeText(CreateEvent.this, eventName + "is created Successfully...", Toast.LENGTH_LONG).show();
                             }
                             else{
                                 String message = task.getException().toString();
-                                Toast.makeText(Create_Event.this, "Error: " + message, Toast.LENGTH_LONG).show();
+                                Toast.makeText(CreateEvent.this, "Error: " + message, Toast.LENGTH_LONG).show();
                             }
                         }
                     });

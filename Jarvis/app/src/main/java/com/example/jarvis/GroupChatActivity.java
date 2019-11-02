@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -15,7 +14,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.jarvis.Notifications.Data;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -23,8 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.apache.http.entity.StringEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -67,12 +63,12 @@ public class GroupChatActivity extends AppCompatActivity {
 
         initializeFields();
 
-        GetUserInfo();
+        getUserInfo();
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SendMessageInfoToDatabase();
+                sendMessageInfoToDatabase();
                 userMessage.setText("");
             }
         });
@@ -88,30 +84,30 @@ public class GroupChatActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                 if(dataSnapshot.exists()){
-                    DisplayMessages(dataSnapshot);
+                    displayMessages(dataSnapshot);
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if(dataSnapshot.exists()){
-                    DisplayMessages(dataSnapshot);
+                    displayMessages(dataSnapshot);
                 }
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                //Maybe Implemented
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                //Maybe Implemented
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                //Maybe Implemented
             }
         });
 
@@ -130,7 +126,7 @@ public class GroupChatActivity extends AppCompatActivity {
         Title.setText(currentEvent);
     }
 
-    private void GetUserInfo() {
+    private void getUserInfo() {
 
         userRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -151,7 +147,7 @@ public class GroupChatActivity extends AppCompatActivity {
     }
 
 
-    private void SendMessageInfoToDatabase()
+    private void sendMessageInfoToDatabase()
     {
         String message = userMessage.getText().toString();
 
@@ -184,7 +180,7 @@ public class GroupChatActivity extends AppCompatActivity {
             Toast.makeText(GroupChatActivity.this, "Message sent to server", Toast.LENGTH_LONG).show();
         }
     }
-    private void DisplayMessages(DataSnapshot dataSnapshot) {
+    private void displayMessages(DataSnapshot dataSnapshot) {
 
         Iterator iterator = dataSnapshot.getChildren().iterator();
         while(iterator.hasNext()){

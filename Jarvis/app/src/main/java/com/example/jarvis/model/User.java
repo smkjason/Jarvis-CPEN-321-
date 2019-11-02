@@ -1,4 +1,4 @@
-package com.example.jarvis.Model;
+package com.example.jarvis.model;
 
 
 //Somehow use this user class for list of friends

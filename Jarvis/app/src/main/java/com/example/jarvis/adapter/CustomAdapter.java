@@ -1,4 +1,4 @@
-package com.example.jarvis.Adapter;
+package com.example.jarvis.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -53,7 +53,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 Intent intent = new Intent (mContext, GroupChatActivity.class);
                 intent.putExtra("Name", events.get(position));
                 mContext.startActivity(intent);
-
             }
         });
     }
@@ -66,8 +65,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView eventName;
-        RelativeLayout layout;
+        private TextView eventName;
+        private RelativeLayout layout;
 
         ViewHolder(View itemView){
             super(itemView);

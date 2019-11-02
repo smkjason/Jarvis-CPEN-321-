@@ -25,9 +25,9 @@
 
         <activity android:name=".MapActivity" />
         <activity android:name=".home" />
-        <activity android:name=".View_Calendar" />
+        <activity android:name=".ViewCalendar" />
         <activity android:name=".view_profile" />
-        <activity android:name=".Create_Event" />
+        <activity android:name=".CreateEvent" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

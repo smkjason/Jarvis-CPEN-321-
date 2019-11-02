@@ -1,37 +1,19 @@
 package com.example.jarvis;
 
-import android.app.Dialog;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.jarvis.Fragments.EventFragment;
-import com.example.jarvis.Fragments.HomeFragment;
-import com.example.jarvis.Model.Events;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.example.jarvis.fragments.EventFragment;
+import com.example.jarvis.fragments.HomeFragment;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -44,18 +26,15 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 
-public class home extends AppCompatActivity {
-    private static final String TAG = "home";
-
-    private static final int ERROR_DIALOG_REQUEST = 9001;
+public class Home extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
 
-    GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onStart() {
@@ -96,7 +75,7 @@ public class home extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(home.this, "Logged Out", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Home.this, "Logged Out", Toast.LENGTH_LONG).show();
                         finish();
                     }
                 });
@@ -106,7 +85,7 @@ public class home extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(home.this, "Revoked", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Home.this, "Revoked", Toast.LENGTH_LONG).show();
                         finish();
                     }
                 });

@@ -48,13 +48,18 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInClient mGoogleSignInClient;
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private DatabaseReference RootRef; //For now it will be using Firebase Database However, we may want to change this root to AWS
 
-    FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private SignInButton signin;
+    private int RC_SIGN_IN = 0;
+
+    private String idToken, authCode;
 
     @Override
     protected void onStart() {
@@ -62,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth.addAuthStateListener(mAuthListener);
     }
-
-    SignInButton signin;
-    int RC_SIGN_IN = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +92,7 @@ public class MainActivity extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.sign_in_button:
-                        signIn();
-                        break;
-                    // ...
-                }
+                signIn();
             }
         });
 
@@ -112,16 +109,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-//        mGoogleSignInClient.silentSignIn()
-//                .addOnCompleteListener(
-//                        this,
-//                        new OnCompleteListener<GoogleSignInAccount>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-//                                handleSignInResult(task);
-//                            }
-//                        });
     }
 
     private void signIn() {
@@ -152,33 +139,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /* Probably won't be needing this since moving login to Firebase */
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            String idToken = account.getIdToken();
-            String authCode = account.getServerAuthCode();
+//    /* Probably won't be needing this since moving login to Firebase */
+//    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+//        try {
+//            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+//            idToken = account.getIdToken();
+//            authCode = account.getServerAuthCode();
+//
+//            new CommunicateBackend(idToken, authCode).execute();
+//
+//             //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
+//            // Signed in successfully, show authenticated UI.
+//            sendUsertoHomeActivity();
+//        } catch (ApiException e) {
+//            // The ApiException status code indicates the detailed failure reason.
+//            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+//            Log.w("Error", "signInResult:failed code=" + e.getStatusCode());
+//            //Maybe Add another UI
+//            //updateUI(null);
+//        }
+//    }
 
-            new communicateBackend(idToken, authCode).execute();
-
-             //returns a one-time server auth code to send to your web server which can be exchanged for access token and sometimes refresh token if requestServerAuthCode(String) is configured; null otherwise. for details.
-            // Signed in successfully, show authenticated UI.
-            sendUsertoHomeActivity();
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w("Error", "signInResult:failed code=" + e.getStatusCode());
-            //Maybe Add another UI
-            //updateUI(null);
-        }
-    }
-
-    private class communicateBackend extends AsyncTask<Void, Void, Void> {
+    private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
 
         String idToken;
         String authCode;
 
-        communicateBackend(String idToken, String authCode) {
+        CommunicateBackend(String idToken, String authCode) {
             this.idToken = idToken;
             this.authCode = authCode;
         }
@@ -200,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
                 httpPost.setHeader("Content-Type", "application/json");
 
                 HttpResponse response = httpClient.execute(httpPost);
-                int statusCode = response.getStatusLine().getStatusCode();
                 final String responseBody = EntityUtils.toString(response.getEntity());
                 Log.i("Information", "Signed in as: " + responseBody);
             } catch (ClientProtocolException e) {
@@ -215,25 +201,25 @@ public class MainActivity extends AppCompatActivity {
 
 
         protected void onPostExecute() {
-
+            //Maybe Implemented
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             Toast.makeText(MainActivity.this, "Sent stuff to backend on the background", Toast.LENGTH_LONG).show();
             super.onPostExecute(aVoid);
-
+            //Maybe Implemented
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Info", "firebaseAuthWithGoogle:" + acct.getId());
 
-        String idToken = acct.getIdToken();
-        String authCode = acct.getServerAuthCode();
+        idToken = acct.getIdToken();
+        authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
 
-        new communicateBackend(idToken, authCode).execute();
+        new CommunicateBackend(idToken, authCode).execute();
         
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -262,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
     /* Goes to home activity */
     private void sendUsertoHomeActivity(){
-        Intent intent = new Intent(MainActivity.this, home.class);
+        Intent intent = new Intent(MainActivity.this, Home.class);
         startActivity(intent);
     }
 }

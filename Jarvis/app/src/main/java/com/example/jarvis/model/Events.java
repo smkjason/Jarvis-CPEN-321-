@@ -1,6 +1,4 @@
-package com.example.jarvis.Model;
-
-import android.util.EventLog;
+package com.example.jarvis.model;
 
 public class Events {
     private String event_name;
@@ -15,11 +13,11 @@ public class Events {
 
     }
 
-    public String getEvent_name() {
+    public String getEventname() {
         return event_name;
     }
 
-    public void setEvent_name(String event_name) {
+    public void setEventname(String event_name) {
         this.event_name = event_name;
     }
 

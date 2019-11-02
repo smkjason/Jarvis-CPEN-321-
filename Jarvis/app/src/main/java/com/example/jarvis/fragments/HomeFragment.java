@@ -1,9 +1,7 @@
-package com.example.jarvis.Fragments;
+package com.example.jarvis.fragments;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,12 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.jarvis.Create_Event;
+import com.example.jarvis.CreateEvent;
 import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.MainActivity;
 import com.example.jarvis.MapActivity;
 import com.example.jarvis.R;
-import com.example.jarvis.home;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,9 +28,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.Map;
 
 
 public class HomeFragment extends Fragment {
@@ -47,7 +41,7 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     //Google Stuff
-    GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +53,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return view;
     }
 
     @Override
@@ -92,13 +86,8 @@ public class HomeFragment extends Fragment {
         Signout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()) {
-                    // ...
-                    case R.id.sign_out_button:
-                        mAuth.signOut();
-                        revokeAccess();
-                        break;
-                }
+                mAuth.signOut();
+                revokeAccess();
             }
         });
 
@@ -106,7 +95,7 @@ public class HomeFragment extends Fragment {
         view_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), com.example.jarvis.view_profile.class);
+                Intent intent = new Intent(getActivity(), com.example.jarvis.ViewProfile.class);
                 startActivity(intent);
             }
         });
@@ -114,7 +103,7 @@ public class HomeFragment extends Fragment {
         create_event.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), Create_Event.class);
+                Intent intent = new Intent(getActivity(), CreateEvent.class);
                 startActivity(intent);
             }
         });
@@ -175,13 +164,5 @@ public class HomeFragment extends Fragment {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
-
-
-
-    public HomeFragment() {
-        // Required empty public constructor
-    }
-
-
 
 }
