@@ -8,45 +8,52 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.jarvis.Fragments.ChatFragment;
-import com.example.jarvis.Fragments.UserFragment;
+import com.example.jarvis.Fragments.EventFragment;
+import com.example.jarvis.Model.Events;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.mortbay.jetty.Main;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 
 public class home extends AppCompatActivity {
 
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private AppBarLayout appBarLayout;
+    private ViewPager viewPager;
     Button view_profile, create_event, chatrooms,
             Signout;
     FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
 
-    private Toolbar toolbar;
-
-    TextView backendMessage;
-
     GoogleSignInClient mGoogleSignInClient;
+
+    private ArrayList<Events> mEvents;
 
     @Override
     protected void onStart() {
@@ -61,9 +68,22 @@ public class home extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+        toolbar = findViewById(R.id.home_toolbar);
+        tabLayout = findViewById(R.id.tablayout_id);
+        appBarLayout = findViewById(R.id.appbarid);
+        viewPager = findViewById(R.id.viewpager_id);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Hello");
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        //Add the fragments
+        EventFragment eventFragment = new EventFragment();
+        adapter.addFragment(eventFragment, "Events");
+        //adapter setup
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+//        initEvents();
 
         String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -118,7 +138,23 @@ public class home extends AppCompatActivity {
         });
 
         new BackendTask().execute();
+
+
     }
+
+//    private void initEvents(){
+//        /* Retrieve from the Database */
+//        initRecyclerView();
+//    }
+//
+//    private void initRecyclerView()
+//    {
+//        Log.d("Events", "Initializing recyclerview of events");
+//        RecyclerView recyclerView = findViewById(R.id.events_recyclerview);
+//        CustomAdapter customAdapter = new CustomAdapter(mEvents, home.this);
+//        recyclerView.setAdapter(customAdapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(home.this));
+//    }
 
     private class BackendTask extends AsyncTask<Void, Void, String> {
         @Override
@@ -195,8 +231,43 @@ public class home extends AppCompatActivity {
         if(item.getItemId() == R.id.Log_out_menu){
             /* Do something */
             mAuth.signOut();
+            revokeAccess();
         }
 
         return true;
+    }
+
+        class ViewPagerAdapter extends FragmentPagerAdapter {
+
+        private ArrayList<Fragment> fragments;
+        private ArrayList<String> titles;
+
+        ViewPagerAdapter(FragmentManager fm){
+            super(fm);
+            this.fragments = new ArrayList<>();
+            this.titles = new ArrayList<>();
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        public void addFragment(Fragment fragment, String title){
+            fragments.add(fragment);
+            titles.add(title);
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles.get(position);
+        }
     }
 }

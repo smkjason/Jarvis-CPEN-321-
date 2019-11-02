@@ -26,6 +26,7 @@
             android:text="Chat"
             android:textSize="50dp"/>
     </com.google.android.material.appbar.AppBarLayout>
+
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,10 +36,11 @@
         app:tabTextColor="@color/tabtextcolor"
         app:tabIndicatorColor="@color/tabindicatorcolor"
         android:background="@color/colorPrimary"/>
+
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/viewpager_id"></androidx.viewpager.widget.ViewPager>
+        android:id="@+id/viewpager_id"/>
 
 
 </LinearLayout>
