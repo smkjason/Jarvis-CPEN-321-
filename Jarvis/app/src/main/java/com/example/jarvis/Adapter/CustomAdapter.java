@@ -24,10 +24,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
 //    private ArrayList<String> eventNames = new ArrayList<>();
-    private ArrayList<Events> events;
+    private ArrayList<String> events;
     private Context mContext;
 
-    public CustomAdapter(ArrayList<Events> events, Context context){
+    public CustomAdapter(ArrayList<String> events, Context context){
         this.events = events;
         mContext = context;
     }
@@ -44,17 +44,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         Log.d("eventItem", "onBindViewHolder: called.");
 
-        Events this_event = events.get(position);
-       holder.eventName.setText(this_event.getEvent_name());
-        if(this_event.getImageUrl() == null){
-            holder.groupChat_image.setImageResource(R.mipmap.ic_launcher);
-        }else{
-            Glide.with(mContext).load(this_event.getImageUrl()).into(holder.groupChat_image);
-        }
+        String this_event = events.get(position);
+       holder.eventName.setText(this_event);
+//        if(this_event.getImageUrl() == null){
+//            holder.groupChat_image.setImageResource(R.mipmap.ic_launcher);
+//        }else{
+//            Glide.with(mContext).load(this_event.getImageUrl()).into(holder.groupChat_image);
+//        }
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("eventItem", "Clicked on " + events.get(position).getEvent_name());
+                Log.d("eventItem", "Clicked on " + events.get(position));
 
                 Toast.makeText(mContext, "Going to Event Info...", Toast.LENGTH_LONG).show();
             }
@@ -63,20 +63,19 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return null!=events? events.size():0;
+        return null != events ? events.size() : 0;
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView eventName;
-        public CircleImageView groupChat_image;
+        TextView eventName;
         RelativeLayout layout;
 
-        public ViewHolder(View itemView){
+        ViewHolder(View itemView){
             super(itemView);
 
             eventName = itemView.findViewById(R.id.event_name);
-            groupChat_image = itemView.findViewById(R.id.event_name);
             layout = itemView.findViewById(R.id.event_item_layout);
         }
 

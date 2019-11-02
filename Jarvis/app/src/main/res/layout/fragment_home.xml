@@ -1,14 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <Button
+        android:id="@+id/Map_bttn"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="200dp"
+        android:text="Map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/view_profile_bttn"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:text="View_Profile"
+        app:layout_constraintEnd_toEndOf="@+id/Map_bttn"
+        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintStart_toStartOf="@+id/Map_bttn"
+        app:layout_constraintTop_toBottomOf="@+id/Map_bttn" />
+
+    <Button
+        android:id="@+id/create_event_bttn"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:text="Create_Event"
+        app:layout_constraintEnd_toEndOf="@+id/view_profile_bttn"
+        app:layout_constraintStart_toStartOf="@+id/view_profile_bttn"
+        app:layout_constraintTop_toBottomOf="@+id/view_profile_bttn" />
+
+    <Button
+        android:id="@+id/go_to_chatroom_bttn"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:text="ChatRooms"
+        app:layout_constraintEnd_toEndOf="@+id/create_event_bttn"
+        app:layout_constraintStart_toStartOf="@+id/create_event_bttn"
+        app:layout_constraintTop_toBottomOf="@+id/create_event_bttn" />
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Out"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/go_to_chatroom_bttn" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
