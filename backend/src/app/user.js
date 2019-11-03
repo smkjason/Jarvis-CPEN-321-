@@ -1,16 +1,18 @@
 
 const axios = require('axios')
 let schema = require('../data/schema')
-const configs = require('../../server')
+const configs = require('../configs')
 const {OAuth2Client} = require('google-auth-library')
-const client = new OAuth2Client(configs.FRONT_END_CLIENT_ID)
+const client = new OAuth2Client(configs.CLIENT_ID)
+const EventFunctions = require('../data/event')
 
 const User = schema.UserModel
 
-function getUser(name, key){
-    //TODO: verify google key
-    console.log("success! getting user!")
-    return User.findOne({name: name})
+async function getUser(name){
+    var user = await User.findOne({email: name}).exec()
+    //TODO: move this to its own path
+    var events = await EventFunctions.uploadEvents(user)
+    return events
 }
 
 //will have a return json
@@ -22,33 +24,40 @@ async function authCreateUser(json){
     verifies token, creates user if it doesn't exist, and returns user
 */
 async function verifyAndRetrieveToken(token, code){
-    var ret = await await client.verifyIdToken({
+    var ret = await client.verifyIdToken({
         idToken: token,
-        audience: configs.FRONT_END_CLIENT_ID
+        audience: configs.CLIENT_ID
     })
-
     payload = ret.getPayload()
 
+    if(!payload.email) {
+        console.log("email not gotten")
+        throw {err: "error authenticating id token"}
+    }
     //check if this user exists already
     user = await User.findOne({email: payload.email}).exec()
-    if(user.email){
+    if(user && user.email){
         return user;
     } else {
         var response = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
             code: code,
-            client_id: configs.client_id,
-            client_secret: configs.client_secret,
-            grant_type: 'authorization_code refresh_token'
+            client_id: configs.CLIENT_ID,
+            client_secret: configs.CLIENT_SECRET,
+            grant_type: 'authorization_code'
         })
-        if(response.status != "200") throw {err: "error authenticating token"}
 
         var user = new User({
             email: payload.email,
+            name: payload.email,
             refresh_token: response.data.refresh_token,
-            google_token: response.data.access_token,
-            expires: response.data.expires_in + Date.now()
+            google_token: response.data.access_token
         })
-        await user.save()
+        console.log({msg: "created user", user: user})
+        try{
+            await user.save()
+        } catch(err){
+            console.log(err)
+        }
         return user
     }
 }
