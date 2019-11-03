@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 function init(){
-    var dbString = "mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/test";
+    var dbString = 'mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/test';
 
     console.log(dbString)
 
@@ -9,10 +9,10 @@ function init(){
         useNewUrlParser: true
     })
     .then(
-        console.log("successfully connected")
+        console.log('successfully connected')
     )
     .catch(err => {
-        console.log("err occurred!")
+        console.log('err occurred!')
     })
 }
 

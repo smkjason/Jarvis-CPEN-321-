@@ -31,8 +31,8 @@ async function verifyAndRetrieveToken(token, code){
     payload = ret.getPayload()
 
     if(!payload.email) {
-        console.log("email not gotten")
-        throw {err: "error authenticating id token"}
+        console.log('email not gotten')
+        throw {err: 'error authenticating id token'}
     }
     //check if this user exists already
     user = await User.findOne({email: payload.email}).exec()
@@ -52,7 +52,7 @@ async function verifyAndRetrieveToken(token, code){
             refresh_token: response.data.refresh_token,
             google_token: response.data.access_token
         })
-        console.log({msg: "created user", user: user})
+        console.log({msg: 'created user', user: user})
         try{
             await user.save()
         } catch(err){
