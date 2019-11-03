@@ -11,17 +11,17 @@ async function uploadEvents(user){
         refresh_token: user.refresh_token, 
         access_token: user.google_token,
     })
-    console.log("lets try to init calendar")
-    var calendar = new google.calendar_v3.Calendar({version: "v3", auth: client})
+    console.log('lets try to init calendar')
+    var calendar = new google.calendar_v3.Calendar({version: 'v3', auth: client})
     
     events = await calendar.events.list({
-        calendarId: "primary",
+        calendarId: 'primary',
         auth: client,
     })
     await saveEvents(events)
     while(events.pageToken){
         events = await calendar.events.list({
-            calendarId: "primary",
+            calendarId: 'primary',
             auth: client,
             pageToken: events.pageToken
         })

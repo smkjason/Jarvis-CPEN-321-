@@ -3,14 +3,6 @@ const Schema = mongoose.Schema
 const Mixed = Schema.Types.Mixed
 
 let eventModel = new Schema({
-    // start_time: Mixed,
-    // end_time: Mixed,
-    // repeat_days: Array,
-    // repeat_until: Number,
-    // name: String,
-    // single_event: Boolean,
-    // owner: String,
-    // google: Boolean
     status: String,
     created: String,
     updated: String,
@@ -30,6 +22,6 @@ let userModel = new Schema({
 })
 
 module.exports = {
-    EventModel: mongoose.model("EventModel", eventModel),
-    UserModel: mongoose.model("UserModel", userModel)
+    EventModel: mongoose.model('EventModel', eventModel),
+    UserModel: mongoose.model('UserModel', userModel)
 }
