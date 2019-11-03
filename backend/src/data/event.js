@@ -1,5 +1,5 @@
 const EventModel = require('./schema').EventModel
-
+var calculateBestTimeslot = require('../find_meetup/find_timeslot').calculateBestTimeslot
 //retrieves calendar events from google, and uploads it to our db
 function uploadEvents(user){
     //check and authorize api token in user
@@ -11,7 +11,7 @@ function uploadEvents(user){
 
 function demoCalculateTime(json){
     retval = parseEvents(json)
-    //retval = calculateBestTimeslot(events)
+    retval = calculateBestTimeslot(retval)
     return retval
 }
 
