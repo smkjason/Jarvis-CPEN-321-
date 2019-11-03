@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var start_time = [[12,19],[13,20],[0,13]]
 var end_time = [[15,23],[16,23],[12,23]]
 var start_to_end = []
@@ -43,3 +44,27 @@ for(var x = 0; x < 3; x++){
  }
 console.log(start_to_end)
 console.log(sum)
+=======
+const mongoose = require('mongoose')
+
+function init(){
+    var dbString = process.env.ENV == "production" ? 
+        "mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/prod" : 
+        "mongodb+srv://jarvis:123123123@jarvis-kanro.mongodb.net/test";
+
+    mongoose.connect(dbString, {
+        useNewUrlParser: true
+    })
+        .then(
+            console.log("successfully connected")
+        )
+        .catch(err => {
+            console.log("err occurred!")
+        })
+}
+
+init();
+
+
+
+>>>>>>> 537a80856f00e98d6f472a4cb0837c685b0d4dfc

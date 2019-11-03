@@ -1,22 +1,58 @@
 const EventModel = require('./schema').EventModel
-var calculateBestTimeslot = require('../find_meetup/find_timeslot').calculateBestTimeslot
-//retrieves calendar events from google, and uploads it to our db
-function uploadEvents(user){
-    //check and authorize api token in user
+const configs = require('../configs')
+const {OAuth2Client} = require('google-auth-library')
+const google = require('googleapis')
+const clone = require('lodash/cloneDeep')
 
-    //get events from google
+async function uploadEvents(user){
+    //called when we first log in
+    var client = new OAuth2Client({clientId: configs.CLIENT_ID, clientSecret: configs.CLIENT_SECRET})
+    client.setCredentials({
+        refresh_token: user.refresh_token, 
+        access_token: user.google_token,
+    })
+    console.log("lets try to init calendar")
+    var calendar = new google.calendar_v3.Calendar({version: "v3", auth: client})
+    
+    events = await calendar.events.list({
+        calendarId: "primary",
+        auth: client,
+    })
+    await saveEvents(events)
+    while(events.pageToken){
+        events = await calendar.events.list({
+            calendarId: "primary",
+            auth: client,
+            pageToken: events.pageToken
+        })
+        await saveEvents(events)
+    }
+    
+    return events.items
+}
 
-    //upoad db
+async function getEvents(email){
+    events = await EventModel.find({creatorEmail: email}).exec()
+    return events
+}
+
+async function saveEvents(events){
+    console.log(events)
+    //event is Schema$Event in google calendar api
+    for(const event of events.data.items){
+        var json = clone(event)
+        json.creatorEmail = json.creator.email
+        var mongoEvent = new EventModel(json)
+        await mongoEvent.save()
+    }
 }
 
 function demoCalculateTime(json){
     retval = parseEvents(json)
-    retval = calculateBestTimeslot(retval)
     return retval
 }
 
 function parseEvents(json){
-    console.log(json)
     res = []
     names = {}
     var i = 0;
@@ -34,5 +70,7 @@ function parseEvents(json){
 }
 
 module.exports = {
-    demoCalculateTime: demoCalculateTime
+    demoCalculateTime: demoCalculateTime,
+    uploadEvents: uploadEvents,
+    getEvents: getEvents
 }

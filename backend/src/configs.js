@@ -10,5 +10,8 @@ function loadConfigs(){
 }
 
 module.exports = {
-    loadConfigs: loadConfigs
+    loadConfigs: loadConfigs,
+    FRONT_END_CLIENT_ID: '282394539630-tiq0ifoor03gv9maddnpbll3gae1iqum.apps.googleusercontent.com',
+    CLIENT_ID: '282394539630-06ith7hfdo2cqeok6g487s0slqh7ah8c.apps.googleusercontent.com',
+    CLIENT_SECRET: 'JveiHU5laxj_y1oDVKtcPWgP'
 }

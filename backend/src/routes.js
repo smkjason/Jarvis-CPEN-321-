@@ -3,44 +3,54 @@ const EventFunctions = require('./data/event')
 
 function routes(app){
     //all our routes can go here
-    app.get("/", function(_, res) {
+    app.get("/", function(req, res) {
+        log(req)
         res.send("Hello World! This is the backend for the calendar app")
     })
 
-    app.get("/env", function(_, res){
+    app.get("/env", function(req, res){
+        log(req)
         res.send(process.env.ENV)
     })
 
     //get the user, with a valid api token
     //returns 401 if token expired
-    app.get("/user/:name", function(req, res){
-        resolvePromise(UserFunctions.getUser(req.params.name, req.query.google_key), res)
+    app.get("/user/:name", async function(req, res){
+        log(req)
+        var user = await UserFunctions.getUser(req.params.name)
+        res.send(user)
     })
 
-    app.post("/user", function(req, res){
-        resolvePromise(UserFunctions.createUser(req.body), res)
+    app.get("/user/:name/events", async function(req, res){
+        log(req)
+        var events = await EventFunctions.getEvents(req.params.name)
+        res.send(events)
     })
 
-    app.post("/test_user", function(req, res){
-        res.send(req.body)
+    app.post("/user", async function(req, res){
+        log(req)
+        try {
+            var user = await UserFunctions.authCreateUser(req.body)
+            res.send(user)
+        } catch(err) {
+            res.status(500)
+            res.send({err: err})
+        }
     })
 
-    app.post("/demo_calculate_times", function(req, res){
-        res.send(EventFunctions.demoCalculateTime(req.body))
+    app.get("/demo_calculate_times", function(req, res){
+        log(req)
+        res.send("UPDATE!!")
     })
 }
 
-function resolvePromise(promise, res){
-    promise
-        .then(function(user){
-            res.status(200)
-            res.send(user)
-        })
-        .catch(function(err){
-            console.log('error returned')
-            res.status(500)
-            res.send({err: err})
-        })
+function log(req){
+    console.log({
+        method: req.method,
+        body: req.body,
+        params: req.params,
+        url: req.url
+    })
 }
 
 module.exports = {
