@@ -16,18 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ViewProfile extends AppCompatActivity {
 
-    private ImageView UserPhoto;
-    private TextView Username;
-    private TextView Useremail;
-    private TextView backendMessage;
-
-    private Button View_Calendar;
-    private Button CreateEvent;
-
-    private GoogleSignInAccount acct;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ImageView UserPhoto;
+        TextView Username;
+        TextView Useremail;
+        TextView backendMessage;
+
+        Button View_Calendar;
+        Button CreateEvent;
+
+        GoogleSignInAccount acct;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_profile);
 
@@ -42,22 +41,14 @@ public class ViewProfile extends AppCompatActivity {
         View_Calendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()){
-                    case R.id.button:
-                        goToCalendar();
-                        break;
-                }
+                goToCalendar();
             }
         });
 
         CreateEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.CreateEvent:
-                        goToCreateEvent();
-                        break;
-                }
+                goToCreateEvent();
             }
         });
 

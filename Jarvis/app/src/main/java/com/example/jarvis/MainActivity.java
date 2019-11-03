@@ -49,10 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    private SignInButton signin;
     private int RC_SIGN_IN = 0;
-
-    private String idToken, authCode;
 
     @Override
     protected void onStart() {
@@ -63,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SignInButton signin;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -155,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
 
     private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
 
-        String idToken;
-        String authCode;
+        private String idToken;
+        private String authCode;
 
         CommunicateBackend(String idToken, String authCode) {
             this.idToken = idToken;
@@ -205,6 +204,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        String idToken;
+        String authCode;
+
         Log.d("Info", "firebaseAuthWithGoogle:" + acct.getId());
 
         idToken = acct.getIdToken();

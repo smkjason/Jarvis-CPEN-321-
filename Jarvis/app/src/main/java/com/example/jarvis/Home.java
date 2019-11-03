@@ -28,9 +28,6 @@ import androidx.viewpager.widget.ViewPager;
 
 public class Home extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
 
     private FirebaseAuth mAuth;
 
@@ -45,6 +42,10 @@ public class Home extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        Toolbar toolbar;
+        TabLayout tabLayout;
+        ViewPager viewPager;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 

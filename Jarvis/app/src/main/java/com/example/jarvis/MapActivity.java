@@ -24,8 +24,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Map;
-
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private static final String TAG = "MapActivity";
@@ -37,7 +35,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private Boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -70,6 +67,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void getDeviceLocation() {
+        FusedLocationProviderClient mFusedLocationProviderClient;
+
         Log.d(TAG, "getDeviceLocation: getting the device's current location");
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);

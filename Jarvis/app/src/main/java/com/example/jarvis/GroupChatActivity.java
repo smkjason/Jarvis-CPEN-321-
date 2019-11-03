@@ -31,21 +31,21 @@ import androidx.appcompat.widget.Toolbar;
 
 public class GroupChatActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
     private ImageButton SendMessageButton;
     private EditText userMessage;
-    private ScrollView mScrollview;
-    private TextView  Title;
     private TextView displayTextMessages;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference userRef, EventRef, GroupMessageKey ;
+    private DatabaseReference userRef;
+    private DatabaseReference eventRef;
 
-    private String currentEvent, currentUserID, currentUserName,
-            currentDate, currentTime;
+    private String currentEvent;
+    private String currentUserID;
+    private String currentUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FirebaseAuth mAuth;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat);
 
@@ -59,7 +59,7 @@ public class GroupChatActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        EventRef = FirebaseDatabase.getInstance().getReference().child("Events").child(currentEvent);
+        eventRef = FirebaseDatabase.getInstance().getReference().child("Events").child(currentEvent);
 
         initializeFields();
 
@@ -79,7 +79,7 @@ public class GroupChatActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        EventRef.addChildEventListener(new ChildEventListener() {
+        eventRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -115,6 +115,10 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private void initializeFields()
     {
+        Toolbar toolbar;
+        ScrollView mScrollview;
+        TextView  Title;
+
         toolbar = findViewById(R.id.GroupChat_ToolBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(currentEvent);
@@ -149,6 +153,10 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private void sendMessageInfoToDatabase()
     {
+        DatabaseReference GroupMessageKey;
+        String currentDate;
+        String currentTime;
+        
         String message = userMessage.getText().toString();
 
         if(TextUtils.isEmpty(message))
@@ -156,7 +164,7 @@ public class GroupChatActivity extends AppCompatActivity {
             Toast.makeText(GroupChatActivity.this, "Oops!", Toast.LENGTH_LONG).show();
         }
         else {
-            String messageKey = EventRef.push().getKey();
+            String messageKey = eventRef.push().getKey();
             Calendar date = Calendar.getInstance();
             SimpleDateFormat currentDateFormat = new SimpleDateFormat("MMM dd, yyyy");
             currentDate = currentDateFormat.format(date.getTime());
@@ -166,9 +174,9 @@ public class GroupChatActivity extends AppCompatActivity {
             currentTime = currentTimeFormat.format(time.getTime());
 
             HashMap<String, Object> groupMessageKey = new HashMap<>();
-            EventRef.updateChildren(groupMessageKey);
+            eventRef.updateChildren(groupMessageKey);
 
-            GroupMessageKey = EventRef.child(messageKey);
+            GroupMessageKey = eventRef.child(messageKey);
 
             HashMap<String, Object> messageMAP = new HashMap<>();
             messageMAP.put("Name", currentUserName);

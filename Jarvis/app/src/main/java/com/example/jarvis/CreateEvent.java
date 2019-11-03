@@ -26,19 +26,22 @@ public class CreateEvent extends AppCompatActivity {
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
     private ViewPager viewPager;
-    private Toolbar mtoolbar;
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private DatabaseReference RootRef;
-    private Button create;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Toolbar mtoolbar;
+        Button create;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_event);
 
-        final EditText nameofEvent, dateofEvent, peopleatEvent;
+        final EditText nameofEvent;
+        final EditText dateofEvent;
+        final EditText peopleatEvent;
 
 
         //TextEdits
