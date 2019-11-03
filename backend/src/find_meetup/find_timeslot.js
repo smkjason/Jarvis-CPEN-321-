@@ -16,6 +16,14 @@ var sum = [0,0,0,0,0,0,0,0,0,0,
 			0,0,0,0,0,0,0,0,0,0,
 			0,0,0,0];
 
+			
+//logic should work something like this
+// Student A: 11100000111111100000
+// Student B: 00000011111000010001
+// Student C: 00000000111111110001
+// _______________________________+
+// 		   11100022333222220002
+
 
 //list of list of events
 //only need to grab start/end time for each user
