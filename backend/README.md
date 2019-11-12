@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/70e28116f3904e65bdac3098c8683bc8)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=smkjason/Jarvis-CPEN-321-&amp;utm_campaign=Badge_Grade)
 # Amazon AWS Summary
 
 - EC2 -> server instances that hosts our container
