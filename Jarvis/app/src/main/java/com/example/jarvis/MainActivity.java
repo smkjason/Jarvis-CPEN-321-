@@ -28,6 +28,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mortbay.jetty.Main;
@@ -35,6 +39,8 @@ import org.mortbay.jetty.Main;
 public class MainActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
+    private String email;
+    private String idToken;
 
     private Socket mSocket;
 
@@ -168,9 +174,10 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("Info", "firebaseAuthWithGoogle:" + acct.getId());
 
-        final String idToken = acct.getIdToken();
+        idToken = acct.getIdToken();
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
+        email = acct.getEmail();
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -231,6 +238,23 @@ public class MainActivity extends AppCompatActivity {
     /* Goes to home activity */
     private void sendUsertoHomeActivity(){
         Intent intent = new Intent(MainActivity.this, Home.class);
+        JSONObject json = new JSONObject();
+
+        HttpClient httpClient = new DefaultHttpClient();
+
+        try {
+            json.put("someKey", "someValue");
+            HttpPost request = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com" + "/" + email + "/events");
+            StringEntity params = new StringEntity(json.toString());
+            request.addHeader("Authorization Bearer", idToken);
+            request.setEntity(params);
+            httpClient.execute(request);
+// handle response here...
+        } catch (Exception ex) {
+            // handle exception here
+        } finally {
+            httpClient.getConnectionManager().shutdown();
+        }
         startActivity(intent);
     }
 
