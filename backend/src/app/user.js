@@ -3,7 +3,7 @@ const axios = require('axios')
 let schema = require('../data/schema')
 const configs = require('../configs')
 const {OAuth2Client} = require('google-auth-library')
-const client = new OAuth2Client(configs.CLIENT_ID)
+
 const EventFunctions = require('../data/event')
 
 const User = schema.UserModel

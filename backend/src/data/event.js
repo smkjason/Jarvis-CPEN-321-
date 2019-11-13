@@ -1,19 +1,10 @@
 const EventModel = require('./schema').EventModel
-const configs = require('../configs')
-const {OAuth2Client} = require('google-auth-library')
-const google = require('googleapis')
+const Google = require('./google')
 const clone = require('lodash/cloneDeep')
 
 async function uploadEvents(user){
     //called when we first log in
-    var client = new OAuth2Client({clientId: configs.CLIENT_ID, clientSecret: configs.CLIENT_SECRET})
-    client.setCredentials({
-        refresh_token: user.refresh_token, 
-        access_token: user.google_token,
-    })
-    console.log('lets try to init calendar')
-    var calendar = new google.calendar_v3.Calendar({version: 'v3', auth: client})
-    
+    var calendar = Google.getUserCalendar(user)
     events = await calendar.events.list({
         calendarId: 'primary',
         auth: client,
@@ -27,7 +18,6 @@ async function uploadEvents(user){
         })
         await saveEvents(events)
     }
-    
     return events.items
 }
 
