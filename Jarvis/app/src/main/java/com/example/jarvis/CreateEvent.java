@@ -1,10 +1,14 @@
 package com.example.jarvis;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -14,6 +18,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.mortbay.util.ajax.JSON;
+
+import java.net.URISyntaxException;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +41,15 @@ public class CreateEvent extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private DatabaseReference RootRef;
+
+    private Socket socket;
+    {
+        try{
+            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/");
+        }catch(URISyntaxException e){
+            Log.e("socket", "Exception caught: " + e);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +77,8 @@ public class CreateEvent extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         RootRef = FirebaseDatabase.getInstance().getReference();
 
+        socket.connect();
+
         mtoolbar = (Toolbar) findViewById(R.id.create_event_toolbar);
 //        tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
 //        appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
@@ -71,6 +93,17 @@ public class CreateEvent extends AppCompatActivity {
                 final String eventName = nameofEvent.getText().toString();
                 final String eventDate = dateofEvent.getText().toString();
                 final String eventMembers = peopleatEvent.getText().toString();
+                JSONObject event = new JSONObject();
+                try {
+                    Log.d("socket", "Sending event jsonobject...");
+                    event.put("eventName", eventName);
+                    event.put("eventDate", eventDate);
+                    event.put("eventMembers", eventMembers);
+
+                }catch (JSONException e){
+                    Log.e("socket", "JSONException caught");
+                }
+                socket.emit("login", event);
                 makeNewEvent(eventName, eventDate, eventMembers);
             }
         });
@@ -94,7 +127,8 @@ public class CreateEvent extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(CreateEvent.this, eventName + "is created Successfully...", Toast.LENGTH_LONG).show();
+                                Toast.makeText(CreateEvent.this, eventName + " " +
+                                        "is created Successfully...", Toast.LENGTH_LONG).show();
                             }
                             else{
                                 String message = task.getException().toString();
