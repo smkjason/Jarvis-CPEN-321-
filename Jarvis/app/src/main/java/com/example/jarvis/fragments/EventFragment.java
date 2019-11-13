@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +15,15 @@ import android.view.ViewGroup;
 
 import com.example.jarvis.adapter.CustomAdapter;
 import com.example.jarvis.R;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,39 +38,22 @@ public class EventFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private ArrayList<String> mEvents = new ArrayList<>();
 
+    private Socket socket;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i("Events", "Started events");
-        /* For Reading from FirebaseDatabase */
-        EventRef = FirebaseDatabase.getInstance().getReference().child("Events");
+        try {
+            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+        }catch (URISyntaxException e){
+            Log.e("Error", "finding room");
+        }
     }
 
     private void initEvents() {
         Log.i("Events", "Initializing Events");
 
-        /* Get all the events from the Database */
-        EventRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                Set<String> set = new HashSet<>();
-                Iterator iterator = dataSnapshot.getChildren().iterator();
-                while(iterator.hasNext())
-                {
-                    set.add(((DataSnapshot) iterator.next()).getKey());
-                }
-                mEvents.clear();
-                mEvents.addAll(set);
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.i("Events", "loadEvents: Cancelled");
-            }
-        });
     }
 
     @Override
@@ -81,7 +68,7 @@ public class EventFragment extends Fragment {
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
-        initEvents();
+
         mAdapter = new CustomAdapter(mEvents, getActivity());
 
         recyclerView.setAdapter(mAdapter);

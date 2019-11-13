@@ -24,9 +24,9 @@
             android:value="AIzaSyC567xrC3YAWcUNwgc1YcpFYRw3UtkMZxo" />
 
         <activity android:name=".MapActivity" />
-        <activity android:name=".home" />
+        <activity android:name=".Home" />
         <activity android:name=".ViewCalendar" />
-        <activity android:name=".view_profile" />
+        <activity android:name=".ViewProfile" />
         <activity android:name=".CreateEvent" />
         <activity android:name=".MainActivity">
             <intent-filter>
