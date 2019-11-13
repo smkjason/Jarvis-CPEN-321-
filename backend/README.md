@@ -51,13 +51,18 @@ useful to describe service:
 
 ### Connect to Server
 `ssh ec2-user@3.14.144.180`
+
 if that does not work, contact Charles, with your ssh public key and he will add you
+
 `docker container list`
+
 this should print out two containers:
 - `754427858209.dkr.ecr.us-east-2.amazonaws.com/jarvis-cpen-321` is our server image
 - `amazon/amazon-ecs-agent:latest` is the gateway container based on the configs
+
 to see logs, run `docker logs <container id>`, where `container id` is the id of the container
-- `exit` to close ssh connection
+
+`exit` to close ssh connection
 
 
 # API

@@ -26,6 +26,8 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server)
 
 io.on('connection', function(socket){
+    console.log("new connection!!!")
+
     socket.on('login', function(data){
         console.log(data)
         socket.emit('login_response', data)
