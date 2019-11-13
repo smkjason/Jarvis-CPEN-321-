@@ -20,6 +20,8 @@ import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.MainActivity;
 import com.example.jarvis.MapActivity;
 import com.example.jarvis.R;
+import com.example.jarvis.jarvis;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -42,6 +44,8 @@ public class HomeFragment extends Fragment {
 
     //Google Stuff
     private GoogleSignInClient mGoogleSignInClient;
+
+    private Socket mSocket;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,8 @@ public class HomeFragment extends Fragment {
                 }
             }
         };
+//
+//        mSocket = ((jarvis) getApplication()).getmSocket();
 
         Button view_profile = getView().findViewById(R.id.view_profile_bttn);
         Button create_event = getView().findViewById(R.id.create_event_bttn);

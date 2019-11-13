@@ -9,24 +9,28 @@ let eventModel = new Schema({
     updated: String,
     location: String,
     colorId: String,
-    creatorEmail: String,
+    creatorEmail: {type: String, index: true},
     start: Mixed,
     end:  Mixed,
-    attendees: Mixed
+    attendees: Mixed,
+    recurrence: Array,
+    id: String,
+    summary: String,
+    description: String
 })
 
 let userModel = new Schema({
     name: String,
     google_token: String,
     refresh_token: String,
-    email: String
+    email: {type: String, index: true}
 })
 
 let chatModel = new Schema({
     messsage: String,
     timestamp: Number,
     sender: String,
-    chat: Id
+    chat: {type: Id, index: true}
 })
 
 module.exports = {
