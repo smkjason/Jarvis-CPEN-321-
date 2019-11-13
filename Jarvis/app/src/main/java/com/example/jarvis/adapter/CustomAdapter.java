@@ -43,7 +43,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         Log.d("eventItem", "onBindViewHolder: called.");
 
         String this_event = events.get(position);
-       holder.eventName.setText(this_event);
+        holder.eventName.setText(this_event);
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

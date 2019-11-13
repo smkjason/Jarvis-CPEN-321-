@@ -1,33 +1,39 @@
 package com.example.jarvis;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jarvis.adapter.ChatBoxAdapter;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 
 public class GroupChatActivity extends AppCompatActivity {
 
@@ -35,12 +41,17 @@ public class GroupChatActivity extends AppCompatActivity {
     private EditText userMessage;
     private TextView displayTextMessages;
 
-    private DatabaseReference userRef;
-    private DatabaseReference eventRef;
-
     private String currentEvent;
     private String currentUserID;
     private String currentUserName;
+
+    //new
+    private Socket socket;
+    public RecyclerView myRecylerView ;
+    public List<JSONObject> MessageList ;
+    public ChatBoxAdapter chatBoxAdapter;
+    public  EditText messagetxt ;
+    public Button send ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,19 +62,13 @@ public class GroupChatActivity extends AppCompatActivity {
 
         Log.d("GroupChat", "CurrentEvent Name: " + currentEvent);
 
-
         getIncomingIntent();
 
         Toast.makeText(GroupChatActivity.this, currentEvent, Toast.LENGTH_LONG).show();
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
-        userRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        eventRef = FirebaseDatabase.getInstance().getReference().child("Events").child(currentEvent);
-
         initializeFields();
-
-        getUserInfo();
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,41 +78,10 @@ public class GroupChatActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        eventRef.addChildEventListener(new ChildEventListener() {
+        socket.on("receive msg", new Emitter.Listener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                if(dataSnapshot.exists()){
-                    displayMessages(dataSnapshot);
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.exists()){
-                    displayMessages(dataSnapshot);
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //Maybe Implemented
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //Maybe Implemented
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                //Maybe Implemented
+            public void call(Object... args) {
+                Toast.makeText(GroupChatActivity.this, args[0].toString(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -115,91 +89,58 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private void initializeFields()
     {
-        Toolbar toolbar;
-        ScrollView mScrollview;
-        TextView  Title;
+        //setting up recyler
+        MessageList = new ArrayList<>();
+        myRecylerView = findViewById(R.id.messagelist);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        myRecylerView.setLayoutManager(mLayoutManager);
+        myRecylerView.setItemAnimator(new DefaultItemAnimator());
 
-        toolbar = findViewById(R.id.GroupChat_ToolBar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(currentEvent);
         SendMessageButton = findViewById(R.id.GroupChat_sendButton);
         userMessage = findViewById(R.id.GroupChat_MessageToSend);
-        mScrollview = findViewById(R.id.scrollview_groupchat);
-        displayTextMessages = findViewById(R.id.GroupChat_TextDisplay);
-        Title = findViewById(R.id.Toolbar_title);
-        Title.setText(currentEvent);
-    }
+        try{
+            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com");
+            socket.connect();
+            socket.emit("join", currentUserName);
+        }catch(URISyntaxException e){
+            e.printStackTrace();
+        }
 
-    private void getUserInfo() {
-
-        userRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    currentUserName = dataSnapshot.child("Name").getValue().toString();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
-                Log.d("GroupChat", "Something went wrong with getting User Info from Firebase...");
-            }
-        });
     }
 
 
     private void sendMessageInfoToDatabase()
     {
-        DatabaseReference GroupMessageKey;
-        String currentDate;
-        String currentTime;
-        
+        JSONObject msgjson = new JSONObject();
         String message = userMessage.getText().toString();
-
-        if(TextUtils.isEmpty(message))
-        {
+        //Message is empty
+        if(TextUtils.isEmpty(message)){
             Toast.makeText(GroupChatActivity.this, "Oops!", Toast.LENGTH_LONG).show();
-        }
-        else {
-            String messageKey = eventRef.push().getKey();
-            Calendar date = Calendar.getInstance();
-            SimpleDateFormat currentDateFormat = new SimpleDateFormat("MMM dd, yyyy");
-            currentDate = currentDateFormat.format(date.getTime());
-
-            Calendar time = Calendar.getInstance();
-            SimpleDateFormat currentTimeFormat = new SimpleDateFormat("hh:mm a");
-            currentTime = currentTimeFormat.format(time.getTime());
-
-            HashMap<String, Object> groupMessageKey = new HashMap<>();
-            eventRef.updateChildren(groupMessageKey);
-
-            GroupMessageKey = eventRef.child(messageKey);
-
-            HashMap<String, Object> messageMAP = new HashMap<>();
-            messageMAP.put("Name", currentUserName);
-            messageMAP.put("Message", message);
-            messageMAP.put("Date", currentDate);
-            messageMAP.put("Time", currentTime);
-            GroupMessageKey.updateChildren(messageMAP);
-
+        }else {
+            SimpleDateFormat currentDateformat = new SimpleDateFormat("MMM dd, yyyy");
+            SimpleDateFormat currentTimeformat = new SimpleDateFormat("hh:mm a");
+            String currentDate = currentDateformat.format(Calendar.getInstance().getTime());
+            String currentTime = currentTimeformat.format(Calendar.getInstance().getTime());
+            try {
+                msgjson.put("name", currentUserName);
+                msgjson.put("message", message);
+                msgjson.put("date", currentDate);
+                msgjson.put("time", currentTime);
+                socket.emit("send msg", msgjson);
+            } catch (JSONException e) {
+                Log.e("Error", "Failed making json object");
+            }
             Toast.makeText(GroupChatActivity.this, "Message sent to server", Toast.LENGTH_LONG).show();
         }
     }
+
     private void displayMessages(DataSnapshot dataSnapshot) {
-
-        Iterator iterator = dataSnapshot.getChildren().iterator();
-        while(iterator.hasNext()){
-            String chatDate = (String) ((DataSnapshot) iterator.next()).getValue();
-            String chatMessage = (String) ((DataSnapshot) iterator.next()).getValue();
-            String chatName = (String) ((DataSnapshot) iterator.next()).getValue();
-            String chatTime =(String) ((DataSnapshot) iterator.next()).getValue();
-
-            displayTextMessages.append(chatName + ":\n" + chatMessage + "\n" + chatTime +  "     " + chatDate + "\n\n");
-            Toast.makeText(GroupChatActivity.this, "Got Messages: " + chatMessage + chatDate + chatName + chatTime, Toast.LENGTH_LONG).show();
-        }
+        socket.on("receive msg", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Toast.makeText(GroupChatActivity.this, args[0].toString(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void getIncomingIntent()
