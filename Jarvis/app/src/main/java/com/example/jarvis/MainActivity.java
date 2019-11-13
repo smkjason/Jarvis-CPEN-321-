@@ -7,6 +7,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,9 +29,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mortbay.jetty.Main;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 //            Log.e("socket", "Here: "+ e.toString());
 //        }
 //
-        mSocket = ((jarvis) getApplication()).getmSocket();
+        mSocket = ((jarvis) this.getApplication()).getmSocket();
 
         if(mSocket.connected()){
             Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
@@ -172,6 +182,14 @@ public class MainActivity extends AppCompatActivity {
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
 
+        if(mSocket.connected()){
+            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
+        }
+
+        new CommunicateBackend(idToken, authCode).execute();
+
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -232,6 +250,57 @@ public class MainActivity extends AppCompatActivity {
     private void sendUsertoHomeActivity(){
         Intent intent = new Intent(MainActivity.this, Home.class);
         startActivity(intent);
+    }
+
+    private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
+
+        String idToken;
+        String authCode;
+
+        CommunicateBackend(String idToken, String authCode) {
+            this.idToken = idToken;
+            this.authCode = authCode;
+        }
+
+        @Override
+        protected Void doInBackground(Void... v) {
+
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user");
+
+                JSONObject json = new JSONObject();
+                json.put("idToken", idToken);
+                json.put("code", authCode);
+                Log.i("Information", "idToken is: " + idToken);
+                Log.i("Information", "authCode is: " + authCode);
+                httpPost.setEntity(new StringEntity(json.toString()));
+                httpPost.setHeader("Content-Type", "application/json");
+
+                HttpResponse response = httpClient.execute(httpPost);
+                final String responseBody = EntityUtils.toString(response.getEntity());
+                Log.i("Information", "Signed in as: " + responseBody);
+            } catch (ClientProtocolException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (IOException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (Exception e) {
+                Log.e("Error", "I caught some exception.", e);
+            }
+            return null;
+        }
+
+
+        protected void onPostExecute() {
+            //Maybe Implemented
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(MainActivity.this, "Sent stuff to backend on the background", Toast.LENGTH_LONG).show();
+            super.onPostExecute(aVoid);
+            //Maybe Implemented
+        }
     }
 
     @Override

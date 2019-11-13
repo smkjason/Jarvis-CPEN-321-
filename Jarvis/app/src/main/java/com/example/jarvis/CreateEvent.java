@@ -42,14 +42,7 @@ public class CreateEvent extends AppCompatActivity {
     private FirebaseUser currentUser;
     private DatabaseReference RootRef;
 
-    private Socket socket;
-    {
-        try{
-            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/");
-        }catch(URISyntaxException e){
-            Log.e("socket", "Exception caught: " + e);
-        }
-    }
+    private Socket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +70,13 @@ public class CreateEvent extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         RootRef = FirebaseDatabase.getInstance().getReference();
 
-        socket.connect();
+        mSocket = ((jarvis) this.getApplication()).getmSocket();
+        if(mSocket.connected()){
+            Toast.makeText(CreateEvent.this, "Connected!!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(CreateEvent.this, "Can't connect...", Toast.LENGTH_LONG).show();
+
+        }
 
         mtoolbar = (Toolbar) findViewById(R.id.create_event_toolbar);
 //        tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
@@ -103,7 +102,7 @@ public class CreateEvent extends AppCompatActivity {
                 }catch (JSONException e){
                     Log.e("socket", "JSONException caught");
                 }
-                socket.emit("login", event);
+                mSocket.emit("login", event);
                 makeNewEvent(eventName, eventDate, eventMembers);
             }
         });
