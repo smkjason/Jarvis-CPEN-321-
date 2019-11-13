@@ -32,6 +32,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mortbay.jetty.Main;
 
 import java.net.URISyntaxException;
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
 
-    private Socket socket;
+    private Socket mSocket;
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -71,24 +72,31 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Connect to the server
-        try{
-            Log.d("Socket", "connecting...");
-            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/");
-            socket.connect();
-            if(socket.connected()){
-                Log.d("socket", "connection is fine");
-            }else{
-                Log.d("socket", "not connecting");
-            }
-        }catch(URISyntaxException e){
-            e.printStackTrace();
-            Toast.makeText(MainActivity.this, "Failed socket", Toast.LENGTH_LONG ).show();
-            Log.e("Socket", "Failed Socket");
-        }catch(Exception e){
-            e.printStackTrace();
-            Log.e("socket", "Here: "+ e.toString());
+//        try{
+//            Log.d("Socket", "connecting...");
+//            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/");
+//            socket.on(socket.EVENT_CONNECT, onConnect);
+//            socket.connect();
+//            if(socket.connected()){
+//                Log.d("socket", "connection is fine");
+//            }else{
+//                Log.d("socket", "not connecting");
+//            }
+//        }catch(URISyntaxException e){
+//            e.printStackTrace();
+//            Toast.makeText(MainActivity.this, "Failed socket", Toast.LENGTH_LONG ).show();
+//            Log.e("Socket", "Failed Socket");
+//        }catch(Exception e){
+//            e.printStackTrace();
+//            Log.e("socket", "Here: "+ e.toString());
+//        }
+//
+        mSocket = ((SocketAWS) getApplication()).getmSocket();
+        if(mSocket.connected()){
+            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
         }
-
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -102,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("Login", "Hello2");
                 signIn();
             }
         });
@@ -121,6 +128,14 @@ public class MainActivity extends AppCompatActivity {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
+
+    private Emitter.Listener onConnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Toast.makeText(MainActivity.this, "Connected to socket!", Toast.LENGTH_LONG).show();
+            Log.i("socket", "connected!");
+        }
+    };
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -171,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
                             currentUser = mAuth.getCurrentUser();
                             String UserID = currentUser.getUid();
-                            if(socket.connected()){
+                            if(mSocket.connected()){
                                 Log.d("socket", "connection is fine");
                             }else{
                                 Log.d("socket", "still not connected");
@@ -190,8 +205,8 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e("Error", "unable to send json object", task.getException());
                             }
                             Log.d("success", "signInWithCredential:success");
-                            socket.emit("login", loginjson);
-                            socket.on("login_response", new Emitter.Listener() {
+                            mSocket.emit("login", loginjson);
+                            mSocket.on("login_response", new Emitter.Listener() {
                                 @Override
                                 public void call(Object... args) {
                                     runOnUiThread(new Runnable() {
@@ -225,6 +240,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        socket.disconnect();
+        mSocket.disconnect();
     }
 }
