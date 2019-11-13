@@ -16,26 +16,15 @@ async function getUser(name){
 }
 
 //will have a return json
-async function authCreateUser(json){
-    return await verifyAndRetrieveToken(json.idToken, json.code)
+async function authCreateUser(email, code){
+    return await verifyAndRetrieveToken(email, code)
 }
 
 /*
     verifies token, creates user if it doesn't exist, and returns user
 */
-async function verifyAndRetrieveToken(token, code){
-    var ret = await client.verifyIdToken({
-        idToken: token,
-        audience: configs.CLIENT_ID
-    })
-    payload = ret.getPayload()
-
-    if(!payload.email) {
-        console.log('email not gotten')
-        throw {err: 'error authenticating id token'}
-    }
-    //check if this user exists already
-    user = await User.findOne({email: payload.email}).exec()
+async function verifyAndRetrieveToken(email, code){
+    user = await User.findOne({email: email}).exec()
     if(user && user.email){
         return user;
     } else {
@@ -47,8 +36,8 @@ async function verifyAndRetrieveToken(token, code){
         })
 
         var user = new User({
-            email: payload.email,
-            name: payload.email,
+            email: email,
+            name: email,
             refresh_token: response.data.refresh_token,
             google_token: response.data.access_token
         })

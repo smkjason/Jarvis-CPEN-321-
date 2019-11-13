@@ -1,5 +1,5 @@
 const EventModel = require('./schema').EventModel
-const Google = require('./google')
+const Google = require('../util/google')
 const clone = require('lodash/cloneDeep')
 
 async function uploadEvents(user){

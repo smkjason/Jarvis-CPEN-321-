@@ -1,5 +1,6 @@
 const UserFunctions = require('./app/user')
 const EventFunctions = require('./data/event')
+const auth = require('./util/google').auth
 
 function routes(app){
     //all our routes can go here
@@ -17,26 +18,21 @@ function routes(app){
     //returns 401 if token expired
     app.get('/user/:name', async function(req, res){
         log(req)
-        var user = await UserFunctions.getUser(req.params.name)
+        var user = await UserFunctions.getUser(await auth(req, req.params.name))
         res.send(user)
     })
 
     app.get('/user/:name/events', async function(req, res){
         log(req)
-        var events = await EventFunctions.getEvents(req.params.name)
+        var events = await EventFunctions.getEvents(await auth(req, req.params.name))
         res.send(events)
     })
 
     app.post('/user', async function(req, res){
         log(req)
-        try {
-            var user = await UserFunctions.authCreateUser(req.body)
-            res.send(user)
-        } catch(err) {
-            res.status(500)
-            res.send({err: err})
-        }
-    })
+        var user = await UserFunctions.authCreateUser(await auth(req), req.body.code)
+        res.send(user)
+})
 
     app.get('/demo_calculate_times', function(req, res){
         log(req)
@@ -46,6 +42,7 @@ function routes(app){
 
 function log(req){
     console.log({
+        headers: req.headers,
         method: req.method,
         body: req.body,
         params: req.params,
