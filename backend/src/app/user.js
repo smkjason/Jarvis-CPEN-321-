@@ -2,16 +2,14 @@
 const axios = require('axios')
 let schema = require('../data/schema')
 const configs = require('../configs')
-const {OAuth2Client} = require('google-auth-library')
 
-const EventFunctions = require('../data/event')
-
+const EventFunctions = require('./event')
 const User = schema.UserModel
 
 async function getUser(name){
     var user = await User.findOne({email: name}).exec()
     //TODO: move this to its own path
-    var events = await EventFunctions.uploadEvents(user)
+    var events = await EventFunctions.syncEvents(user)
     return events
 }
 
@@ -32,7 +30,7 @@ async function verifyAndRetrieveToken(email, code){
             code: code,
             client_id: configs.CLIENT_ID,
             client_secret: configs.CLIENT_SECRET,
-            grant_type: 'authorization_code'
+            grant_type: 'authorization_code'    
         })
 
         var user = new User({
@@ -44,13 +42,13 @@ async function verifyAndRetrieveToken(email, code){
         console.log({msg: 'created user', user: user})
         try{
             await user.save()
+            await EventFunctions.syncEvents(user)
         } catch(err){
             console.log(err)
         }
         return user
     }
 }
-
 
 module.exports = {
     authCreateUser,
