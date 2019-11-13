@@ -107,7 +107,7 @@ public class Home extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         if(item.getItemId() == R.id.Settings_menu){
-            /* Do something */
+            /* Do somcething */
         }
         if(item.getItemId() == R.id.Log_out_menu){
             /* Do something */

@@ -94,7 +94,8 @@ public class CreateEvent extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(CreateEvent.this, eventName + "is created Successfully...", Toast.LENGTH_LONG).show();
+                                Toast.makeText(CreateEvent.this, eventName + " " +
+                                        "is created Successfully...", Toast.LENGTH_LONG).show();
                             }
                             else{
                                 String message = task.getException().toString();

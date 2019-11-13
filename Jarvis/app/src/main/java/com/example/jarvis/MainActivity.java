@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             }catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w("Error", "Google sign in failed", e);
-                // ...
+                Toast.makeText(MainActivity.this, "Google Sign In Failed", Toast.LENGTH_LONG).show();
             }
 
         }

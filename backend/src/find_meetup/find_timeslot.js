@@ -16,6 +16,14 @@ var sum = [0,0,0,0,0,0,0,0,0,0,
 			0,0,0,0,0,0,0,0,0,0,
 			0,0,0,0];
 
+			
+//logic should work something like this
+// Student A: 11100000111111100000
+// Student B: 00000011111000010001
+// Student C: 00000000111111110001
+// _______________________________+
+// 		   11100022333222220002
+
 
 //list of list of events
 //only need to grab start/end time for each user
@@ -31,16 +39,16 @@ function calculateBestTimeslot(listEvents){
 
 		starttoend = endtime.map(function(item, index){
 			return item - starttime[index];
-		})
+		});
 
 		loop2:
 		//increment the intervals of meet up time
 		for(var y = 0; y < starttoend.length; y++){
-				while(starttoend[y] > 0){
-					sum[starttime[y]] += 1;
-					starttoend[y]--;
-					starttime[y]++;
-					if(starttoend[y] < 0){
+				while(starttoend[parseInt(y)] > 0){
+					sum[starttime[parseInt(y)]] += 1;
+					starttoend[parseInt(y)]--;
+					starttime[parseInt(y)]++;
+					if(starttoend[parseInt(y)] < 0){
 						break loop2;
 					}
 				}
@@ -56,18 +64,18 @@ for(var i = 1; i < sum.length; i++){
 	if(sum[i] === total){
 		//starting a new sequence
 		if(sum[i-1] !== total){
-			start = i;
+			parseInt(start) = i;
 		}
 	} else {
 		//ending a sequence
 		if(sum[i-1] === total){
 			//take all the 0s from start - i-1
-			set[start] = i - 1;
+			set[parseInt(start)] = i - 1;
 		}
 	}
 }
 if(sum[sum.length-1] === total){
-	set[start] = sum.length - 1;
+	set[parseInt(start)] = sum.length - 1;
 }
 
 console.log(sum);
