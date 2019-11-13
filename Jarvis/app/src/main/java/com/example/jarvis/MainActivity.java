@@ -4,11 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,8 +31,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mortbay.jetty.Main;
-
-import java.net.URISyntaxException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -91,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
 //            Log.e("socket", "Here: "+ e.toString());
 //        }
 //
-        mSocket = ((SocketAWS) getApplication()).getmSocket();
+        mSocket = ((jarvis) getApplication()).getmSocket();
+
         if(mSocket.connected()){
             Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
         }else{
@@ -205,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e("Error", "unable to send json object", task.getException());
                             }
                             Log.d("success", "signInWithCredential:success");
+                            Toast.makeText(MainActivity.this, "json emitted...", Toast.LENGTH_LONG).show();
                             mSocket.emit("login", loginjson);
                             mSocket.on("login_response", new Emitter.Listener() {
                                 @Override

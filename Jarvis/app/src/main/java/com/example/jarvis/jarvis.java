@@ -7,7 +7,7 @@ import com.github.nkzawa.socketio.client.Socket;
 
 import java.net.URISyntaxException;
 
-public class SocketAWS extends Application {
+public class jarvis extends Application {
 
     private Socket mSocket;
     private static final String URL = "http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/";
@@ -22,7 +22,6 @@ public class SocketAWS extends Application {
         }catch (URISyntaxException e){
             throw new RuntimeException(e);
         }
-
     }
 
     public Socket getmSocket() {
