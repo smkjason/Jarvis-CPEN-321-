@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+//
+//import com.github.nkzawa.socketio.client.IO;
+//import com.github.nkzawa.socketio.client.Socket;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,6 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.Toolbar;
+import io.socket.client.Socket;
 
 public class CreateEvent extends AppCompatActivity {
 

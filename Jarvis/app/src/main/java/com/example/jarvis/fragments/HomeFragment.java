@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import io.socket.client.Socket;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,8 +21,8 @@ import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.MainActivity;
 import com.example.jarvis.MapActivity;
 import com.example.jarvis.R;
-import com.example.jarvis.jarvis;
-import com.github.nkzawa.socketio.client.Socket;
+//import com.example.jarvis.jarvis;
+//import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
