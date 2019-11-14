@@ -85,27 +85,6 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 //        RootRef = FirebaseDatabase.getInstance().getReference();
 
-
-        //Connect to the server
-//        try{
-//            Log.d("Socket", "connecting...");
-//            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/");
-//            socket.on(socket.EVENT_CONNECT, onConnect);
-//            socket.connect();
-//            if(socket.connected()){
-//                Log.d("socket", "connection is fine");
-//            }else{
-//                Log.d("socket", "not connecting");
-//            }
-//        }catch(URISyntaxException e){
-//            e.printStackTrace();
-//            Toast.makeText(MainActivity.this, "Failed socket", Toast.LENGTH_LONG ).show();
-//            Log.e("Socket", "Failed Socket");
-//        }catch(Exception e){
-//            e.printStackTrace();
-//            Log.e("socket", "Here: "+ e.toString());
-//        }
-//
         mSocket = ((jarvis) this.getApplication()).getmSocket();
 
         if(mSocket.connected()){

@@ -9,7 +9,6 @@ import com.example.jarvis.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
 
 import java.util.List;
 
@@ -26,20 +25,17 @@ public class ChatBoxAdapter  extends RecyclerView.Adapter<ChatBoxAdapter.MyViewH
         public MyViewHolder(View view) {
             super(view);
 
-            nickname = (TextView) view.findViewById(R.id.nickname);
-            message = (TextView) view.findViewById(R.id.message);
-
+            nickname = view.findViewById(R.id.nickname);
+            message = view.findViewById(R.id.message);
         }
     }
 // in this adaper constructor we add the list of messages as a parameter so that
 // we will passe  it when making an instance of the adapter object in our activity
 
 
-
     public ChatBoxAdapter(List<JSONObject>MessagesList) {
 
         this.MessageList = MessagesList;
-
 
     }
 
@@ -47,6 +43,7 @@ public class ChatBoxAdapter  extends RecyclerView.Adapter<ChatBoxAdapter.MyViewH
     public int getItemCount() {
         return MessageList.size();
     }
+
     @Override
     public ChatBoxAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())

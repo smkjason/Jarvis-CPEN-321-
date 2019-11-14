@@ -83,8 +83,17 @@ public class GroupChatActivity extends AppCompatActivity {
 
         socket.on("receive msg", new Emitter.Listener() {
             @Override
-            public void call(Object... args) {
-                Toast.makeText(GroupChatActivity.this, args[0].toString(), Toast.LENGTH_LONG).show();
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        MessageList.add(jsonObject);
+                        ChatBoxAdapter chatBoxAdapter = new ChatBoxAdapter(MessageList);
+                        chatBoxAdapter.notifyDataSetChanged();
+                        myRecylerView.setAdapter(chatBoxAdapter);
+                    }
+                });
             }
         });
 
@@ -111,7 +120,6 @@ public class GroupChatActivity extends AppCompatActivity {
 
     }
 
-
     private void sendMessageInfoToDatabase()
     {
         JSONObject msgjson = new JSONObject();
@@ -135,15 +143,6 @@ public class GroupChatActivity extends AppCompatActivity {
             }
             Toast.makeText(GroupChatActivity.this, "Message sent to server", Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void displayMessages(DataSnapshot dataSnapshot) {
-        socket.on("receive msg", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                Toast.makeText(GroupChatActivity.this, args[0].toString(), Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private void getIncomingIntent()
