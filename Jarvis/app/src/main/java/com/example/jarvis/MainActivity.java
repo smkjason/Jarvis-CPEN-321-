@@ -157,9 +157,8 @@ public class MainActivity extends AppCompatActivity {
         final String idToken = acct.getIdToken();
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
-<<<<<<< HEAD
-=======
-        email = acct.getEmail();
+
+        final String email = acct.getEmail();
 
         if(mSocket.connected()){
             Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
@@ -185,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
        // new CommunicateBackend(idToken, authCode).execute();
->>>>>>> c84cc28458985c298609807f8d348e4972773303
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
