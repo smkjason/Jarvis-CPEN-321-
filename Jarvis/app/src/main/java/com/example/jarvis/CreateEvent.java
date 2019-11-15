@@ -1,5 +1,6 @@
 package com.example.jarvis;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
@@ -20,11 +23,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.JsonObject;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mortbay.util.ajax.JSON;
 
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,6 +55,7 @@ public class CreateEvent extends AppCompatActivity {
     private DatabaseReference RootRef;
 
     private Socket mSocket;
+    GoogleSignInAccount acct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +98,9 @@ public class CreateEvent extends AppCompatActivity {
 
         setSupportActionBar(mtoolbar);
         getSupportActionBar().setTitle("Create_Event");
+        acct = GoogleSignIn.getLastSignedInAccount(this);
+        
+        new CreateTask().execute();
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +120,7 @@ public class CreateEvent extends AppCompatActivity {
                 }
                 mSocket.emit("login", event);
                 makeNewEvent(eventName, eventDate, eventMembers);
+
             }
         });
 
@@ -137,6 +154,52 @@ public class CreateEvent extends AppCompatActivity {
                     });
         /* Add the Events under this User */
     }
+
+    private class CreateTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... v) {
+            HttpClient httpClient = new DefaultHttpClient();
+            String responseBody = "";
+            String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+            try {
+                JSONObject json = new JSONObject();
+                ArrayList<String> recurrence = new ArrayList<String>();
+                json.put("status", "test_status");
+                json.put("created", currentTime);
+                json.put("updated", currentTime);
+                json.put("location", "test_location");
+                json.put("colorId", "test_colorId");
+                json.put("creatorEmail", acct.getEmail());
+                json.put("start", "test_start");
+                json.put("end", "test_end");
+                json.put("attendees", acct.getEmail());
+                json.put("recurrence", recurrence);
+
+                HttpPost request = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/" + "user" + "/" + acct.getEmail() + "/events");
+                StringEntity params = new StringEntity(json.toString());
+                request.addHeader("Authorization", "Bearer " + acct.getIdToken());
+                request.setEntity(params);
+                HttpResponse response = httpClient.execute(request);
+                responseBody = EntityUtils.toString(response.getEntity());
+                Log.d("CreateEvent successful",responseBody);
+            } catch (Exception ex) {
+                Log.e("CreateEvent failed", ex.getMessage());
+                System.out.println(ex);
+                // handle exception here
+            } finally {
+                httpClient.getConnectionManager().shutdown();
+            }
+            return responseBody;
+        }
+        protected void onProgressUpdate() {
+        }
+
+        protected void onPostExecute(String response) {
+            Toast.makeText(CreateEvent.this, "Finished setting up event: " + response, Toast.LENGTH_LONG).show();
+        }
+
+    }
+
 
 
 //    class ViewPagerAdapter extends FragmentPagerAdapter {

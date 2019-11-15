@@ -53,10 +53,10 @@ public class ViewProfile extends AppCompatActivity {
         });
 
         acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            String personName = acct.getDisplayName();
-            String personEmail = acct.getEmail();
-            Uri personPhoto = acct.getPhotoUrl();
+            if (acct != null) {
+                String personName = acct.getDisplayName();
+                String personEmail = acct.getEmail();
+                Uri personPhoto = acct.getPhotoUrl();
 
             Username.setText(personName);
             Useremail.setText(personEmail);
