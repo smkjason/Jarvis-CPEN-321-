@@ -15,8 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".jarvis"
-        android:networkSecurityConfig="@xml/network_security_config"> //can use this instead of cleartexttraffic
-
         android:usesCleartextTraffic="true">
         <activity android:name=".GroupChatActivity"/>
 
