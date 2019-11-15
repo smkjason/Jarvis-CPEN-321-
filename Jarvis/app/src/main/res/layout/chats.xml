@@ -2,12 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GroupChatActivity">
+    tools:context=".Chats">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/GroupChat_ToolBar"
+        android:id="@+id/Chats_ToolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -22,7 +23,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/GroupChat_AppBar"
+        android:id="@+id/Chats_AppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -34,38 +35,14 @@
         android:clipToPadding="false"
         android:scrollbars="vertical"
         android:layout_weight="3"
-        android:id="@+id/messagelist">
+        android:id="@+id/chatlist">
     </androidx.recyclerview.widget.RecyclerView>
 
     <View
-    android:layout_marginTop="5dp"
-    android:id="@+id/separator"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="@android:color/primary_text_dark"/>
-
-    <LinearLayout
-        android:id="@+id/GroupChat_LinearLayout"
+        android:layout_marginTop="5dp"
+        android:id="@+id/separator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/GroupChat_MessageToSend"
-            android:layout_width="362dp"
-            android:layout_height="match_parent"
-            android:hint="Write your message here..."
-            android:padding="17dp">
-        </EditText>
-
-        <ImageButton
-            android:id="@+id/GroupChat_sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/send_button">
-        </ImageButton>
-    </LinearLayout>
+        android:layout_height="1dp"
+        android:background="@android:color/primary_text_dark"/>
 
 </RelativeLayout>

@@ -13,12 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jarvis.adapter.ChatBoxAdapter;
-//import com.github.nkzawa.emitter.Emitter;
-//import com.github.nkzawa.socketio.client.IO;
-//import com.github.nkzawa.socketio.client.Socket;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,10 +21,8 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
