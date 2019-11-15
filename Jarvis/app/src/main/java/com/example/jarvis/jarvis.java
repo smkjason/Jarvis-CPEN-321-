@@ -2,10 +2,13 @@ package com.example.jarvis;
 
 import android.app.Application;
 
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+//import com.github.nkzawa.socketio.client.IO;
+//import com.github.nkzawa.socketio.client.Socket;
 
 import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
 
 public class jarvis extends Application {
 

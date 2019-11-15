@@ -13,9 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jarvis.adapter.ChatBoxAdapter;
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+//import com.github.nkzawa.emitter.Emitter;
+//import com.github.nkzawa.socketio.client.IO;
+//import com.github.nkzawa.socketio.client.Socket;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
@@ -33,6 +33,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 
 public class GroupChatActivity extends AppCompatActivity {
@@ -80,8 +83,17 @@ public class GroupChatActivity extends AppCompatActivity {
 
         socket.on("receive msg", new Emitter.Listener() {
             @Override
-            public void call(Object... args) {
-                Toast.makeText(GroupChatActivity.this, args[0].toString(), Toast.LENGTH_LONG).show();
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        MessageList.add(jsonObject);
+                        ChatBoxAdapter chatBoxAdapter = new ChatBoxAdapter(MessageList);
+                        chatBoxAdapter.notifyDataSetChanged();
+                        myRecylerView.setAdapter(chatBoxAdapter);
+                    }
+                });
             }
         });
 
@@ -108,7 +120,6 @@ public class GroupChatActivity extends AppCompatActivity {
 
     }
 
-
     private void sendMessageInfoToDatabase()
     {
         JSONObject msgjson = new JSONObject();
@@ -132,15 +143,6 @@ public class GroupChatActivity extends AppCompatActivity {
             }
             Toast.makeText(GroupChatActivity.this, "Message sent to server", Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void displayMessages(DataSnapshot dataSnapshot) {
-        socket.on("receive msg", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                Toast.makeText(GroupChatActivity.this, args[0].toString(), Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private void getIncomingIntent()

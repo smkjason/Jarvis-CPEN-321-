@@ -2,9 +2,15 @@ package com.example.jarvis;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import io.socket.client.Manager;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import io.socket.engineio.client.Transport;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
+//import com.github.nkzawa.emitter.Emitter;
+//import com.github.nkzawa.engineio.client.Transport;
+//import com.github.nkzawa.socketio.client.Manager;
+//import com.github.nkzawa.socketio.client.Socket;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -67,27 +73,7 @@ public class MainActivity extends AppCompatActivity {
 //        RootRef = FirebaseDatabase.getInstance().getReference();
 
 
-        //Connect to the server
-//        try{
-//            Log.d("Socket", "connecting...");
-//            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/");
-//            socket.on(socket.EVENT_CONNECT, onConnect);
-//            socket.connect();
-//            if(socket.connected()){
-//                Log.d("socket", "connection is fine");
-//            }else{
-//                Log.d("socket", "not connecting");
-//            }
-//        }catch(URISyntaxException e){
-//            e.printStackTrace();
-//            Toast.makeText(MainActivity.this, "Failed socket", Toast.LENGTH_LONG ).show();
-//            Log.e("Socket", "Failed Socket");
-//        }catch(Exception e){
-//            e.printStackTrace();
-//            Log.e("socket", "Here: "+ e.toString());
-//        }
-//
-        mSocket = ((jarvis) getApplication()).getmSocket();
+        mSocket = ((jarvis) this.getApplication()).getmSocket();
 
         if(mSocket.connected()){
             Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
@@ -171,6 +157,35 @@ public class MainActivity extends AppCompatActivity {
         final String idToken = acct.getIdToken();
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
+<<<<<<< HEAD
+=======
+        email = acct.getEmail();
+
+        if(mSocket.connected()){
+            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
+        }
+
+        mSocket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Transport transport = (Transport) args[0];
+                transport.on(Transport.EVENT_ERROR, new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        Exception e = (Exception) args[0];
+                        Toast.makeText(MainActivity.this, "caught an error...", Toast.LENGTH_LONG).show();
+                        Log.e("socket", "Transport Error: " + e);
+                        e.printStackTrace();
+                        e.getCause().printStackTrace();
+                    }
+                });
+            }
+        });
+
+       // new CommunicateBackend(idToken, authCode).execute();
+>>>>>>> c84cc28458985c298609807f8d348e4972773303
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -211,14 +226,14 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             Log.d("socket", "waiting...");
-                                            Toast.makeText(MainActivity.this, "Registered on the backend", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(MainActivity.this, "Registered on the backend!!", Toast.LENGTH_LONG).show();
                                             sendUsertoHomeActivity();
                                         }
                                     });
                                 }
                             });
-                            Log.d("socket", "here");
-                            sendUsertoHomeActivity();
+//                            Log.d("socket", "here");
+//                            sendUsertoHomeActivity();
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(MainActivity.this, "SignIn Failed", Toast.LENGTH_LONG).show();

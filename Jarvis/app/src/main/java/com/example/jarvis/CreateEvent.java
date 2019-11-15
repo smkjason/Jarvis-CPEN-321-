@@ -7,9 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+//
+//import com.github.nkzawa.socketio.client.IO;
+//import com.github.nkzawa.socketio.client.Socket;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -43,6 +43,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.Toolbar;
+import io.socket.client.Socket;
 
 public class CreateEvent extends AppCompatActivity {
 
@@ -52,7 +53,6 @@ public class CreateEvent extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private DatabaseReference RootRef;
 
     private Socket mSocket;
     GoogleSignInAccount acct;
@@ -71,9 +71,9 @@ public class CreateEvent extends AppCompatActivity {
 
 
         //TextEdits
-        nameofEvent = (EditText) findViewById(R.id.name_of_event);
-        dateofEvent = (EditText) findViewById(R.id.date_of_event);
-        peopleatEvent = (EditText) findViewById(R.id.add_people_to_event);
+        nameofEvent = findViewById(R.id.name_of_event);
+        dateofEvent = findViewById(R.id.date_of_event);
+        peopleatEvent = findViewById(R.id.add_people_to_event);
 
         //Button(s)
         create = findViewById(R.id.make_event);
@@ -81,14 +81,12 @@ public class CreateEvent extends AppCompatActivity {
         //Firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        RootRef = FirebaseDatabase.getInstance().getReference();
 
         mSocket = ((jarvis) this.getApplication()).getmSocket();
         if(mSocket.connected()){
             Toast.makeText(CreateEvent.this, "Connected!!", Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(CreateEvent.this, "Can't connect...", Toast.LENGTH_LONG).show();
-
         }
 
         mtoolbar = (Toolbar) findViewById(R.id.create_event_toolbar);
@@ -108,17 +106,7 @@ public class CreateEvent extends AppCompatActivity {
                 final String eventName = nameofEvent.getText().toString();
                 final String eventDate = dateofEvent.getText().toString();
                 final String eventMembers = peopleatEvent.getText().toString();
-                JSONObject event = new JSONObject();
-                try {
-                    Log.d("socket", "Sending event jsonobject...");
-                    event.put("eventName", eventName);
-                    event.put("eventDate", eventDate);
-                    event.put("eventMembers", eventMembers);
 
-                }catch (JSONException e){
-                    Log.e("socket", "JSONException caught");
-                }
-                mSocket.emit("login", event);
                 makeNewEvent(eventName, eventDate, eventMembers);
 
             }
@@ -135,24 +123,16 @@ public class CreateEvent extends AppCompatActivity {
 
     private void makeNewEvent(final String eventName, String eventDate, String eventMembers) {
         /* Check if the User exists on Server */
-        currentUser = mAuth.getCurrentUser();
-        RootRef.child("Events").child(eventName).setValue("");
-        RootRef.child("Events").child(eventName).child(eventDate).setValue("");
-        RootRef.child("Events").child(eventName).child(eventMembers).setValue("")
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(CreateEvent.this, eventName + " " +
-                                        "is created Successfully...", Toast.LENGTH_LONG).show();
-                            }
-                            else{
-                                String message = task.getException().toString();
-                                Toast.makeText(CreateEvent.this, "Error: " + message, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-        /* Add the Events under this User */
+        JSONObject event = new JSONObject();
+        try {
+            Log.d("socket", "Sending event jsonobject...");
+            event.put("eventName", eventName);
+            event.put("eventDate", eventDate);
+            event.put("eventMembers", eventMembers);
+        }catch (JSONException e){
+            Log.e("socket", "JSONException caught");
+        }
+        mSocket.emit("new event", event);
     }
 
     private class CreateTask extends AsyncTask<Void, Void, String> {
