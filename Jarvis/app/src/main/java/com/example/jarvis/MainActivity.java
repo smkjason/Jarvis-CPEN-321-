@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -40,13 +41,16 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import java.io.IOException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.mortbay.jetty.Main;
+
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
     private GoogleSignInClient mGoogleSignInClient;
-    private String email;
-    public String idToken;
 
     private Socket mSocket;
 
@@ -70,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
+
+//        RootRef = FirebaseDatabase.getInstance().getReference();
 
 //        jarvis app = (jarvis) getApplication();
 //        mSocket = app.getmSocket();
@@ -152,10 +158,10 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("Info", "firebaseAuthWithGoogle:" + acct.getId());
 
-        idToken = acct.getIdToken();
+        final String idToken = acct.getIdToken();
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
-        email = acct.getEmail();
+
 
 //
 //        if(mSocket.connected()){
@@ -182,6 +188,30 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         new CommunicateBackend(idToken, authCode).execute();
+//        if(mSocket.connected()){
+//            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
+//        }else {
+//            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
+//        }
+
+//        mSocket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
+//            @Override
+//            public void call(Object... args) {
+//                Transport transport = (Transport) args[0];
+//                transport.on(Transport.EVENT_ERROR, new Emitter.Listener() {
+//                    @Override
+//                    public void call(Object... args) {
+//                        Exception e = (Exception) args[0];
+//                        Toast.makeText(MainActivity.this, "caught an error...", Toast.LENGTH_LONG).show();
+//                        Log.e("socket", "Transport Error: " + e);
+//                        e.printStackTrace();
+//                        e.getCause().printStackTrace();
+//                    }
+//                });
+//            }
+//        });
+
+       // new CommunicateBackend(idToken, authCode).execute();
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -204,23 +234,6 @@ public class MainActivity extends AppCompatActivity {
     /* Goes to home activity */
     private void sendUsertoHomeActivity(){
         Intent intent = new Intent(MainActivity.this, Home.class);
-        JSONObject json = new JSONObject();
-
-        HttpClient httpClient = new DefaultHttpClient();
-
-        try {
-            json.put("someKey", "someValue");
-            HttpPost request = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com" + "/" + email + "/events");
-            StringEntity params = new StringEntity(json.toString());
-            request.addHeader("Authorization Bearer", idToken);
-            request.setEntity(params);
-            httpClient.execute(request);
-// handle response here...
-        } catch (Exception ex) {
-            // handle exception here
-        } finally {
-            httpClient.getConnectionManager().shutdown();
-        }
         startActivity(intent);
     }
 
@@ -285,7 +298,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
