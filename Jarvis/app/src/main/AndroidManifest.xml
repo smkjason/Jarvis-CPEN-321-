@@ -31,12 +31,12 @@
         <activity android:name=".Home" />
         <activity android:name=".ViewCalendar" />
         <activity android:name=".ViewProfile" />
-        <activity android:name=".SearchableActivity" />
-        <intent-filter>
-            <action android:name="android.intent.action.SEARCH" />
-        </intent-filter>
-        <meta-data android:name="android.app.searchable"
-            android:resource="@xml/searchable_friends"/>
+        <activity android:name=".FriendList" />
+<!--        <intent-filter>-->
+<!--            <action android:name="android.intent.action.SEARCH" />-->
+<!--        </intent-filter>-->
+<!--        <meta-data android:name="android.app.searchable"-->
+<!--            android:resource="@xml/searchable_friends"/>-->
 
         <activity android:name=".CreateEvent" />
         <activity android:name=".Chats"/>

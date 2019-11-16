@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class ViewProfile extends AppCompatActivity {
 
         Button View_Calendar;
         Button CreateEvent;
+        Button FriendList;
 
         GoogleSignInAccount acct;
         super.onCreate(savedInstanceState);
@@ -46,6 +48,7 @@ public class ViewProfile extends AppCompatActivity {
         View_Calendar = findViewById(R.id.button);
         backendMessage = findViewById(R.id.backendMessage);
         CreateEvent = findViewById(R.id.CreateEvent);
+        FriendList = findViewById(R.id.FriendList);
 
         View_Calendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +61,13 @@ public class ViewProfile extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 goToCreateEvent();
+            }
+        });
+
+        FriendList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToFriendList();
             }
         });
 
@@ -84,6 +94,11 @@ public class ViewProfile extends AppCompatActivity {
 
     private void goToCreateEvent(){
         Intent intent = new Intent(ViewProfile.this, CreateEvent.class);
+        startActivity(intent);
+    }
+
+    private void goToFriendList() {
+        Intent intent = new Intent(ViewProfile.this, FriendList.class);
         startActivity(intent);
     }
 
