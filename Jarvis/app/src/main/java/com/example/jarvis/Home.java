@@ -24,11 +24,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import io.socket.client.Socket;
 
 
 public class Home extends AppCompatActivity {
 
+    private static final String TAG = "Home";
 
+    private Socket mSocket;
     private FirebaseAuth mAuth;
 
     private GoogleSignInClient mGoogleSignInClient;
@@ -55,6 +58,13 @@ public class Home extends AppCompatActivity {
         tabLayout = findViewById(R.id.tablayout_id);
         viewPager = findViewById(R.id.viewpager_id);
 
+        mSocket = ((jarvis) this.getApplication()).getmSocket();
+//
+//        if(mSocket.connected()){
+//            Toast.makeText(Home.this, "Socket is now connected at: " + TAG, Toast.LENGTH_LONG).show();
+//        }else{
+//            Toast.makeText(Home.this, "Socket isn't connected at " + TAG, Toast.LENGTH_LONG).show();
+//        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Jarvis");
 

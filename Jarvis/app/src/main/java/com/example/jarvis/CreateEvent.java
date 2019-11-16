@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.JsonObject;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -33,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mortbay.util.ajax.JSON;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +71,7 @@ public class CreateEvent extends AppCompatActivity {
         final EditText dateofEvent;
         final EditText peopleatEvent;
 
+        String email;
 
         //TextEdits
         nameofEvent = findViewById(R.id.name_of_event);
@@ -81,6 +84,7 @@ public class CreateEvent extends AppCompatActivity {
         //Firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        email = currentUser.getEmail();
 
         mSocket = ((jarvis) this.getApplication()).getmSocket();
         if(mSocket.connected()){
@@ -89,7 +93,7 @@ public class CreateEvent extends AppCompatActivity {
             Toast.makeText(CreateEvent.this, "Can't connect...", Toast.LENGTH_LONG).show();
         }
 
-        mtoolbar = (Toolbar) findViewById(R.id.create_event_toolbar);
+        mtoolbar = findViewById(R.id.create_event_toolbar);
 //        tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
 //        appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
 //        viewPager = (ViewPager) findViewById(R.id.viewpager_id);
@@ -121,18 +125,60 @@ public class CreateEvent extends AppCompatActivity {
 //        tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void makeNewEvent(final String eventName, String eventDate, String eventMembers) {
+    private void makeNewEvent(final String eventName, String eventDate, String email) {
         /* Check if the User exists on Server */
-        JSONObject event = new JSONObject();
-        try {
-            Log.d("socket", "Sending event jsonobject...");
-            event.put("eventName", eventName);
-            event.put("eventDate", eventDate);
-            event.put("eventMembers", eventMembers);
-        }catch (JSONException e){
-            Log.e("socket", "JSONException caught");
+        new CommunicateBackend(eventName, eventDate, email).execute();
+    }
+
+    private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
+
+        String eventName;
+        String eventDate;
+        String email;
+
+        CommunicateBackend(String eventName, String eventDate, String email) {
+            this.eventName = eventName;
+            this.eventDate = eventDate;
+            this.email = email;
         }
-        mSocket.emit("new event", event);
+
+        @Override
+        protected Void doInBackground(Void... v) {
+
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
+
+                JSONObject json = new JSONObject();
+                json.put("name", eventName);
+                json.put("date", eventDate);
+                httpPost.setEntity(new StringEntity(json.toString()));
+                httpPost.setHeader("Content-Type", "application/json");
+
+                HttpResponse response = httpClient.execute(httpPost);
+                final String responseBody = EntityUtils.toString(response.getEntity());
+                Log.i("Information", "Signed in as: " + responseBody);
+            } catch (ClientProtocolException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (IOException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (Exception e) {
+                Log.e("Error", "I caught some exception.", e);
+            }
+            return null;
+        }
+
+
+        protected void onPostExecute() {
+            //Maybe Implemented
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(CreateEvent.this, "Event sent to backend", Toast.LENGTH_LONG).show();
+            super.onPostExecute(aVoid);
+            //Maybe Implemented
+        }
     }
 
     private class CreateTask extends AsyncTask<Void, Void, String> {
