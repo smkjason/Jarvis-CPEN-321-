@@ -87,16 +87,7 @@ public class HomeFragment extends Fragment {
         Button My_events = getView().findViewById(R.id.view_profile_bttn);
         Button create_event = getView().findViewById(R.id.create_event_bttn);
         Button chatrooms = getView().findViewById(R.id.go_to_chatroom_bttn);
-        Button Signout = getView().findViewById(R.id.sign_out_button);
         Button Mapp = getView().findViewById(R.id.Map_bttn);
-
-        Signout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signOut();
-                revokeAccess();
-            }
-        });
 
 
         My_events.setOnClickListener(new View.OnClickListener() {

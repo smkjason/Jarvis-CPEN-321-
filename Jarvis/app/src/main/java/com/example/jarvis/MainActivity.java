@@ -156,57 +156,8 @@ public class MainActivity extends AppCompatActivity {
         final String idToken = acct.getIdToken();
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
-
-
-//
-//        if(mSocket.connected()){
-//            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
-//        }else {
-//            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
-//        }
-//
-//        mSocket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
-//            @Override
-//            public void call(Object... args) {
-//                Transport transport = (Transport) args[0];
-//                transport.on(Transport.EVENT_ERROR, new Emitter.Listener() {
-//                    @Override
-//                    public void call(Object... args) {
-//                        Exception e = (Exception) args[0];
-//                        Toast.makeText(MainActivity.this, "caught an error...", Toast.LENGTH_LONG).show();
-//                        Log.e("socket", "Transport Error: " + e);
-//                        e.printStackTrace();
-//                        e.getCause().printStackTrace();
-//                    }
-//                });
-//            }
-//        });
-
+        
         new CommunicateBackend(idToken, authCode).execute();
-//        if(mSocket.connected()){
-//            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
-//        }else {
-//            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
-//        }
-
-//        mSocket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
-//            @Override
-//            public void call(Object... args) {
-//                Transport transport = (Transport) args[0];
-//                transport.on(Transport.EVENT_ERROR, new Emitter.Listener() {
-//                    @Override
-//                    public void call(Object... args) {
-//                        Exception e = (Exception) args[0];
-//                        Toast.makeText(MainActivity.this, "caught an error...", Toast.LENGTH_LONG).show();
-//                        Log.e("socket", "Transport Error: " + e);
-//                        e.printStackTrace();
-//                        e.getCause().printStackTrace();
-//                    }
-//                });
-//            }
-//        });
-
-       // new CommunicateBackend(idToken, authCode).execute();
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)

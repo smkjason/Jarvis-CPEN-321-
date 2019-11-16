@@ -28,7 +28,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="120dp"
         android:layout_marginEnd="16dp"
-        android:text="My Events"
+        android:text="My Calendar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/Map_bttn"
@@ -62,18 +62,6 @@
         app:layout_constraintStart_toEndOf="@+id/create_event_bttn"
         app:layout_constraintTop_toBottomOf="@+id/view_profile_bttn"
         app:layout_constraintVertical_bias="0.06" />
-
-    <Button
-        android:id="@+id/sign_out_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="Sign Out"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/go_to_chatroom_bttn"
-        app:layout_constraintVertical_bias="0.83" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
