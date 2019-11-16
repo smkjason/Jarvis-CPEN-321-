@@ -1,27 +1,22 @@
 package com.example.jarvis;
 
+import android.app.DatePickerDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
-//
-//import com.github.nkzawa.socketio.client.IO;
-//import com.github.nkzawa.socketio.client.Socket;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.JsonObject;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -30,17 +25,14 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.viewpager.widget.ViewPager;
@@ -48,6 +40,8 @@ import androidx.appcompat.widget.Toolbar;
 import io.socket.client.Socket;
 
 public class CreateEvent extends AppCompatActivity {
+
+    private static final String TAG = "CreateEvent";
 
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
@@ -57,25 +51,57 @@ public class CreateEvent extends AppCompatActivity {
     private FirebaseUser currentUser;
 
     private Socket mSocket;
-    GoogleSignInAccount acct;
+    private GoogleSignInAccount acct;
+
+    private TextView mDisplaydate;
+    private Calendar calendar;
+    private int year, month, day;
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Toolbar mtoolbar;
-        Button create;
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_event);
-
+        Toolbar mtoolbar;
+        Button create;
         final EditText nameofEvent;
-        final EditText dateofEvent;
         final EditText peopleatEvent;
 
         String email;
 
+        mDisplaydate = findViewById(R.id.tvDate);
+
+        mDisplaydate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                Toast.makeText(CreateEvent.this, "Clicked!", Toast.LENGTH_LONG).show();
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        CreateEvent.this,
+                        R.style.Theme_AppCompat_Light_Dialog_MinWidth,
+                        mDateSetListener,
+                        year, month, day);
+                datePickerDialog.getWindow();
+                datePickerDialog.show();
+            }
+        });
+
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                mDisplaydate.setText(new StringBuilder().append(dayOfMonth).append("/").append(month).append("/").append(year));
+                Log.d(TAG, "Date:" + year + "/" + month + "/" + dayOfMonth);
+            }
+        };
+
         //TextEdits
         nameofEvent = findViewById(R.id.name_of_event);
-        dateofEvent = findViewById(R.id.date_of_event);
+
         peopleatEvent = findViewById(R.id.add_people_to_event);
 
         //Button(s)
@@ -108,37 +134,27 @@ public class CreateEvent extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String eventName = nameofEvent.getText().toString();
-                final String eventDate = dateofEvent.getText().toString();
                 final String eventMembers = peopleatEvent.getText().toString();
-
-                makeNewEvent(eventName, eventDate, eventMembers);
-
+                makeNewEvent(eventName, eventMembers);
             }
         });
 
-//        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-//        //Add the fragments
-//        adapter.addFragment(new EventFragment(), "Chat");
-//        adapter.addFragment(new UserFragment(), "Users");
-//        //adapter setup
-//        viewPager.setAdapter(adapter);
-//        tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void makeNewEvent(final String eventName, String eventDate, String email) {
+    private void makeNewEvent(final String eventName, String email) {
         /* Check if the User exists on Server */
-        new CommunicateBackend(eventName, eventDate, email).execute();
+        Toast.makeText(CreateEvent.this, "making new event", Toast.LENGTH_LONG).show();
+
+        new CommunicateBackend(eventName, email).execute();
     }
 
     private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
 
         String eventName;
-        String eventDate;
         String email;
 
-        CommunicateBackend(String eventName, String eventDate, String email) {
+        CommunicateBackend(String eventName, String email) {
             this.eventName = eventName;
-            this.eventDate = eventDate;
             this.email = email;
         }
 
@@ -148,13 +164,12 @@ public class CreateEvent extends AppCompatActivity {
             try {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
+                Log.d(TAG, "The year: " + year + "\nThe month: " + month + "\nThe day" + day);
 
                 JSONObject json = new JSONObject();
                 json.put("name", eventName);
-                json.put("date", eventDate);
                 httpPost.setEntity(new StringEntity(json.toString()));
                 httpPost.setHeader("Content-Type", "application/json");
-
                 HttpResponse response = httpClient.execute(httpPost);
                 final String responseBody = EntityUtils.toString(response.getEntity());
                 Log.i("Information", "Signed in as: " + responseBody);

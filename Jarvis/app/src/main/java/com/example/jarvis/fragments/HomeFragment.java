@@ -84,7 +84,7 @@ public class HomeFragment extends Fragment {
 //
 //        mSocket = ((jarvis) getApplication()).getmSocket();
 
-        Button view_profile = getView().findViewById(R.id.view_profile_bttn);
+        Button My_events = getView().findViewById(R.id.view_profile_bttn);
         Button create_event = getView().findViewById(R.id.create_event_bttn);
         Button chatrooms = getView().findViewById(R.id.go_to_chatroom_bttn);
         Button Signout = getView().findViewById(R.id.sign_out_button);
@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment {
         });
 
 
-        view_profile.setOnClickListener(new View.OnClickListener() {
+        My_events.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), com.example.jarvis.ViewProfile.class);
