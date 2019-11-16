@@ -37,6 +37,25 @@
         AIzaSyC567xrC3YAWcUNwgc1YcpFYRw3UtkMZxo
     </string>
 
+    <string name="search_hint">
+        Friend email
+    </string>
+
+    <string name="app_label">
+        Friend Search Feature
+    </string>
+
+    <string name="search_view">
+        Enter Search
+    </string>
+
+    <string-array name="test">
+        <item>test1</item>
+        <item>test2</item>
+    </string-array>
+
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,11 +1,19 @@
 package com.example.jarvis;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -13,9 +21,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import java.util.List;
 
 public class ViewProfile extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ImageView UserPhoto;
@@ -25,6 +35,7 @@ public class ViewProfile extends AppCompatActivity {
 
         Button View_Calendar;
         Button CreateEvent;
+        Button FriendList;
 
         GoogleSignInAccount acct;
         super.onCreate(savedInstanceState);
@@ -37,6 +48,7 @@ public class ViewProfile extends AppCompatActivity {
         View_Calendar = findViewById(R.id.button);
         backendMessage = findViewById(R.id.backendMessage);
         CreateEvent = findViewById(R.id.CreateEvent);
+        FriendList = findViewById(R.id.FriendList);
 
         View_Calendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +64,13 @@ public class ViewProfile extends AppCompatActivity {
             }
         });
 
+        FriendList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToFriendList();
+            }
+        });
+
         acct = GoogleSignIn.getLastSignedInAccount(this);
             if (acct != null) {
                 String personName = acct.getDisplayName();
@@ -61,7 +80,11 @@ public class ViewProfile extends AppCompatActivity {
             Username.setText(personName);
             Useremail.setText(personEmail);
             Glide.with(this).load(String.valueOf(personPhoto)).into(UserPhoto);
-        }
+            }
+
+
+//        Toolbar myToolbar = (Toolbar) findViewById(R.id.friends_bar);
+//        setSupportActionBar(myToolbar);
     }
 
     private void goToCalendar(){
@@ -73,4 +96,12 @@ public class ViewProfile extends AppCompatActivity {
         Intent intent = new Intent(ViewProfile.this, CreateEvent.class);
         startActivity(intent);
     }
+
+    private void goToFriendList() {
+        Intent intent = new Intent(ViewProfile.this, FriendList.class);
+        startActivity(intent);
+    }
+
+
+
 }
