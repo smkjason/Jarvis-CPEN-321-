@@ -9,55 +9,71 @@
 
     <Button
         android:id="@+id/Map_bttn"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="200dp"
-        android:text="Map"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="16dp"
+        android:text="Satellite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/view_profile_bttn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.19999999" />
 
     <Button
         android:id="@+id/view_profile_bttn"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:text="View_Profile"
-        app:layout_constraintEnd_toEndOf="@+id/Map_bttn"
-        app:layout_constraintHorizontal_bias="0.483"
-        app:layout_constraintStart_toStartOf="@+id/Map_bttn"
-        app:layout_constraintTop_toBottomOf="@+id/Map_bttn" />
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="16dp"
+        android:text="My Events"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Map_bttn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.19999999" />
 
     <Button
         android:id="@+id/create_event_bttn"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:text="Create_Event"
-        app:layout_constraintEnd_toEndOf="@+id/view_profile_bttn"
-        app:layout_constraintStart_toStartOf="@+id/view_profile_bttn"
-        app:layout_constraintTop_toBottomOf="@+id/view_profile_bttn" />
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:text="Find a Time!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/go_to_chatroom_bttn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Map_bttn"
+        app:layout_constraintVertical_bias="0.060000002" />
 
     <Button
         android:id="@+id/go_to_chatroom_bttn"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:text="ChatRooms"
-        app:layout_constraintEnd_toEndOf="@+id/create_event_bttn"
-        app:layout_constraintStart_toStartOf="@+id/create_event_bttn"
-        app:layout_constraintTop_toBottomOf="@+id/create_event_bttn" />
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:text="Discussions"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/create_event_bttn"
+        app:layout_constraintTop_toBottomOf="@+id/view_profile_bttn"
+        app:layout_constraintVertical_bias="0.06" />
 
     <Button
         android:id="@+id/sign_out_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
         android:text="Sign Out"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/go_to_chatroom_bttn" />
+        app:layout_constraintTop_toBottomOf="@+id/go_to_chatroom_bttn"
+        app:layout_constraintVertical_bias="0.83" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

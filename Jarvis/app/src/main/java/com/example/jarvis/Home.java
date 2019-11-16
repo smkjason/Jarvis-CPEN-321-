@@ -1,7 +1,9 @@
 package com.example.jarvis;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -52,21 +54,15 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
-//        mAuth = FirebaseAuth.getInstance(); moving...
-
         toolbar = findViewById(R.id.home_toolbar);
         tabLayout = findViewById(R.id.tablayout_id);
         viewPager = findViewById(R.id.viewpager_id);
 
         mSocket = ((jarvis) this.getApplication()).getmSocket();
-//
-//        if(mSocket.connected()){
-//            Toast.makeText(Home.this, "Socket is now connected at: " + TAG, Toast.LENGTH_LONG).show();
-//        }else{
-//            Toast.makeText(Home.this, "Socket isn't connected at " + TAG, Toast.LENGTH_LONG).show();
-//        }
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Jarvis");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         //Add the fragments
@@ -78,6 +74,14 @@ public class Home extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
+
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.options_menu, menu);
+//
+//        return true;
+//    }
 
 
     /* Probably not needed anymore because we are now using Firebase login logout */
@@ -106,7 +110,6 @@ public class Home extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-
         getMenuInflater().inflate(R.menu.options_menu, menu);
         return true;
     }
@@ -115,6 +118,11 @@ public class Home extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         super.onOptionsItemSelected(item);
+
+        if(item.getItemId() == R.id.Settings_profile){
+            Intent intent = new Intent(Home.this, com.example.jarvis.ViewProfile.class);
+            startActivity(intent);
+        }
 
         if(item.getItemId() == R.id.Settings_menu){
             /* Do somcething */
@@ -125,7 +133,7 @@ public class Home extends AppCompatActivity {
             revokeAccess();
         }
 
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
 

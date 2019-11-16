@@ -54,7 +54,6 @@ public class CreateEvent extends AppCompatActivity {
     private GoogleSignInAccount acct;
 
     private TextView mDisplaydate;
-    private DatePicker datePicker;
     private Calendar calendar;
     private int year, month, day;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -66,7 +65,6 @@ public class CreateEvent extends AppCompatActivity {
         Toolbar mtoolbar;
         Button create;
         final EditText nameofEvent;
-        final EditText dateofEvent;
         final EditText peopleatEvent;
 
         String email;
@@ -103,7 +101,6 @@ public class CreateEvent extends AppCompatActivity {
 
         //TextEdits
         nameofEvent = findViewById(R.id.name_of_event);
-        dateofEvent = findViewById(R.id.date_of_event);
 
         peopleatEvent = findViewById(R.id.add_people_to_event);
 
@@ -137,30 +134,27 @@ public class CreateEvent extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String eventName = nameofEvent.getText().toString();
-                final String eventDate = dateofEvent.getText().toString();
                 final String eventMembers = peopleatEvent.getText().toString();
-                makeNewEvent(eventName, eventDate, eventMembers);
+                makeNewEvent(eventName, eventMembers);
             }
         });
 
     }
 
-    private void makeNewEvent(final String eventName, String eventDate, String email) {
+    private void makeNewEvent(final String eventName, String email) {
         /* Check if the User exists on Server */
         Toast.makeText(CreateEvent.this, "making new event", Toast.LENGTH_LONG).show();
 
-        new CommunicateBackend(eventName, eventDate, email).execute();
+        new CommunicateBackend(eventName, email).execute();
     }
 
     private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
 
         String eventName;
-        String eventDate;
         String email;
 
-        CommunicateBackend(String eventName, String eventDate, String email) {
+        CommunicateBackend(String eventName, String email) {
             this.eventName = eventName;
-            this.eventDate = eventDate;
             this.email = email;
         }
 
@@ -174,7 +168,6 @@ public class CreateEvent extends AppCompatActivity {
 
                 JSONObject json = new JSONObject();
                 json.put("name", eventName);
-                json.put("date", eventDate);
                 httpPost.setEntity(new StringEntity(json.toString()));
                 httpPost.setHeader("Content-Type", "application/json");
                 HttpResponse response = httpClient.execute(httpPost);

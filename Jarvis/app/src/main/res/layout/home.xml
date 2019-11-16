@@ -18,19 +18,16 @@
         layout="@layout/toolbar">
     </include>
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:gravity="center"
-        android:elevation="0dp"
-        android:id="@+id/appbarid"
-        app:layout_constraintTop_toTopOf="parent">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Jarvis"
-            android:textSize="30dp" />
-    </com.google.android.material.appbar.AppBarLayout>
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:id="@+id/my_toolbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="?attr/actionBarSize"-->
+<!--        android:background="?attr/colorPrimary"-->
+<!--        android:elevation="4dp"-->
+<!--        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/home_toolbar"-->
+<!--        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">-->
+<!--    </androidx.appcompat.widget.Toolbar>-->
 
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
@@ -48,61 +45,6 @@
         app:tabTextColor="@color/tabtextcolor"
         app:tabIndicatorColor="@color/tabindicatorcolor"
         android:background="@color/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/appbarid"
+        app:layout_constraintTop_toBottomOf="@id/home_toolbar"
         />
-
-<!--    <Button-->
-<!--        android:id="@+id/Map_bttn"-->
-<!--        android:layout_width="150dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginTop="200dp"-->
-<!--        android:text="Map"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.498"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/view_profile_bttn"-->
-<!--        android:layout_width="150dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:text="View_Profile"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/Map_bttn"-->
-<!--        app:layout_constraintHorizontal_bias="0.483"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/Map_bttn"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/Map_bttn" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/create_event_bttn"-->
-<!--        android:layout_width="150dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:text="Create_Event"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/view_profile_bttn"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/view_profile_bttn"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/view_profile_bttn" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/go_to_chatroom_bttn"-->
-<!--        android:layout_width="150dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:text="ChatRooms"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/create_event_bttn"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/create_event_bttn"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/create_event_bttn" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/sign_out_button"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Sign Out"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/go_to_chatroom_bttn" />-->
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
