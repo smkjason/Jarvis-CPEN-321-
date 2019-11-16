@@ -41,11 +41,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import java.io.IOException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.mortbay.jetty.Main;
-
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -249,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Void... v) {
-
             int retval = 0;
             try {
                 HttpClient httpClient = new DefaultHttpClient();
@@ -275,10 +269,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("Error", "I caught some exception.", e);
             }
             return retval;
-        }
-
-        protected void onPostExecute() {
-            //Maybe Implemented
         }
 
         @Override
