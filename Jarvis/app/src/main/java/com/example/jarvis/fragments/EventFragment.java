@@ -22,6 +22,7 @@ import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.adapter.CustomAdapter;
 import com.example.jarvis.R;
 
+import com.example.jarvis.jarvisevent;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.database.DatabaseReference;
@@ -47,7 +48,7 @@ public class EventFragment extends Fragment {
 
     private DatabaseReference EventRef;
 
-    private ArrayList<String> mEvents = new ArrayList<>();
+    private ArrayList<jarvisevent> mEvents = new ArrayList<>();
     private RecyclerView recyclerView;
 
     private Socket mSocket;
@@ -103,19 +104,6 @@ public class EventFragment extends Fragment {
 
         new GetEventIDs(idToken, email).execute();
 
-        mEvents.add("testing#1");
-        mEvents.add("testing#2");
-        mEvents.add("testing#3");
-        mEvents.add("testing#4");
-        mEvents.add("testing#5");
-        mEvents.add("testing#6");
-        mEvents.add("testing#7");
-        mEvents.add("testing#8");
-
-        CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity());
-        mAdapter.notifyDataSetChanged();
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.scrollToPosition(mEvents.size() - 1);
 //
 //        mAdapter = new CustomAdapter(mEvents, getActivity());
 //
@@ -167,18 +155,24 @@ public class EventFragment extends Fragment {
                 Toast.makeText(getActivity(), "!!couldn't get jsonarray!!", Toast.LENGTH_LONG).show();
             }
             else{
+                Toast.makeText(getActivity(), "Trying to get event names...........", Toast.LENGTH_LONG).show();
                 Log.d(TAG, "jsonArray: " + jsonArray);
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        mEvents.add(cur.getString("summary"));
-                        Log.d(TAG, "jsonobj: " + cur.getString("status"));
+                        jarvisevent event = new jarvisevent(cur.getString("summary"), cur.getString("id"));
+                        mEvents.add(event);
+                        Log.d(TAG, "jsonobj: " + cur.getString("summary"));
                     }catch(JSONException e){
                         e.printStackTrace();
                         Log.e(TAG, "initEvents(): JSONException", e);
                     }
                 }
             }
+            CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity());
+            mAdapter.notifyDataSetChanged();
+            recyclerView.setAdapter(mAdapter);
+            recyclerView.scrollToPosition(mEvents.size() - 1);
 
             Intent intent = new Intent(getActivity(), GroupChatActivity.class);
             intent.putExtra("eventname", "Nothing for now");

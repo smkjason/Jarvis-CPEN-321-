@@ -62,11 +62,6 @@ public class GroupChatActivity extends AppCompatActivity {
         currentUserID = mAuth.getCurrentUser().getUid();
 
         mSocket = ((jarvis) getApplication()).getmSocket();
-        if(mSocket.connected()){
-            Toast.makeText(GroupChatActivity.this, "FIRST:Socket ready for groupchat", Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(GroupChatActivity.this, "FIRST: !Socket not ready for groupchat!", Toast.LENGTH_LONG).show();
-        }
         toolbar = findViewById(R.id.chat_toolbar);
         initializeFields();
 

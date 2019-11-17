@@ -106,20 +106,10 @@ public class HomeFragment extends Fragment {
         Button Mapp = getView().findViewById(R.id.Map_bttn);
 
         /* Testing Chat */
-        Button testchat = getView().findViewById(R.id.test_chat);
 
         acct = GoogleSignIn.getLastSignedInAccount(getActivity());
-        final String email = acct.getEmail();
-        final String idToken = acct.getIdToken();
 
-        testchat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "testchat starting...", Toast.LENGTH_LONG).show();
-                Log.d("msgtest", "testchat starting...");
-                new GetEventID(idToken, "authocode", email).execute();
-            }
-        });
+
 
         My_events.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,13 +127,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        chatrooms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GroupChatActivity.class);
-                startActivity(intent);
-            }
-        });
+//        chatrooms.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         if (isServicesOK()) { //check if map can operate with this phone
             Mapp.setOnClickListener(new View.OnClickListener() {
@@ -154,16 +144,6 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
-    }
-
-    private void revokeAccess() {
-        mGoogleSignInClient.revokeAccess()
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getActivity(), "Revoked", Toast.LENGTH_LONG).show();
-                    }
-                });
     }
 
     public boolean isServicesOK() {
@@ -193,52 +173,4 @@ public class HomeFragment extends Fragment {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
-
-    private class GetEventID extends AsyncTask<Void, Void, String> {
-
-        String idToken;
-        String authCode;
-        String email;
-
-        GetEventID(String idToken, String authCode, String email) {
-            this.idToken = idToken;
-            this.authCode = authCode;
-            this.email = email;
-        }
-
-        @Override
-        protected String doInBackground(Void... v) {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpResponse httpResponse;
-            String id = "";
-            HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
-            try {
-                httpGet.addHeader("Authorization", "Bearer " + idToken);
-                httpResponse = httpClient.execute(httpGet);
-                HttpEntity httpEntity = httpResponse.getEntity();
-                String json_string = EntityUtils.toString(httpEntity);
-                Log.d("http", "json_string: " + json_string);
-                JSONArray response_json = new JSONArray(json_string);
-                JSONObject jsonObject = response_json.getJSONObject(0);
-                id = jsonObject.get("id").toString();
-            } catch (ClientProtocolException e) {
-                Log.e("Error", "Error sending ID token to backend.", e);
-            } catch (IOException e) {
-                Log.e("Error", "Error sending ID token to backend.", e);
-            } catch (Exception e) {
-                Log.e("Error", "I caught some exception.", e);
-            }
-            return id;
-        }
-
-        @Override
-        protected void onPostExecute(String eventid) {
-            super.onPostExecute(eventid);
-            Intent intent = new Intent(getActivity(), GroupChatActivity.class);
-            intent.putExtra("eventid", eventid);
-            intent.putExtra("eventname", "Nothing for now");
-            startActivity(intent);
-        }
-    }
-
 }
