@@ -1,34 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentBottom="true">
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/home_toolbar"
-        layout="@layout/toolbar">
-    </include>
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme">
+        <include
+            android:id="@+id/home_toolbar"
+            layout="@layout/toolbar">
+        </include>
+
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            android:id="@+id/tablayout_id"
+            app:tabTextColor="@color/tabtextcolor"
+            app:tabIndicatorColor="@color/tabindicatorcolor"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
+            />
+    </com.google.android.material.appbar.AppBarLayout>
+
 
 
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/viewpager_id"
         app:layout_constraintTop_toTopOf="parent"
     />
 
-    <com.google.android.material.tabs.TabLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="fill"
-        app:tabMode="fixed"
-        android:id="@+id/tablayout_id"
-        app:tabTextColor="@color/tabtextcolor"
-        app:tabIndicatorColor="@color/tabindicatorcolor"
-        android:background="@color/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/home_toolbar"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

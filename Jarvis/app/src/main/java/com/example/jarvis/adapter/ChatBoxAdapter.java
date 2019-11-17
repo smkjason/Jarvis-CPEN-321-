@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.jarvis.R;
+import com.example.jarvis.jarvismessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,28 +16,24 @@ import java.util.List;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ChatBoxAdapter  extends RecyclerView.Adapter<ChatBoxAdapter.MyViewHolder> {
-    private List<JSONObject> MessageList;
+    private List<jarvismessage> MessageList;
+
+    public ChatBoxAdapter(List<jarvismessage> MessagesList) {
+        this.MessageList = MessagesList;
+    }
 
     public  class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView nickname;
         public TextView message;
-
+        public TextView time;
 
         public MyViewHolder(View view) {
             super(view);
 
-            nickname = view.findViewById(R.id.nickname);
-            message = view.findViewById(R.id.message);
+            nickname = view.findViewById(R.id.text_message_name);
+            message = view.findViewById(R.id.text_message_body);
+            time = view.findViewById(R.id.text_message_time);
         }
-    }
-// in this adaper constructor we add the list of messages as a parameter so that
-// we will passe  it when making an instance of the adapter object in our activity
-
-
-    public ChatBoxAdapter(List<JSONObject>MessagesList) {
-
-        this.MessageList = MessagesList;
-
     }
 
     @Override
@@ -48,22 +45,20 @@ public class ChatBoxAdapter  extends RecyclerView.Adapter<ChatBoxAdapter.MyViewH
     public ChatBoxAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.chatbox, parent, false);
-
-        return new ChatBoxAdapter.MyViewHolder(itemView);
+        MyViewHolder myViewHolder = new MyViewHolder(itemView);
+        return myViewHolder;
     }
 
     @Override
     public void onBindViewHolder(final ChatBoxAdapter.MyViewHolder holder, final int position) {
-        String name, message;
-        //binding the data from our ArrayList of object to the item.xml using the viewholder
-        try{
-            name = MessageList.get(position).getString("name");
-            message = MessageList.get(position).getString("message");
-            holder.nickname.setText(name);
-            holder.message.setText(message);
-        }catch(JSONException e){
-            e.printStackTrace();
-        }
+        String name, message, time;
+        name = MessageList.get(position).getSender();
+        message = MessageList.get(position).getMessage();
+        time = MessageList.get(position).getTime();
+
+        holder.nickname.setText(name);
+        holder.message.setText(message);
+        holder.time.setText(time);
     }
 
 }

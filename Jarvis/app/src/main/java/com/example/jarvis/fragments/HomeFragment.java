@@ -2,6 +2,7 @@ package com.example.jarvis.fragments;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.example.jarvis.R;
 //import com.example.jarvis.jarvis;
 //import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -31,6 +33,18 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 
 public class HomeFragment extends Fragment {
@@ -47,6 +61,8 @@ public class HomeFragment extends Fragment {
     private GoogleSignInClient mGoogleSignInClient;
 
     private Socket mSocket;
+
+    private GoogleSignInAccount acct;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +105,21 @@ public class HomeFragment extends Fragment {
         Button chatrooms = getView().findViewById(R.id.go_to_chatroom_bttn);
         Button Mapp = getView().findViewById(R.id.Map_bttn);
 
+        /* Testing Chat */
+        Button testchat = getView().findViewById(R.id.test_chat);
+
+        acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        final String email = acct.getEmail();
+        final String idToken = acct.getIdToken();
+
+        testchat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "testchat starting...", Toast.LENGTH_LONG).show();
+                Log.d("msgtest", "testchat starting...");
+                new GetEventID(idToken, "authocode", email).execute();
+            }
+        });
 
         My_events.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,6 +192,53 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    private class GetEventID extends AsyncTask<Void, Void, String> {
+
+        String idToken;
+        String authCode;
+        String email;
+
+        GetEventID(String idToken, String authCode, String email) {
+            this.idToken = idToken;
+            this.authCode = authCode;
+            this.email = email;
+        }
+
+        @Override
+        protected String doInBackground(Void... v) {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpResponse httpResponse;
+            String id = "";
+            HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
+            try {
+                httpGet.addHeader("Authorization", "Bearer " + idToken);
+                httpResponse = httpClient.execute(httpGet);
+                HttpEntity httpEntity = httpResponse.getEntity();
+                String json_string = EntityUtils.toString(httpEntity);
+                Log.d("http", "json_string: " + json_string);
+                JSONArray response_json = new JSONArray(json_string);
+                JSONObject jsonObject = response_json.getJSONObject(0);
+                id = jsonObject.get("id").toString();
+            } catch (ClientProtocolException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (IOException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (Exception e) {
+                Log.e("Error", "I caught some exception.", e);
+            }
+            return id;
+        }
+
+        @Override
+        protected void onPostExecute(String eventid) {
+            super.onPostExecute(eventid);
+            Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+            intent.putExtra("eventid", eventid);
+            intent.putExtra("eventname", "Nothing for now");
+            startActivity(intent);
+        }
     }
 
 }
