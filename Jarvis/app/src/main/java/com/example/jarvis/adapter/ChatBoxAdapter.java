@@ -6,10 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.jarvis.R;
-import com.example.jarvis.jarvismessage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.jarvis.jarvis_types.jarvismessage;
 
 import java.util.List;
 

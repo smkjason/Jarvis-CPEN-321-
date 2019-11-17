@@ -127,13 +127,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
-//        chatrooms.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), GroupChatActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        chatrooms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+                startActivity(intent);
+            }
+        });
 
         if (isServicesOK()) { //check if map can operate with this phone
             Mapp.setOnClickListener(new View.OnClickListener() {

@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import io.socket.client.IO;
 import io.socket.client.Socket;
 
 import android.util.Log;
@@ -22,7 +20,7 @@ import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.adapter.CustomAdapter;
 import com.example.jarvis.R;
 
-import com.example.jarvis.jarvisevent;
+import com.example.jarvis.jarvis_types.jarvisevent;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.database.DatabaseReference;
@@ -39,7 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class EventFragment extends Fragment {

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.jarvis.adapter.ChatBoxAdapter;
+import com.example.jarvis.jarvis_types.jarvismessage;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;

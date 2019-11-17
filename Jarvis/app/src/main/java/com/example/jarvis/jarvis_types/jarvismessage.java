@@ -1,4 +1,4 @@
-package com.example.jarvis;
+package com.example.jarvis.jarvis_types;
 
 import android.widget.CalendarView;
 

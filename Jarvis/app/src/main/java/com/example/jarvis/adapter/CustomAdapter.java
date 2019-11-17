@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.R;
-import com.example.jarvis.jarvisevent;
+import com.example.jarvis.jarvis_types.jarvisevent;
 
 import java.util.ArrayList;
 
