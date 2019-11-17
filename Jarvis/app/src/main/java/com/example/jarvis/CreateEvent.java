@@ -1,38 +1,47 @@
 package com.example.jarvis;
 
+import android.app.DatePickerDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.JsonObject;
 
-import org.json.JSONException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
 
-import java.net.URISyntaxException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.Toolbar;
+import io.socket.client.Socket;
 
 public class CreateEvent extends AppCompatActivity {
+
+    private static final String TAG = "CreateEvent";
 
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
@@ -40,34 +49,60 @@ public class CreateEvent extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private DatabaseReference RootRef;
 
-    private Socket socket;
-    {
-        try{
-            socket = IO.socket("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/");
-        }catch(URISyntaxException e){
-            Log.e("socket", "Exception caught: " + e);
-        }
-    }
+    private Socket mSocket;
+    private GoogleSignInAccount acct;
+
+    private TextView mDisplaydate;
+    private Calendar calendar;
+    private int year, month, day;
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Toolbar mtoolbar;
-        Button create;
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_event);
-
+        Toolbar mtoolbar;
+        Button create;
         final EditText nameofEvent;
-        final EditText dateofEvent;
         final EditText peopleatEvent;
 
+        String email;
+
+        mDisplaydate = findViewById(R.id.tvDate);
+
+        mDisplaydate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                Toast.makeText(CreateEvent.this, "Clicked!", Toast.LENGTH_LONG).show();
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        CreateEvent.this,
+                        R.style.Theme_AppCompat_Light_Dialog_MinWidth,
+                        mDateSetListener,
+                        year, month, day);
+                datePickerDialog.getWindow();
+                datePickerDialog.show();
+            }
+        });
+
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                mDisplaydate.setText(new StringBuilder().append(dayOfMonth).append("/").append(month).append("/").append(year));
+                Log.d(TAG, "Date:" + year + "/" + month + "/" + dayOfMonth);
+            }
+        };
 
         //TextEdits
-        nameofEvent = (EditText) findViewById(R.id.name_of_event);
-        dateofEvent = (EditText) findViewById(R.id.date_of_event);
-        peopleatEvent = (EditText) findViewById(R.id.add_people_to_event);
+        nameofEvent = findViewById(R.id.name_of_event);
+
+        peopleatEvent = findViewById(R.id.add_people_to_event);
 
         //Button(s)
         create = findViewById(R.id.make_event);
@@ -75,69 +110,137 @@ public class CreateEvent extends AppCompatActivity {
         //Firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        RootRef = FirebaseDatabase.getInstance().getReference();
+        email = currentUser.getEmail();
 
-        socket.connect();
+        mSocket = ((jarvis) this.getApplication()).getmSocket();
+        if(mSocket.connected()){
+            Toast.makeText(CreateEvent.this, "Connected!!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(CreateEvent.this, "Can't connect...", Toast.LENGTH_LONG).show();
+        }
 
-        mtoolbar = (Toolbar) findViewById(R.id.create_event_toolbar);
+        mtoolbar = findViewById(R.id.create_event_toolbar);
 //        tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
 //        appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
 //        viewPager = (ViewPager) findViewById(R.id.viewpager_id);
 
         setSupportActionBar(mtoolbar);
         getSupportActionBar().setTitle("Create_Event");
+        acct = GoogleSignIn.getLastSignedInAccount(this);
+        
+        new CreateTask().execute();
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String eventName = nameofEvent.getText().toString();
-                final String eventDate = dateofEvent.getText().toString();
                 final String eventMembers = peopleatEvent.getText().toString();
-                JSONObject event = new JSONObject();
-                try {
-                    Log.d("socket", "Sending event jsonobject...");
-                    event.put("eventName", eventName);
-                    event.put("eventDate", eventDate);
-                    event.put("eventMembers", eventMembers);
-
-                }catch (JSONException e){
-                    Log.e("socket", "JSONException caught");
-                }
-                socket.emit("login", event);
-                makeNewEvent(eventName, eventDate, eventMembers);
+                makeNewEvent(eventName, eventMembers);
             }
         });
 
-//        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-//        //Add the fragments
-//        adapter.addFragment(new EventFragment(), "Chat");
-//        adapter.addFragment(new UserFragment(), "Users");
-//        //adapter setup
-//        viewPager.setAdapter(adapter);
-//        tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void makeNewEvent(final String eventName, String eventDate, String eventMembers) {
+    private void makeNewEvent(final String eventName, String email) {
         /* Check if the User exists on Server */
-        currentUser = mAuth.getCurrentUser();
-        RootRef.child("Events").child(eventName).setValue("");
-        RootRef.child("Events").child(eventName).child(eventDate).setValue("");
-        RootRef.child("Events").child(eventName).child(eventMembers).setValue("")
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(CreateEvent.this, eventName + " " +
-                                        "is created Successfully...", Toast.LENGTH_LONG).show();
-                            }
-                            else{
-                                String message = task.getException().toString();
-                                Toast.makeText(CreateEvent.this, "Error: " + message, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-        /* Add the Events under this User */
+        Toast.makeText(CreateEvent.this, "making new event", Toast.LENGTH_LONG).show();
+
+        new CommunicateBackend(eventName, email).execute();
     }
+
+    private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
+
+        String eventName;
+        String email;
+
+        CommunicateBackend(String eventName, String email) {
+            this.eventName = eventName;
+            this.email = email;
+        }
+
+        @Override
+        protected Void doInBackground(Void... v) {
+
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
+                Log.d(TAG, "The year: " + year + "\nThe month: " + month + "\nThe day" + day);
+
+                JSONObject json = new JSONObject();
+                json.put("name", eventName);
+                httpPost.setEntity(new StringEntity(json.toString()));
+                httpPost.setHeader("Content-Type", "application/json");
+                HttpResponse response = httpClient.execute(httpPost);
+                final String responseBody = EntityUtils.toString(response.getEntity());
+                Log.i("Information", "Signed in as: " + responseBody);
+            } catch (ClientProtocolException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (IOException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (Exception e) {
+                Log.e("Error", "I caught some exception.", e);
+            }
+            return null;
+        }
+
+
+        protected void onPostExecute() {
+            //Maybe Implemented
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(CreateEvent.this, "Event sent to backend", Toast.LENGTH_LONG).show();
+            super.onPostExecute(aVoid);
+            //Maybe Implemented
+        }
+    }
+
+    private class CreateTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... v) {
+            HttpClient httpClient = new DefaultHttpClient();
+            String responseBody = "";
+            String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+            try {
+                JSONObject json = new JSONObject();
+                ArrayList<String> recurrence = new ArrayList<String>();
+                json.put("status", "test_status");
+                json.put("created", currentTime);
+                json.put("updated", currentTime);
+                json.put("location", "test_location");
+                json.put("colorId", "test_colorId");
+                json.put("creatorEmail", acct.getEmail());
+                json.put("start", "test_start");
+                json.put("end", "test_end");
+                json.put("attendees", acct.getEmail());
+                json.put("recurrence", recurrence);
+
+                HttpPost request = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/" + "user" + "/" + acct.getEmail() + "/events");
+                StringEntity params = new StringEntity(json.toString());
+                request.addHeader("Authorization", "Bearer " + acct.getIdToken());
+                request.setEntity(params);
+                HttpResponse response = httpClient.execute(request);
+                responseBody = EntityUtils.toString(response.getEntity());
+                Log.d("CreateEvent successful",responseBody);
+            } catch (Exception ex) {
+                Log.e("CreateEvent failed", ex.getMessage());
+                System.out.println(ex);
+                // handle exception here
+            } finally {
+                httpClient.getConnectionManager().shutdown();
+            }
+            return responseBody;
+        }
+        protected void onProgressUpdate() {
+        }
+
+        protected void onPostExecute(String response) {
+            Toast.makeText(CreateEvent.this, "Finished setting up event: " + response, Toast.LENGTH_LONG).show();
+        }
+
+    }
+
 
 
 //    class ViewPagerAdapter extends FragmentPagerAdapter {
