@@ -1,5 +1,6 @@
 const UserFunctions = require('./app/user')
 const EventFunctions = require('./app/event')
+const ChatFunctions = require('./app/chat')
 const auth = require('./util/google').auth
 
 function routes(app){
@@ -15,6 +16,15 @@ function routes(app){
     app.get('/env', function(req, res){
         log(req)
         res.send(process.env.ENV)
+    })
+
+    /*
+        gets all users
+    */
+    app.get('/user', async function(req, res){
+        log(req)
+        var users = await UserFunctions.getUsers(req.query.q)
+        res.send(users)
     })
 
     /*
@@ -36,6 +46,15 @@ function routes(app){
     })
 
     /*
+        see friends
+    */
+   app.get('/user/:email/friends', async function(req, req){
+       log(req)
+       var friends = await UserFunctions.getFriends(auth(req, req.params.name))
+       res.send(friends)
+   })
+
+    /*
         returns a user's events
     */
     app.get('/user/:name/events', async function(req, res){
@@ -51,6 +70,15 @@ function routes(app){
         log(req)
         var event = await EventFunctions.createEvent(await auth(req, req.params.name), res.body)
         res.send(event)
+    })
+
+    /*
+        returns all the chat messages for a given event before a certain time
+    */
+    app.get('/events/:id/messages', async function(req, res){
+        log(req)
+        var msgs = await ChatFunctions.getMessages(req.params.id, await auth(req), req.query.before)
+        res.send(msgs)
     })
 
     app.get('/demo_calculate_times', function(req, res){

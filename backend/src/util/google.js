@@ -12,6 +12,8 @@ function getUserCalendar(user){
 }
 
 async function auth(req, name = null){
+    if(process.env.ENV != "production") return name || 'jarviscpen321.1@gmail.com'
+
     var client = new OAuth2Client(configs.CLIENT_ID)
     var token = req.headers.authorization
     token = token || req.body.idToken

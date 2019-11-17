@@ -1,4 +1,5 @@
 const EventModel = require('../data/schema').EventModel
+const UserModel = require('../data/schema').UserModel
 const Google = require('../util/google')
 const clone = require('lodash/cloneDeep')
 
@@ -8,7 +9,7 @@ const clone = require('lodash/cloneDeep')
     create and save db object
     save to user google calendar
 */
-async function createEvent(name, data){
+async function createEvent(name, data = {}){
     data.creatorEmail = name
     return data
 }
@@ -44,7 +45,7 @@ async function syncEvents(user){
         calendarId: 'primary',
     })
     eventList = eventList.concat(events)
-    await saveGoogleEvents(events)
+    await saveGoogleEvents(user.email, events)
 
     while(events.pageToken){
         events = await calendar.events.list({
@@ -58,11 +59,10 @@ async function syncEvents(user){
 }
 
 /*
-    get the events that the user has
+    get the events that the user is attending or created
 */
 async function getEvents(email){
-    events = await EventModel.find({creatorEmail: email}).exec()
-    return events
+    return await relatedEvents(email)
 }
 
 function demoCalculateTime(json){
@@ -70,16 +70,37 @@ function demoCalculateTime(json){
     return retval
 }
 
-/* private functions  ----------- */
 
-async function saveGoogleEvents(events){
+async function relatedEvents(email){
+    var user = await UserModel.findOne({email: email}).exec()
+    if(!user) return []
+
+    var events = await EventModel.find({
+        $or: [
+            {creatorEmail: user.email},
+            {attendees: {$in: [user.email]}}
+        ]
+    }).exec()
+    return events
+}
+
+/* private functions  ----------- */
+async function saveGoogleEvents(email, events){
     console.log(events)
-    console.log('there are ' + events.data.items.length + 'items')
+    console.log('there are ' + events.data.items.length + ' items to sync')
+    var currentEvents = await EventModel.find({creatorEmail: email}).exec()
+    eventIds = currentEvents ? currentEvents.map(function(doc){return doc.id}) : []
+
     var eventlist = []
     //event is Schema$Event in google calendar api
     for(const event of events.data.items){
+        //skip over events we already have
+        if(eventIds.includes(event.id)) continue
+
         var json = clone(event)
         json.creatorEmail = json.creator.email
+        json.googleEvent = true
+        json.attendees = (json.attendees || []).map(function(attendee){return attendee.email})
         var mongoEvent = new EventModel(json)
         eventlist.push(mongoEvent)
         try{
@@ -114,5 +135,6 @@ module.exports = {
     getEvents,
     createEvent,
     updateEvent,
-    deleteEvent
+    deleteEvent,
+    relatedEvents
 }

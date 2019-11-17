@@ -6,6 +6,12 @@ const configs = require('../configs')
 const EventFunctions = require('./event')
 const User = schema.UserModel
 
+async function getUsers(query){
+    var users = await User.find({email: {$regex: query, $options: 'i'}})
+        .select(['-refresh_token', '-google_token']).exec()
+    return users
+}
+
 async function getUser(name){
     var user = await User.findOne({email: name}).exec()
     //TODO: move this to its own path
@@ -30,7 +36,8 @@ async function verifyAndRetrieveToken(email, code){
             code: code,
             client_id: configs.CLIENT_ID,
             client_secret: configs.CLIENT_SECRET,
-            grant_type: 'authorization_code'    
+            grant_type: 'authorization_code',
+            access_type: 'offline'
         })
 
         var user = new User({
@@ -50,7 +57,24 @@ async function verifyAndRetrieveToken(email, code){
     }
 }
 
+async function getFriends(email){
+    var user = await User.findOne({email: email}).exec()
+    return user.friends
+}
+
+async function removeFriend(email, friend){
+
+}
+
+async function addFriend(email, friend){
+
+}
+
 module.exports = {
     authCreateUser,
     getUser,
+    getFriends, 
+    removeFriend, 
+    addFriend,
+    getUsers
 }
