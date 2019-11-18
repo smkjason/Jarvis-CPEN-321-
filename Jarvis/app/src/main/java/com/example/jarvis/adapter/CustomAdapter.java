@@ -25,11 +25,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     private ArrayList<jarvisevent> events;
     private Context mContext;
+    private String idToken;
 
 
-    public CustomAdapter(ArrayList<jarvisevent> events, Context context){
+    public CustomAdapter(ArrayList<jarvisevent> events, Context context, String idToken){
         this.events = events;
         mContext = context;
+        this.idToken = idToken;
     }
 
     @NonNull
@@ -55,6 +57,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 Intent intent = new Intent (mContext, GroupChatActivity.class);
                 intent.putExtra("eventid", events.get(position).getEventid());
                 intent.putExtra("Name", events.get(position).getName_of_event());
+                intent.putExtra("idToken", idToken);
                 mContext.startActivity(intent);
             }
         });

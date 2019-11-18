@@ -99,7 +99,7 @@ public class EventFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity());
+        CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity(), idToken);
         mAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(mAdapter);
         recyclerView.scrollToPosition(mEvents.size() - 1);
@@ -169,16 +169,16 @@ public class EventFragment extends Fragment {
                         Log.e(TAG, "initEvents(): JSONException", e);
                     }
                 }
-                CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity());
+                CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity(), idToken);
                 mAdapter.notifyDataSetChanged();
                 recyclerView.setAdapter(mAdapter);
                 recyclerView.scrollToPosition(mEvents.size() - 1);
             }
 
-            Intent intent = new Intent(getActivity(), GroupChatActivity.class);
-            intent.putExtra("eventname", "Nothing for now");
-            intent.putExtra("idToken", idToken);
-            startActivity(intent);
+//            Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+//            intent.putExtra("eventname", "Nothing for now");
+//            intent.putExtra("idToken", idToken);
+//            startActivity(intent);
         }
     }
 

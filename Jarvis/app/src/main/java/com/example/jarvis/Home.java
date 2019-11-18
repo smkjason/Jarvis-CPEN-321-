@@ -69,7 +69,7 @@ public class Home extends AppCompatActivity {
         EventFragment eventFragment = new EventFragment();
         HomeFragment homeFragment = new HomeFragment();
         adapter.addFragment(homeFragment, "Home");
-        //adapter.addFragment(eventFragment, "Events");
+        adapter.addFragment(eventFragment, "Events");
         //adapter setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
