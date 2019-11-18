@@ -142,6 +142,9 @@ public class CreateEvent extends AppCompatActivity {
             public void onClick(View v) {
                 final String eventName = nameofEvent.getText().toString();
                 makeNewEvent(eventName, friendList);
+                Intent intent = new Intent(CreateEvent.this, SelectTime.class);
+                startActivity(intent);
+
             }
         });
 
