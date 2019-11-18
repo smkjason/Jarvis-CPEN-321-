@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const Mixed = Schema.Types.Mixed
-const Id = Schema.Types.ObjectId
 
 let eventModel = new Schema({
     status: String,
@@ -12,25 +11,27 @@ let eventModel = new Schema({
     creatorEmail: {type: String, index: true},
     start: Mixed,
     end:  Mixed,
-    attendees: Mixed,
+    attendees: [String],
     recurrence: Array,
-    id: String,
+    id: {type: String, index: true},
     summary: String,
-    description: String
+    description: String,
+    googleEvent: Boolean
 })
 
 let userModel = new Schema({
     name: String,
     google_token: String,
     refresh_token: String,
-    email: {type: String, index: true}
+    email: {type: String, index: true},
+    friends: [String]
 })
 
 let chatModel = new Schema({
-    messsage: String,
+    message: String,
     timestamp: Number,
     sender: String,
-    chat: {type: Id, index: true}
+    event: {type: String, index: true}
 })
 
 module.exports = {

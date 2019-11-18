@@ -1,71 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".GroupChatActivity">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/GroupChat_ToolBar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-        <TextView
-            android:id="@+id/Toolbar_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </TextView>
-    </androidx.appcompat.widget.Toolbar>
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/GroupChat_AppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </com.google.android.material.appbar.AppBarLayout>
+    <include
+        android:id="@+id/chat_toolbar"
+        layout="@layout/toolbar">
+    </include>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reyclerview_message_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:clipToPadding="false"
         android:scrollbars="vertical"
-        android:layout_weight="3"
-        android:id="@+id/messagelist">
+        android:paddingBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/layout_chatbox"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chat_toolbar"
+        app:layout_constraintVertical_bias="0.0"
+        app:stackFromEnd="true" >
     </androidx.recyclerview.widget.RecyclerView>
 
+    <!-- A horizontal line between the chatbox and RecyclerView -->
     <View
-    android:layout_marginTop="5dp"
-    android:id="@+id/separator"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="@android:color/primary_text_dark"/>
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#dfdfdf"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <LinearLayout
-        android:id="@+id/GroupChat_LinearLayout"
-        android:layout_width="match_parent"
+        android:id="@+id/layout_chatbox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:minHeight="48dp"
+        android:background="#ffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
 
         <EditText
-            android:id="@+id/GroupChat_MessageToSend"
-            android:layout_width="362dp"
-            android:layout_height="match_parent"
-            android:hint="Write your message here..."
-            android:padding="17dp">
-        </EditText>
-
-        <ImageButton
-            android:id="@+id/GroupChat_sendButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/edittext_chatbox"
+            android:hint="Enter message"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:src="@mipmap/send_button">
-        </ImageButton>
+            android:maxLines="6"/>
+
+        <Button
+            android:id="@+id/button_chatbox_send"
+            android:text="SEND"
+            android:textSize="14dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_width="64dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:layout_gravity="bottom" />
+
     </LinearLayout>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

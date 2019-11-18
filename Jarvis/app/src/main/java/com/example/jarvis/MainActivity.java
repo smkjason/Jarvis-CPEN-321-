@@ -38,6 +38,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-//    private DatabaseReference RootRef; //For now it will be using Firebase Database However, we may want to change this root to AWS
 
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -69,16 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
-
-//        RootRef = FirebaseDatabase.getInstance().getReference();
-
-//        jarvis app = (jarvis) getApplication();
-//        mSocket = app.getmSocket();
-//        if(mSocket.connected()){
-//            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
-//        }else{
-//            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
-//        }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -144,12 +134,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.w("Error", "Google sign in failed", e);
                 Toast.makeText(MainActivity.this, "Google Sign In Failed", Toast.LENGTH_LONG).show();
             }
-
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-
 
         Log.d("Info", "firebaseAuthWithGoogle:" + acct.getId());
 
@@ -157,56 +145,7 @@ public class MainActivity extends AppCompatActivity {
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
 
-
-//
-//        if(mSocket.connected()){
-//            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
-//        }else {
-//            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
-//        }
-//
-//        mSocket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
-//            @Override
-//            public void call(Object... args) {
-//                Transport transport = (Transport) args[0];
-//                transport.on(Transport.EVENT_ERROR, new Emitter.Listener() {
-//                    @Override
-//                    public void call(Object... args) {
-//                        Exception e = (Exception) args[0];
-//                        Toast.makeText(MainActivity.this, "caught an error...", Toast.LENGTH_LONG).show();
-//                        Log.e("socket", "Transport Error: " + e);
-//                        e.printStackTrace();
-//                        e.getCause().printStackTrace();
-//                    }
-//                });
-//            }
-//        });
-
         new CommunicateBackend(idToken, authCode).execute();
-//        if(mSocket.connected()){
-//            Toast.makeText(MainActivity.this, "Connected Socket!!", Toast.LENGTH_LONG).show();
-//        }else {
-//            Toast.makeText(MainActivity.this, "Can't connect to Socket...", Toast.LENGTH_LONG).show();
-//        }
-
-//        mSocket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
-//            @Override
-//            public void call(Object... args) {
-//                Transport transport = (Transport) args[0];
-//                transport.on(Transport.EVENT_ERROR, new Emitter.Listener() {
-//                    @Override
-//                    public void call(Object... args) {
-//                        Exception e = (Exception) args[0];
-//                        Toast.makeText(MainActivity.this, "caught an error...", Toast.LENGTH_LONG).show();
-//                        Log.e("socket", "Transport Error: " + e);
-//                        e.printStackTrace();
-//                        e.getCause().printStackTrace();
-//                    }
-//                });
-//            }
-//        });
-
-       // new CommunicateBackend(idToken, authCode).execute();
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -275,11 +214,18 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Integer response) {
             Toast.makeText(MainActivity.this, "Sent stuff to backend on the background", Toast.LENGTH_LONG).show();
             super.onPostExecute(response);
+            JSONObject authenticate_json = new JSONObject();
             if(response == 200) {
                 jarvis app = (jarvis) getApplication();
                 mSocket = app.getmSocket();
                 if(mSocket.connected()){
-                    Toast.makeText(MainActivity.this, "Socket Connected after approval", Toast.LENGTH_LONG).show();
+                    try {
+                        authenticate_json.put("idToken", idToken);
+                        mSocket.emit("authenticate", authenticate_json);
+                        Toast.makeText(MainActivity.this, "Sent authenticatejson", Toast.LENGTH_LONG).show();
+                    }catch(JSONException e){
+                        Toast.makeText(MainActivity.this, "unable to authenticate socket", Toast.LENGTH_LONG).show();
+                    }
                 }else{
                     Toast.makeText(MainActivity.this, "got 200 back but can't connect", Toast.LENGTH_LONG).show();
                 }
@@ -288,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

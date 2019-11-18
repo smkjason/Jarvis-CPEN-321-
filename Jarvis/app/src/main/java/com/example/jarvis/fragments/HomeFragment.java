@@ -2,6 +2,7 @@ package com.example.jarvis.fragments;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.example.jarvis.R;
 //import com.example.jarvis.jarvis;
 //import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -31,6 +33,18 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 
 public class HomeFragment extends Fragment {
@@ -47,6 +61,8 @@ public class HomeFragment extends Fragment {
     private GoogleSignInClient mGoogleSignInClient;
 
     private Socket mSocket;
+
+    private GoogleSignInAccount acct;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,16 +103,12 @@ public class HomeFragment extends Fragment {
         Button My_events = getView().findViewById(R.id.view_profile_bttn);
         Button create_event = getView().findViewById(R.id.create_event_bttn);
         Button chatrooms = getView().findViewById(R.id.go_to_chatroom_bttn);
-        Button Signout = getView().findViewById(R.id.sign_out_button);
         Button Mapp = getView().findViewById(R.id.Map_bttn);
 
-        Signout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signOut();
-                revokeAccess();
-            }
-        });
+        /* Testing Chat */
+
+        acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+
 
 
         My_events.setOnClickListener(new View.OnClickListener() {
@@ -134,16 +146,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void revokeAccess() {
-        mGoogleSignInClient.revokeAccess()
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getActivity(), "Revoked", Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
     public boolean isServicesOK() {
         Log.d(TAG,"isServicesOK: checking google services");
 
@@ -171,5 +173,4 @@ public class HomeFragment extends Fragment {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
-
 }

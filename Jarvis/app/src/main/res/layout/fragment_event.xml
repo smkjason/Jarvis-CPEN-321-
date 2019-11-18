@@ -3,13 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_below="@+id/tablayout_id"
     tools:context=".fragments.EventFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/events_recyclerview"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-
+        android:layout_height="match_parent" />
 </FrameLayout>

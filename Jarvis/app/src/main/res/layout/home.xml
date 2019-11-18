@@ -1,50 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentBottom="true">
+    android:orientation="vertical">
 
-<!--    <include-->
-<!--        android:id="@+id/toolbar_actionbar"-->
-<!--        layout="@layout/bar_layout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"/>-->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme">
+        <include
+            android:id="@+id/home_toolbar"
+            layout="@layout/toolbar">
+        </include>
 
-    <include
-        android:id="@+id/home_toolbar"
-        layout="@layout/toolbar">
-    </include>
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            android:id="@+id/tablayout_id"
+            app:tabTextColor="@color/tabtextcolor"
+            app:tabIndicatorColor="@color/tabindicatorcolor"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
+            />
+    </com.google.android.material.appbar.AppBarLayout>
 
-<!--    <androidx.appcompat.widget.Toolbar-->
-<!--        android:id="@+id/my_toolbar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="?attr/actionBarSize"-->
-<!--        android:background="?attr/colorPrimary"-->
-<!--        android:elevation="4dp"-->
-<!--        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/home_toolbar"-->
-<!--        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">-->
-<!--    </androidx.appcompat.widget.Toolbar>-->
+
 
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/viewpager_id"
         app:layout_constraintTop_toTopOf="parent"
     />
 
-    <com.google.android.material.tabs.TabLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="fill"
-        app:tabMode="fixed"
-        android:id="@+id/tablayout_id"
-        app:tabTextColor="@color/tabtextcolor"
-        app:tabIndicatorColor="@color/tabindicatorcolor"
-        android:background="@color/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/home_toolbar"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

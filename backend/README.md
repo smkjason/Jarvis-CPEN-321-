@@ -173,8 +173,13 @@ All of these commands needs to have the user's google api key, since that's how 
 
 ## Chat
  - send message
+done through socket
  - receive message
+done through socket
  - chat information
+ -retrieve old chats:
+http://localhost:3000/events/<id>/messages?before=<unix timestamp>
+
 
 ## Event
 ```json

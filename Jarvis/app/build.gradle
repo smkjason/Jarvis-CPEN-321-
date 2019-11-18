@@ -99,6 +99,7 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 
+    implementation 'com.applandeo:material-calendar-view:1.4.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

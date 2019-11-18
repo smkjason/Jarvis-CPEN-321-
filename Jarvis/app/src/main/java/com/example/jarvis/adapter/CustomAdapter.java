@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.R;
+import com.example.jarvis.jarvis_types.jarvisevent;
 
 import java.util.ArrayList;
 
@@ -22,10 +23,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
-    private ArrayList<String> events;
+    private ArrayList<jarvisevent> events;
     private Context mContext;
 
-    public CustomAdapter(ArrayList<String> events, Context context){
+
+    public CustomAdapter(ArrayList<jarvisevent> events, Context context){
         this.events = events;
         mContext = context;
     }
@@ -42,8 +44,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         Log.d("eventItem", "onBindViewHolder: called.");
 
-        String this_event = events.get(position);
-        holder.eventName.setText(this_event);
+        jarvisevent this_event = events.get(position);
+        holder.eventName.setText(this_event.getName_of_event());
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +53,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 Toast.makeText(mContext, "Going to Event Info...", Toast.LENGTH_LONG).show();
                 /* Go to GroupChat on Click */
                 Intent intent = new Intent (mContext, GroupChatActivity.class);
-                intent.putExtra("Name", events.get(position));
+                intent.putExtra("eventid", events.get(position).getEventid());
+                intent.putExtra("Name", events.get(position).getName_of_event());
                 mContext.startActivity(intent);
             }
         });

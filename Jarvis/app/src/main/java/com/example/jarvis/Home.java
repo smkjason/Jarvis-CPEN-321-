@@ -75,15 +75,6 @@ public class Home extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.options_menu, menu);
-//
-//        return true;
-//    }
-
-
     /* Probably not needed anymore because we are now using Firebase login logout */
     private void signOut() {
         mGoogleSignInClient.signOut()
@@ -125,11 +116,9 @@ public class Home extends AppCompatActivity {
         }
 
         if(item.getItemId() == R.id.Settings_menu){
-            /* Do somcething */
+
         }
         if(item.getItemId() == R.id.Log_out_menu){
-            /* Do something */
-            mAuth.signOut();
             revokeAccess();
         }
 
