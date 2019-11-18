@@ -1,11 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<TextView
+    android:id="@+id/name"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="Hello World..."
+    android:text="Name"
     android:textStyle="bold"
-    android:textSize="18sp"
-    android:layout_margin="12dp"
-    android:padding="12dp">
+    android:textSize="21sp" />
 
-</TextView>
+
+<TextView
+    android:id="@+id/email"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Email"
+    android:textStyle="bold"
+    android:textSize="16sp" />
+
+</LinearLayout>
+
+<!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:text="Hello World..."-->
+<!--android:textStyle="bold"-->
+<!--android:textSize="18sp"-->
+<!--android:layout_margin="12dp"-->
+<!--android:padding="12dp">-->
+
+<!--</TextView>-->
