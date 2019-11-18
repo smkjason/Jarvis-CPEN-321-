@@ -1,6 +1,7 @@
 package com.example.jarvis;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.viewpager.widget.ViewPager;
@@ -58,6 +60,11 @@ public class CreateEvent extends AppCompatActivity {
     private int year, month, day;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
 
+    ArrayList<String> friendList = new ArrayList<>();
+    TextView peopleAtEvent;
+
+    Button add_friends;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +72,6 @@ public class CreateEvent extends AppCompatActivity {
         Toolbar mtoolbar;
         Button create;
         final EditText nameofEvent;
-        final EditText peopleatEvent;
 
         String email;
 
@@ -102,10 +108,11 @@ public class CreateEvent extends AppCompatActivity {
         //TextEdits
         nameofEvent = findViewById(R.id.name_of_event);
 
-        peopleatEvent = findViewById(R.id.add_people_to_event);
+        peopleAtEvent = findViewById(R.id.add_people_to_event);
 
         //Button(s)
         create = findViewById(R.id.make_event);
+        add_friends = findViewById(R.id.add_friends);
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -134,28 +141,36 @@ public class CreateEvent extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String eventName = nameofEvent.getText().toString();
-                final String eventMembers = peopleatEvent.getText().toString();
-                makeNewEvent(eventName, eventMembers);
+                makeNewEvent(eventName, friendList);
+            }
+        });
+
+        add_friends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),SearchFriends.class);
+                intent.putExtra("Added Friends", friendList);
+                startActivityForResult(intent,101);
             }
         });
 
     }
 
-    private void makeNewEvent(final String eventName, String email) {
+    private void makeNewEvent(final String eventName, ArrayList<String> emails) {
         /* Check if the User exists on Server */
         Toast.makeText(CreateEvent.this, "making new event", Toast.LENGTH_LONG).show();
 
-        new CommunicateBackend(eventName, email).execute();
+        new CommunicateBackend(eventName, emails).execute();
     }
 
     private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
 
         String eventName;
-        String email;
+        ArrayList<String> email;
 
-        CommunicateBackend(String eventName, String email) {
+        CommunicateBackend(String eventName, ArrayList<String> emails) {
             this.eventName = eventName;
-            this.email = email;
+            this.email = emails;
         }
 
         @Override
@@ -241,9 +256,31 @@ public class CreateEvent extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == RESULT_OK) {
+            ArrayList<String> newList = data.getStringArrayListExtra("Added Friends");
+            for (int i = 0; i < newList.size(); i++) {
+                if (!friendList.contains(newList.get(i))) {
+                    friendList.add(newList.get(i));
+                }
+            }
+            String People = "";
+            for (int i = 0; i < friendList.size(); i++) {
+                if (i != 0) {
+                    People += ", ";
+                }
+                People += friendList.get(i);
+            }
+            peopleAtEvent.setText(People);
+            Log.d("Back", "Successful");
+            Log.d("Back", String.valueOf(requestCode));
+            Log.d("Back", String.valueOf(resultCode));
+        }
+    }
 
-
-//    class ViewPagerAdapter extends FragmentPagerAdapter {
+    //    class ViewPagerAdapter extends FragmentPagerAdapter {
 //
 //        private ArrayList<Fragment> fragments;
 //        private ArrayList<String> titles;
