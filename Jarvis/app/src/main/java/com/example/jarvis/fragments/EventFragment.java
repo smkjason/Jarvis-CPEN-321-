@@ -99,6 +99,11 @@ public class EventFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity());
+        mAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.scrollToPosition(mEvents.size() - 1);
+
         new GetEventIDs(idToken, email).execute();
 
 //
@@ -124,7 +129,6 @@ public class EventFragment extends Fragment {
         protected JSONArray doInBackground(Void... v) {
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse httpResponse;
-            String id = "";
             JSONArray jsonArray = new JSONArray();
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
             try {
@@ -165,14 +169,15 @@ public class EventFragment extends Fragment {
                         Log.e(TAG, "initEvents(): JSONException", e);
                     }
                 }
+                CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity());
+                mAdapter.notifyDataSetChanged();
+                recyclerView.setAdapter(mAdapter);
+                recyclerView.scrollToPosition(mEvents.size() - 1);
             }
-            CustomAdapter mAdapter = new CustomAdapter(mEvents, getActivity());
-            mAdapter.notifyDataSetChanged();
-            recyclerView.setAdapter(mAdapter);
-            recyclerView.scrollToPosition(mEvents.size() - 1);
 
             Intent intent = new Intent(getActivity(), GroupChatActivity.class);
             intent.putExtra("eventname", "Nothing for now");
+            intent.putExtra("idToken", idToken);
             startActivity(intent);
         }
     }

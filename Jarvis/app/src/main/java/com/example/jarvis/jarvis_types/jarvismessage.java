@@ -18,6 +18,12 @@ public class jarvismessage {
         this.time = timeFormat.format(Calendar.getInstance().getTime());
     }
 
+    public jarvismessage(String message, String sender, String time) {
+        this.message = message;
+        this.sender = sender;
+        this.time = time;
+    }
+
     public String getMessage() {
         return message;
     }
