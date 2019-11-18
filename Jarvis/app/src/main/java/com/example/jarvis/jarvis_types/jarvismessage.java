@@ -7,21 +7,25 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class jarvismessage {
-    public String message;
-    public String sender;
-    public String time;
+    private String message;
+    private String sender;
+    private String time;
+    private Boolean is_mine = false;
+
 
     public jarvismessage(String sender, String message){
         this.sender = sender;
         this.message = message;
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh: mm");
         this.time = timeFormat.format(Calendar.getInstance().getTime());
+        is_mine = true;
     }
 
     public jarvismessage(String message, String sender, String time) {
         this.message = message;
         this.sender = sender;
         this.time = time;
+        is_mine = false;
     }
 
     public String getMessage() {
@@ -35,4 +39,6 @@ public class jarvismessage {
     public String getTime() {
         return time;
     }
+
+    public Boolean get_is_mine(){ return is_mine; }
 }
