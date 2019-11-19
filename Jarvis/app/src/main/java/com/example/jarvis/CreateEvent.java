@@ -37,11 +37,12 @@ import java.util.Date;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.Toolbar;
 import io.socket.client.Socket;
 
-public class CreateEvent extends AppCompatActivity {
+public class CreateEvent extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
     private static final String TAG = "CreateEvent";
 
@@ -59,96 +60,46 @@ public class CreateEvent extends AppCompatActivity {
     private Calendar calendar;
     private int year, month, day;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
+    private EditText nameofEvent;
 
-    ArrayList<String> friendList = new ArrayList<>();
-    TextView peopleAtEvent;
+    private ArrayList<String> friendList = new ArrayList<>();
+    private TextView peopleAtEvent;
 
-    Button add_friends;
+    private Button create;
+
+    private Toolbar mtoolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_event);
-        Toolbar mtoolbar;
-        Button create;
-        final EditText nameofEvent;
 
-        String email;
-
-        mDisplaydate = findViewById(R.id.tvDate);
-
-        mDisplaydate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calendar = Calendar.getInstance();
-                year = calendar.get(Calendar.YEAR);
-                month = calendar.get(Calendar.MONTH);
-                day = calendar.get(Calendar.DAY_OF_MONTH);
-
-                Toast.makeText(CreateEvent.this, "Clicked!", Toast.LENGTH_LONG).show();
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(
-                        CreateEvent.this,
-                        R.style.Theme_AppCompat_Light_Dialog_MinWidth,
-                        mDateSetListener,
-                        year, month, day);
-                datePickerDialog.getWindow();
-                datePickerDialog.show();
-            }
-        });
-
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                mDisplaydate.setText(new StringBuilder().append(dayOfMonth).append("/").append(month).append("/").append(year));
-                Log.d(TAG, "Date:" + year + "/" + month + "/" + dayOfMonth);
-            }
-        };
 
         //TextEdits
         nameofEvent = findViewById(R.id.name_of_event);
-
+        mDisplaydate = findViewById(R.id.tvDate);
         peopleAtEvent = findViewById(R.id.add_people_to_event);
 
         //Button(s)
         create = findViewById(R.id.make_event);
-        add_friends = findViewById(R.id.add_friends);
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        email = currentUser.getEmail();
 
         mSocket = ((jarvis) this.getApplication()).getmSocket();
-        if(mSocket.connected()){
-            Toast.makeText(CreateEvent.this, "Connected!!", Toast.LENGTH_LONG).show();
-        }else{
+        if(!mSocket.connected()) {
             Toast.makeText(CreateEvent.this, "Can't connect...", Toast.LENGTH_LONG).show();
         }
 
-        mtoolbar = findViewById(R.id.create_event_toolbar);
-//        tabLayout = (TabLayout) findViewById(R.id.tablayout_id);
-//        appBarLayout = (AppBarLayout) findViewById(R.id.appbarid);
-//        viewPager = (ViewPager) findViewById(R.id.viewpager_id);
 
+        mtoolbar = findViewById(R.id.create_event_toolbar);
         setSupportActionBar(mtoolbar);
         getSupportActionBar().setTitle("Create_Event");
+
         acct = GoogleSignIn.getLastSignedInAccount(this);
-        
-        new CreateTask().execute();
 
-        create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String eventName = nameofEvent.getText().toString();
-                makeNewEvent(eventName, friendList);
-                Intent intent = new Intent(CreateEvent.this, SelectTime.class);
-                startActivity(intent);
-
-            }
-        });
-
-        add_friends.setOnClickListener(new View.OnClickListener() {
+        peopleAtEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(),SearchFriends.class);
@@ -157,21 +108,53 @@ public class CreateEvent extends AppCompatActivity {
             }
         });
 
+        mDisplaydate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+
+        create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String eventName = nameofEvent.getText().toString();
+                new makeNewEvent(eventName, friendList).execute();
+                Intent intent = new Intent(CreateEvent.this, SelectTime.class);
+                startActivity(intent);
+
+            }
+        });
+
     }
 
-    private void makeNewEvent(final String eventName, ArrayList<String> emails) {
-        /* Check if the User exists on Server */
-        Toast.makeText(CreateEvent.this, "making new event", Toast.LENGTH_LONG).show();
+    private void showDatePickerDialog() {
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        new CommunicateBackend(eventName, emails).execute();
+        Toast.makeText(CreateEvent.this, "Clicked!", Toast.LENGTH_LONG).show();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                CreateEvent.this,
+                R.style.Theme_AppCompat_DayNight_Dialog,
+                CreateEvent.this,
+                year, month, day);
+        datePickerDialog.show();
     }
 
-    private class CommunicateBackend extends AsyncTask<Void, Void, Void> {
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        String date = month + " / " + dayOfMonth + " / " + year;
+        mDisplaydate.setText(date);
+    }
+
+    private class makeNewEvent extends AsyncTask<Void, Void, Void> {
 
         String eventName;
         ArrayList<String> email;
 
-        CommunicateBackend(String eventName, ArrayList<String> emails) {
+        makeNewEvent(String eventName, ArrayList<String> emails) {
             this.eventName = eventName;
             this.email = emails;
         }
@@ -211,7 +194,7 @@ public class CreateEvent extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(CreateEvent.this, "Event sent to backend", Toast.LENGTH_LONG).show();
+            Toast.makeText(CreateEvent.this, "Event Successfully Created", Toast.LENGTH_LONG).show();
             super.onPostExecute(aVoid);
             //Maybe Implemented
         }

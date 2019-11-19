@@ -49,6 +49,10 @@
         Enter Search
     </string>
 
+    <string name="CREATEVENT_TOAST">
+        Event Successfully Created
+    </string>
+
     <string-array name="test">
         <item>test1</item>
         <item>test2</item>

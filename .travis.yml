@@ -6,7 +6,10 @@ addons:
 matrix:
   include:
   - language: android
+    install: ant deps
     dist: trusty
+    script:
+  - ./gradlew build --scan -s
     android:
         components:
         # Uncomment the lines below if you want to
