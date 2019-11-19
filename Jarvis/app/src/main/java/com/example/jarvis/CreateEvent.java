@@ -183,9 +183,12 @@ public class CreateEvent extends AppCompatActivity {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
                 Log.d(TAG, "The year: " + year + "\nThe month: " + month + "\nThe day" + day);
-
                 JSONObject json = new JSONObject();
                 json.put("name", eventName);
+                json.put("year", year);
+                json.put("month", month);
+                json.put("day", day);
+                json.put("attendees", friendList);
                 httpPost.setEntity(new StringEntity(json.toString()));
                 httpPost.setHeader("Content-Type", "application/json");
                 HttpResponse response = httpClient.execute(httpPost);

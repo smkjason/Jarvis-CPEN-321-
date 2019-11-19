@@ -41,9 +41,7 @@
         android:layout_marginTop="24dp"
         android:clickable="true"
         android:text="Choose a Date!"
-        android:textAlignment="center"
         android:textSize="20dp"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -56,6 +54,7 @@
         android:ems="10"
         android:hint="Name of the Event..."
         android:inputType="textPersonName"
+        android:background="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -85,6 +84,7 @@
         android:layout_width="211dp"
         android:layout_height="146dp"
         android:layout_marginTop="25dp"
+        android:textSize="20dp"
         android:text="No Added Friends"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,10 +96,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="monospace"
-        android:text="What is this event called?"
+        android:background="@drawable/text_box"
+        android:text=" What is this event called? "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.20"
         app:layout_constraintStart_toStartOf="parent"
+        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/create_event_toolbar" />
 
     <TextView
@@ -108,7 +110,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:fontFamily="monospace"
-        android:text="When does this need to happen by?"
+        android:textStyle="bold"
+        android:background="@drawable/text_box"
+        android:text=" When does this need to happen by? "
         app:layout_constraintBottom_toTopOf="@+id/tvDate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.00"
@@ -121,7 +125,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:fontFamily="monospace"
-        android:text="Invites: "
+        android:textStyle="bold"
+        android:background="@drawable/text_box"
+        android:text=" Invites: "
         android:textSize="17dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.00"
