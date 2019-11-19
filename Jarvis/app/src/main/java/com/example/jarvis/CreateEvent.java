@@ -73,8 +73,6 @@ public class CreateEvent extends AppCompatActivity {
         Button create;
         final EditText nameofEvent;
 
-        String email;
-
         mDisplaydate = findViewById(R.id.tvDate);
 
         mDisplaydate.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +84,6 @@ public class CreateEvent extends AppCompatActivity {
                 day = calendar.get(Calendar.DAY_OF_MONTH);
 
                 Toast.makeText(CreateEvent.this, "Clicked!", Toast.LENGTH_LONG).show();
-
                 DatePickerDialog datePickerDialog = new DatePickerDialog(
                         CreateEvent.this,
                         R.style.Theme_AppCompat_Light_Dialog_MinWidth,
@@ -101,13 +98,13 @@ public class CreateEvent extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 mDisplaydate.setText(new StringBuilder().append(dayOfMonth).append("/").append(month).append("/").append(year));
+                onBackPressed();
                 Log.d(TAG, "Date:" + year + "/" + month + "/" + dayOfMonth);
             }
         };
 
         //TextEdits
         nameofEvent = findViewById(R.id.name_of_event);
-
         peopleAtEvent = findViewById(R.id.add_people_to_event);
 
         //Button(s)
@@ -117,7 +114,6 @@ public class CreateEvent extends AppCompatActivity {
         //Firebase
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        email = currentUser.getEmail();
 
         mSocket = ((jarvis) this.getApplication()).getmSocket();
         if(mSocket.connected()){
@@ -135,7 +131,7 @@ public class CreateEvent extends AppCompatActivity {
         getSupportActionBar().setTitle("Create_Event");
         acct = GoogleSignIn.getLastSignedInAccount(this);
         
-        new CreateTask().execute();
+//        new CreateTask().execute();
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override
