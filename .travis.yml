@@ -1,6 +1,7 @@
 matrix:
   include:
   - language: android
+    install: ant deps
     dist: trusty
     script:
   - ./gradlew build --scan -s
