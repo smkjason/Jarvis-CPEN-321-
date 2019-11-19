@@ -2,6 +2,8 @@ matrix:
   include:
   - language: android
     dist: trusty
+    script:
+  - ./gradlew build --scan -s
     android:
         components:
         # Uncomment the lines below if you want to
