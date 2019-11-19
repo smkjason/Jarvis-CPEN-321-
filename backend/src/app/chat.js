@@ -75,8 +75,8 @@ async function setupEvents(socket){
                 var chat = new Chat(data)
                 await chat.save()
                 console.log("saved chat, time to emit message")
-
-                socket.emit(event.id + ".message", data)
+                
+                socket.broadcast.emit(event.id + ".message", data)
             })
         }
     } else {
