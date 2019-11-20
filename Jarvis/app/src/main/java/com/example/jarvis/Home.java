@@ -87,6 +87,13 @@ public class Home extends AppCompatActivity {
                 });
     }
     private void revokeAccess() {
+        mAuth.getCurrentUser().delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(Home.this, "User Removed", Toast.LENGTH_LONG).show();
+                    }
+                });
         mGoogleSignInClient.revokeAccess()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
@@ -95,6 +102,7 @@ public class Home extends AppCompatActivity {
                         finish();
                     }
                 });
+
     }
 
     /* This is for drop down menu */

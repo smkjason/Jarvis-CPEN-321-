@@ -70,21 +70,14 @@ public class MainActivity extends AppCompatActivity {
         //Firebase
         mAuth = FirebaseAuth.getInstance();
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() != null){
-                    sendUsertoHomeActivity();
-                }
-            }
-        };
-
-        signin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
+//        mAuthListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                if(firebaseAuth.getCurrentUser() != null){
+//                    sendUsertoHomeActivity();
+//                }
+//            }
+//        };
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -99,6 +92,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        signin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
     }
 
     private Emitter.Listener onConnect = new Emitter.Listener() {
@@ -212,7 +212,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Integer response) {
-            Toast.makeText(MainActivity.this, "Sent stuff to backend on the background", Toast.LENGTH_LONG).show();
             super.onPostExecute(response);
             JSONObject authenticate_json = new JSONObject();
             if(response == 200) {
@@ -222,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         authenticate_json.put("idToken", idToken);
                         mSocket.emit("authenticate", authenticate_json);
-                        Toast.makeText(MainActivity.this, "Sent authenticatejson", Toast.LENGTH_LONG).show();
                     }catch(JSONException e){
                         Toast.makeText(MainActivity.this, "unable to authenticate socket", Toast.LENGTH_LONG).show();
                     }
@@ -238,7 +236,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         mSocket.disconnect();
     }
 
