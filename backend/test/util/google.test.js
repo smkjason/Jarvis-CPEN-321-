@@ -37,4 +37,26 @@ describe('google client test', () =>{
 
         // )
     })
+
+    /*
+    test('auth uses google client in production', async () => {
+        jest.mock('google-auth-library')
+        const returnValue = {
+            getPayload: jest.fn()
+        }
+        const Oauth2ClientMock = {
+            verifyIdToken: jest.fn().mockImplementation(() => Promise.resolve(returnValue))
+        }
+
+        OAuth2Client.mockImplementation(() => Oauth2ClientMock)
+        process.env.ENV = 'production'
+
+        try{
+            await Google.auth({headers: {authorization: 'Bearer TOKEN'}})
+        } catch(err){}
+
+        expect(Oauth2ClientMock.verifyIdToken).toHaveBeenCalledTimes(1)
+        //expect(OAuth2Client.mock.calls[0][0]).toBe(client_id)
+    })
+    */
 })

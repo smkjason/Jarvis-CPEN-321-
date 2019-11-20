@@ -207,6 +207,151 @@ weight is used for when the user enters in free slots, and our app will calculat
  - add people
  - remove people
 
+## Event Creation
+
+ - admin inputs event creation constraints
+ `POST user/:email/event/`
+ ```json
+{
+    "deadline": "YYYY-MM-DD",
+    "length": "hh:mm",
+    "invitees":["array of emails"],
+    "name": "name" 
+}
+ ```
+deadline is inclusive
+
+return:
+```json
+{
+    "id":"tentative uuid",
+    "status":"success",
+    "error":"some message"
+}
+```
+
+ - backend sends notification to all attendees
+ (TBD)
+ (socket sends status event?)
+
+ - front end receives notification, calls backend to display contraints
+
+ - user picks list of preferred times, sends to backend
+
+ `PUT user/:email/event/:id(?declined=true)`
+ ```json
+ {
+     "timeslots":[
+         {
+             "startTime":"YYYY-MM-DD hh:mm",
+             "endTime":"YYYY-MM-DD hh:mm"
+         },
+         {
+             "startTime":"YYYY-MM-DD hh:mm",
+             "endTime":"YYYY-MM-DD hh:mm"
+         }
+         ...
+     ]
+ }
+ ```
+ return:
+```json
+{
+    "status":"success",
+    "error":"some message"
+}
+```
+
+ - admin can view the status of the event
+
+ `GET event/:id/` will return
+  ```json
+{
+    "deadline": "YYYY-MM-DD",
+    "length": "hh:mm",
+    "invitees":["array of emails"],
+    "name": "name",
+    "responses":[
+        {
+            "email":"email",
+            "timeslots":[...],
+            "declined": true
+        }
+        ...
+    ]
+}
+ ```
+ - admin can look at backend - suggested timeslots
+
+ `GET event/:id/preferred`
+ Return:
+ ```json
+ {
+    "timeslots":[
+         {
+             "startTime":"YYYY-MM-DD hh:mm",
+             "endTime":"YYYY-MM-DD hh:mm"
+         },
+         {
+             "startTime":"YYYY-MM-DD hh:mm",
+             "endTime":"YYYY-MM-DD hh:mm"
+         }
+         ...
+     ]
+ }
+ ```
+
+ - admin can also create the event at any time
+
+ `POST event/:id/activate`
+ ```json
+ {
+    "startTime":"YYYY-MM-DD hh:mm",
+    "endTime":"YYYY-MM-DD hh:mm"
+ }
+ ```
+ returns:
+ ```json
+ {
+    "creatorEmail":"email",
+    "id":"uuid",
+    (other stuff that the event schema has)
+ }
+ ```
+- backend will create the event for every person, chat will be created for the event
+
+Push notification to everyone that accepted the event
+
+## Event Location
+
+- front-end periodically updates location
+`PUT user/:email/location`
+```json
+{
+    "lat":"number",
+    "lon":"number"
+}
+```
+returns:
+```json
+{
+    "success":true
+}
+```
+
+`GET event/:id/locations`
+```json
+{
+    "locations":[
+        {
+            "user":"email",
+            "lat":"number",
+            "lon":"number"
+        }
+    ]
+}
+
+
 
 
 ***We can use refresh tokens to obtain more information

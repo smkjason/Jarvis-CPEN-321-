@@ -19,6 +19,14 @@ let eventModel = new Schema({
     googleEvent: Boolean
 })
 
+let tentativeEventModel = new Schema({
+    length: String,
+    invitees: [String],
+    deadline: String,
+    name: String,
+    responses: [Mixed]
+})
+
 let userModel = new Schema({
     name: String,
     google_token: String,
@@ -37,5 +45,6 @@ let chatModel = new Schema({
 module.exports = {
     EventModel: mongoose.model('EventModel', eventModel),
     UserModel: mongoose.model('UserModel', userModel),
-    ChatModel: mongoose.model('ChatModel', chatModel)
+    ChatModel: mongoose.model('ChatModel', chatModel),
+    TentativeEventModel: mongoose.model('TentativeEventModel', tentativeEventModel),
 }
