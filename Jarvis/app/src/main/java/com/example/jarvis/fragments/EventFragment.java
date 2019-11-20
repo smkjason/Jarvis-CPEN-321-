@@ -156,7 +156,6 @@ public class EventFragment extends Fragment {
                 Toast.makeText(getActivity(), "!!couldn't get jsonarray!!", Toast.LENGTH_LONG).show();
             }
             else{
-                Toast.makeText(getActivity(), "Trying to get event names...........", Toast.LENGTH_LONG).show();
                 Log.d(TAG, "jsonArray: " + jsonArray);
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{

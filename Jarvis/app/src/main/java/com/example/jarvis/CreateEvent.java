@@ -102,7 +102,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         peopleAtEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),SearchFriends.class);
+                Intent intent = new Intent(getApplicationContext(), SearchFriends.class);
                 intent.putExtra("Added Friends", friendList);
                 startActivityForResult(intent,101);
             }
@@ -258,7 +258,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
             String People = "";
             for (int i = 0; i < friendList.size(); i++) {
                 if (i != 0) {
-                    People += ", ";
+                    People += "\n";
                 }
                 People += friendList.get(i);
             }
