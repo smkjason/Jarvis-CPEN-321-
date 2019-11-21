@@ -55,20 +55,19 @@ public class GroupChatActivity extends AppCompatActivity {
     private NotificationManagerCompat notificationManagerCompat;
 
     private int message_id = 0;
-
+    //XML
     private Button SendMessageButton;
     private EditText userMessage;
-
+    public RecyclerView myRecylerView ;
+    private Toolbar toolbar;
+    
     private String currentEvent;
     private String currentUserID;
     private String currentUserName;
-    private Toolbar toolbar;
 
     //new
     private Socket mSocket;
-    public RecyclerView myRecylerView ;
     public List<jarvismessage> MessageList ;
-
     private String eventid;
     private String idToken;
 

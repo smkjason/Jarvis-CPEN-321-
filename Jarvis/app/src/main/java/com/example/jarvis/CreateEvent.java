@@ -26,9 +26,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,37 +47,41 @@ import androidx.appcompat.widget.Toolbar;
 import io.socket.client.Socket;
 
 public class CreateEvent extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
-
     private static final String TAG = "CreateEvent";
 
-    private TabLayout tabLayout;
-    private AppBarLayout appBarLayout;
-    private ViewPager viewPager;
-
+    //Server Stuff
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-
     private Socket mSocket;
     private GoogleSignInAccount acct;
 
+    //XML
+    private TabLayout tabLayout;
+    private AppBarLayout appBarLayout;
+    private ViewPager viewPager;
+    private EditText nameofEvent;
+    private TextView peopleAtEvent;
+    private Button create;
+    private Toolbar mtoolbar;
     private TextView mDisplaydate;
     private Calendar calendar;
     private int year, month, day;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
-    private EditText nameofEvent;
 
+    //Event Details
+    private Date deadline;
+    private SimpleDateFormat deadlineformat;
+    private Time length;
+    private String eventid;
     private ArrayList<String> friendList = new ArrayList<>();
-    private TextView peopleAtEvent;
-
-    private Button create;
-
-    private Toolbar mtoolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_event);
 
+        //deadline format
+        deadlineformat = new SimpleDateFormat("yyyy-MM-dd");
 
         //TextEdits
         nameofEvent = findViewById(R.id.name_of_event);
@@ -95,7 +103,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
 
         mtoolbar = findViewById(R.id.create_event_toolbar);
         setSupportActionBar(mtoolbar);
-        getSupportActionBar().setTitle("Create_Event");
+        getSupportActionBar().setTitle("Create an Event");
 
         acct = GoogleSignIn.getLastSignedInAccount(this);
 
@@ -119,9 +127,20 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
             @Override
             public void onClick(View v) {
                 final String eventName = nameofEvent.getText().toString();
-                new makeNewEvent(eventName, friendList).execute();
-                Intent intent = new Intent(CreateEvent.this, SelectTime.class);
-                startActivity(intent);
+                if(eventName.isEmpty()){
+                    Toast.makeText(CreateEvent.this, "What is the name of this event?", Toast.LENGTH_LONG).show();
+                }
+                else if(deadline == null){
+                    Toast.makeText(CreateEvent.this, "When does this needs to happen by?", Toast.LENGTH_LONG).show();
+                }
+                else if(length == null || length.equals(new Time(0))){
+                    Toast.makeText(CreateEvent.this, "The length of the event is invalid.", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    new makeNewEvent(eventName, deadline, length, friendList).execute();
+                    Intent intent = new Intent(CreateEvent.this, SelectTime.class);
+                    startActivity(intent);
+                }
 
             }
         });
@@ -145,37 +164,47 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        String date = month + " / " + dayOfMonth + " / " + year;
+        String date = year + "-" + month + "-" + dayOfMonth;
         mDisplaydate.setText(date);
+        try {
+            deadline = deadlineformat.parse(date);
+        }catch(ParseException e){
+            Log.e(TAG, "dateformat exception", e);
+        }
     }
 
-    private class makeNewEvent extends AsyncTask<Void, Void, Void> {
+    private class makeNewEvent extends AsyncTask<Void, Void, JSONObject> {
 
         String eventName;
         ArrayList<String> email;
+        Date deadline;
+        Time length;
 
-        makeNewEvent(String eventName, ArrayList<String> emails) {
+
+        makeNewEvent(String eventName, Date date, Time length, ArrayList<String> emails) {
             this.eventName = eventName;
             this.email = emails;
+            this.deadline = date;
+            this.length = length;
         }
 
         @Override
-        protected Void doInBackground(Void... v) {
-
+        protected JSONObject doInBackground(Void... v) {
+            JSONObject createresponse = new JSONObject();
             try {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
                 Log.d(TAG, "The year: " + year + "\nThe month: " + month + "\nThe day" + day);
                 JSONObject json = new JSONObject();
                 json.put("name", eventName);
-                json.put("year", year);
-                json.put("month", month);
-                json.put("day", day);
-                json.put("attendees", friendList);
+                json.put("deadline", deadline);
+                json.put("length", length);
+                json.put("invitees", friendList);
                 httpPost.setEntity(new StringEntity(json.toString()));
                 httpPost.setHeader("Content-Type", "application/json");
                 HttpResponse response = httpClient.execute(httpPost);
                 final String responseBody = EntityUtils.toString(response.getEntity());
+                createresponse = new JSONObject(responseBody);
                 Log.i("Information", "Signed in as: " + responseBody);
             } catch (ClientProtocolException e) {
                 Log.e("Error", "Error sending ID token to backend.", e);
@@ -184,65 +213,24 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
             } catch (Exception e) {
                 Log.e("Error", "I caught some exception.", e);
             }
-            return null;
-        }
-
-
-        protected void onPostExecute() {
-            //Maybe Implemented
+            return createresponse;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            Toast.makeText(CreateEvent.this, "Event Successfully Created", Toast.LENGTH_LONG).show();
-            super.onPostExecute(aVoid);
-            //Maybe Implemented
-        }
-    }
-
-    private class CreateTask extends AsyncTask<Void, Void, String> {
-        @Override
-        protected String doInBackground(Void... v) {
-            HttpClient httpClient = new DefaultHttpClient();
-            String responseBody = "";
-            String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+        protected void onPostExecute(JSONObject jsonObject) {
+//            Toast.makeText(CreateEvent.this, "Event Successfully Created", Toast.LENGTH_LONG).show();
+            super.onPostExecute(jsonObject);
             try {
-                JSONObject json = new JSONObject();
-                ArrayList<String> recurrence = new ArrayList<String>();
-                json.put("status", "test_status");
-                json.put("created", currentTime);
-                json.put("updated", currentTime);
-                json.put("location", "test_location");
-                json.put("colorId", "test_colorId");
-                json.put("creatorEmail", acct.getEmail());
-                json.put("start", "test_start");
-                json.put("end", "test_end");
-                json.put("attendees", acct.getEmail());
-                json.put("recurrence", recurrence);
-
-                HttpPost request = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/" + "user" + "/" + acct.getEmail() + "/events");
-                StringEntity params = new StringEntity(json.toString());
-                request.addHeader("Authorization", "Bearer " + acct.getIdToken());
-                request.setEntity(params);
-                HttpResponse response = httpClient.execute(request);
-                responseBody = EntityUtils.toString(response.getEntity());
-                Log.d("CreateEvent successful",responseBody);
-            } catch (Exception ex) {
-                Log.e("CreateEvent failed", ex.getMessage());
-                System.out.println(ex);
-                // handle exception here
-            } finally {
-                httpClient.getConnectionManager().shutdown();
+                if (!jsonObject.getString("status").equals("success")) {
+                    Toast.makeText(CreateEvent.this, "Something went wrong with invitation", Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(CreateEvent.this, "Invitation sent!", Toast.LENGTH_LONG).show();
+                    eventid = jsonObject.getString("id");
+                }
+            }catch (JSONException e){
+                Log.e(TAG, "JSONException caught", e);
             }
-            return responseBody;
         }
-        protected void onProgressUpdate() {
-        }
-
-        protected void onPostExecute(String response) {
-            Toast.makeText(CreateEvent.this, "Finished setting up event: " + response, Toast.LENGTH_LONG).show();
-        }
-
     }
 
     @Override
@@ -268,38 +256,4 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
             Log.d("Back", String.valueOf(resultCode));
         }
     }
-
-    //    class ViewPagerAdapter extends FragmentPagerAdapter {
-//
-//        private ArrayList<Fragment> fragments;
-//        private ArrayList<String> titles;
-//
-//        ViewPagerAdapter(FragmentManager fm){
-//            super(fm);
-//            this.fragments = new ArrayList<>();
-//            this.titles = new ArrayList<>();
-//        }
-//
-//        @NonNull
-//        @Override
-//        public Fragment getItem(int position) {
-//            return fragments.get(position);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return fragments.size();
-//        }
-//
-//        public void addFragment(Fragment fragment, String title){
-//            fragments.add(fragment);
-//            titles.add(title);
-//        }
-//
-//        @Nullable
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//            return titles.get(position);
-//        }
-//    }
 }

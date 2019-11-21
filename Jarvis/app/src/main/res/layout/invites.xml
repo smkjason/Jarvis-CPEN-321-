@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Chats">
+    android:background="@color/colorPrimary">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/Chats_ToolBar"
+        android:id="@+id/invites_ToolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/colorPrimaryDark"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
@@ -22,28 +21,12 @@
         </TextView>
     </androidx.appcompat.widget.Toolbar>
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/Chats_AppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvInvites"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        android:layout_weight="3"
-        android:layout_below="@id/Chats_ToolBar"
-        android:id="@+id/chatlist">
+        android:layout_below="@id/invites_ToolBar"
+        android:background="@color/colorAccent">
     </androidx.recyclerview.widget.RecyclerView>
-
-    <View
-        android:layout_marginTop="5dp"
-        android:id="@+id/separator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/primary_text_dark"/>
 
 </RelativeLayout>

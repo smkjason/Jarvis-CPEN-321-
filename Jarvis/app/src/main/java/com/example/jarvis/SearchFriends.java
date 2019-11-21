@@ -123,7 +123,7 @@ public class SearchFriends extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONArray jsonArray) {
+        protected void onPostExecute(JSONArray jsonArray){
             super.onPostExecute(jsonArray);
             JSONObject cur;
             if(jsonArray == null || jsonArray.length() == 0){

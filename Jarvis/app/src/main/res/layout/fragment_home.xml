@@ -30,7 +30,7 @@
         android:layout_marginTop="120dp"
         android:layout_marginEnd="16dp"
         android:background="@color/tabtextcolor"
-        android:text="My Calendar"
+        android:text="New Events"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/Map_bttn"
