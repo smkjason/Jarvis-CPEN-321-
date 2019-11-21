@@ -44,6 +44,7 @@ function socketSetup(server){
 
             //we will now set up all the other event messages
             await setupEvents(socket)
+            await sendEventNotifications(socket)
         })
         socket.email = null
     })
@@ -55,33 +56,40 @@ function socketSetup(server){
 
 /*private functions ----------------- */
 async function setupEvents(socket){
-    var user = await User.findOne({email: socket.email}).exec()
+    if(!socket.email) return socket.emit('error', {msg: 'user does not have a record in the db'})
+    
+    //register all event handlers
+    var events = await EventFunctions.relatedEvents(socket.email)
+    for(const event of events){
+        console.log('registering event handler with id: ' + event.id)
 
-    if(user && user.email){
-        //register all event handlers
-        var events = await EventFunctions.relatedEvents(user.email)
-        for(const event of events){
-            console.log('registering event handler with id: ' + event.id)
+        socket.on(event.id + ".send", async function(data){
+            data.timestamp = (new Date()).getTime()
+            data.event = event.id
+            data.sender = socket.email
 
-            socket.on(event.id + ".send", async function(data){
-                console.log("MESSAGE RECEIVED")
-                console.log(data)
-                console.log(data.message)
-                data.timestamp = (new Date()).getTime()
-                data.event = event.id
-                data.sender = socket.email
-
-                //save this chat
-                var chat = new Chat(data)
-                await chat.save()
-                console.log("saved chat, time to emit message")
-                
-                socket.broadcast.emit(event.id + ".message", data)
-            })
-        }
-    } else {
-        socket.emit('error', {msg: 'user does not have a record in the db'})
+            //save this chat
+            var chat = new Chat(data)
+            await chat.save()
+            
+            socket.broadcast.emit(event.id + ".message", data)
+        })
     }
+}
+
+async function sendEventNotifications(socket){
+    if(!socket.email) return socket.emit('error', {msg: 'user does not have a record in the db'})
+
+    var tevents = await EventFunctions.relatedTEvents(socket.email)
+    for(const event of tevents){
+        var responseEmails = event.responses.map(function(res){return res.email})
+        if(!responseEmails.includes(socket.email)){
+            console.log(`user ${socket.email} was invited to event ${event.name}`)
+            //we need to send a notification for the user select a time
+            socket.emit("invite", event)
+        }
+    }
+    
 }
 
 module.exports = {

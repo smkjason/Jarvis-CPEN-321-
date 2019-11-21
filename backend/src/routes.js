@@ -39,9 +39,9 @@ function routes(app){
     /*
         returns a user's events
     */
-    app.get('/user/:name', async function(req, res){
+    app.get('/user/:email', async function(req, res){
         log(req)
-        var user = await UserFunctions.getUser(await auth(req, req.params.name))
+        var user = await UserFunctions.getUser(await auth(req, req.params.email))
         res.send(user)
     })
 
@@ -50,27 +50,45 @@ function routes(app){
     */
    app.get('/user/:email/friends', async function(req, req){
        log(req)
-       var friends = await UserFunctions.getFriends(auth(req, req.params.name))
+       var friends = await UserFunctions.getFriends(auth(req, req.params.email))
        res.send(friends)
    })
 
     /*
         returns a user's events
     */
-    app.get('/user/:name/events', async function(req, res){
+    app.get('/user/:email/events', async function(req, res){
         log(req)
-        var events = await EventFunctions.getEvents(await auth(req, req.params.name))
+        var events = await EventFunctions.getEvents(await auth(req, req.params.email))
         res.send(events)
     })
 
     /*
-        creates a new user event, and saves to calendar
+        creates a new tentative event
     */
-    app.post('/user/:name/events', async function(req, res){
+    app.post('/user/:email/events', async function(req, res){
         log(req)
-        var event = await EventFunctions.createEvent(await auth(req, req.params.name), res.body)
+        var event = await EventFunctions.createEvent(await auth(req, req.params.email), req.body)
         res.send(event)
     })
+
+    /*
+        allows a user to respond to an event
+    */
+    app.put('/user/:email/events/:id', async function(req, res){
+        log(req)
+        var response = await EventFunctions.respondEvent(req.params.id, await auth(req, req.params.email), req.query.declined, req.body)
+        res.send(response)
+    })
+
+    /*
+        creates a real event out of a tentative one
+    */
+   app.post('/events/:id/activate', async function(req, res){
+       log(req)
+       var response = await EventFunctions.activateEvent(req.params.id, await auth(req, req.params.email), req.body)
+       res.send(response)
+   })
 
     /*
         returns all the chat messages for a given event before a certain time
@@ -79,11 +97,6 @@ function routes(app){
         log(req)
         var msgs = await ChatFunctions.getMessages(req.params.id, await auth(req), req.query.before)
         res.send(msgs)
-    })
-
-    app.get('/demo_calculate_times', function(req, res){
-        log(req)
-        res.send('huh what is going on')
     })
 }
 

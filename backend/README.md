@@ -210,7 +210,7 @@ weight is used for when the user enters in free slots, and our app will calculat
 ## Event Creation
 
  - admin inputs event creation constraints
- `POST user/:email/event/`
+ `POST user/:email/events/`
  ```json
 {
     "deadline": "YYYY-MM-DD",
@@ -238,7 +238,7 @@ return:
 
  - user picks list of preferred times, sends to backend
 
- `PUT user/:email/event/:id(?declined=true)`
+ `PUT user/:email/events/:id(?declined=true)`
  ```json
  {
      "timeslots":[
@@ -264,7 +264,7 @@ return:
 
  - admin can view the status of the event
 
- `GET event/:id/` will return
+ `GET events/:id/` will return
   ```json
 {
     "deadline": "YYYY-MM-DD",
@@ -283,7 +283,7 @@ return:
  ```
  - admin can look at backend - suggested timeslots
 
- `GET event/:id/preferred`
+ `GET events/:id/preferred`
  Return:
  ```json
  {
@@ -303,7 +303,7 @@ return:
 
  - admin can also create the event at any time
 
- `POST event/:id/activate`
+ `POST events/:id/activate`
  ```json
  {
     "startTime":"YYYY-MM-DD hh:mm",
@@ -339,7 +339,7 @@ returns:
 }
 ```
 
-`GET event/:id/locations`
+`GET events/:id/locations`
 ```json
 {
     "locations":[

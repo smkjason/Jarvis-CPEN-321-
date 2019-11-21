@@ -20,11 +20,13 @@ let eventModel = new Schema({
 })
 
 let tentativeEventModel = new Schema({
+    id: {type: String, index: true},
     length: String,
     invitees: [String],
     deadline: String,
     name: String,
-    responses: [Mixed]
+    responses: [Mixed],
+    creatorEmail: String
 })
 
 let userModel = new Schema({
@@ -32,7 +34,10 @@ let userModel = new Schema({
     google_token: String,
     refresh_token: String,
     email: {type: String, index: true},
-    friends: [String]
+    friends: [String],
+    new_events: [String],
+    lat: String,
+    lon: String
 })
 
 let chatModel = new Schema({

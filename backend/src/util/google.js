@@ -31,7 +31,17 @@ async function auth(req, name = null){
     return payload.email
 }
 
+async function addToCalendar(user, event){
+    var calendar = getUserCalendar(user)
+
+    await calendar.events.insert({
+        calendarId: "primary",
+        requestBody: event
+    })
+}
+
 module.exports = {
     getUserCalendar,
-    auth
+    auth,
+    addToCalendar
 }
