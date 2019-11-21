@@ -12,7 +12,7 @@ function getUserCalendar(user){
 }
 
 async function auth(req, name = null){
-    if(process.env.ENV != "production") return name || 'jarviscpen321.1@gmail.com'
+    if(process.env.ENV != "production") return name || 'jarviscpen321@gmail.com'
 
     var client = new OAuth2Client(configs.CLIENT_ID)
     var token = req.headers.authorization
@@ -31,7 +31,23 @@ async function auth(req, name = null){
     return payload.email
 }
 
+async function addToCalendar(user, event){
+    var calendar = getUserCalendar(user)
+    var eventJson = event.toJSON()
+    //remove all the uneeded fields
+    delete eventJson._id
+    delete eventJson.__v
+    delete eventJson.creatorEmail
+    delete eventJson.googleEvent
+
+    await calendar.events.insert({
+        calendarId: "primary",
+        requestBody: event,
+    })
+}
+
 module.exports = {
     getUserCalendar,
-    auth
+    auth,
+    addToCalendar
 }
