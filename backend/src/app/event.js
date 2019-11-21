@@ -7,10 +7,21 @@ const uuid = require('uuid/v1')
 const moment = require('moment')
 
 /*
-    create an event
+    gets a single event
+
+    TODO: add checking if the user can view the event
+*/
+async function getEvent(eventId, email){
+    event = await TEventModel.findOne({id: eventId}) || await EventModel.findOne({id: eventId})
+    if(!event) return
+
+    return event
+}
+
+/*
+    create a tentative event
 
     create and save db object
-    save to user google calendar
 */
 async function createEvent(email, data = {}){
     data.creatorEmail = email
@@ -67,7 +78,10 @@ async function syncEvents(user){
     get the events that the user is attending or created
 */
 async function getEvents(email){
-    return await relatedEvents(email)
+    var tevents = await relatedTEvents(email)
+    var events = await relatedEvents(email)
+
+    return tevents.concat(events)
 }
 
 async function relatedEvents(email){
@@ -105,6 +119,7 @@ async function respondEvent(id, email, decline, response){
     response.email = email
     response.declined = decline
     event.responses.push(response)
+    await event.save()
     return {status: "success"}
 }
 
@@ -121,7 +136,7 @@ async function activateEvent(id, email, timeSlot){
 
     //save to the goole calendar event
     var admin = await UserModel.findOne({email: email}).exec()
-    await Google.addToCalendar(admin, event)
+    await Google.addToCalendar(admin, googleEvent)
 
     var attendees = getAttendees(event)
     //save for the user
@@ -136,12 +151,11 @@ async function activateEvent(id, email, timeSlot){
         Google.addToCalendar(user, googleEvent)
         user.new_events = (user.new_events || []).concat([eventId])
     }
+    await TEventModel.deleteOne({id: event.id}).exec()
 }
 
 /* private functions  ----------- */
 async function saveGoogleEvents(email, events){
-    console.log(events)
-    console.log('there are ' + events.data.items.length + ' items to sync')
     var currentEvents = await EventModel.find({creatorEmail: email}).exec()
     eventIds = currentEvents ? currentEvents.map(function(doc){return doc.id}) : []
 
@@ -172,12 +186,12 @@ function finalizeEvent(tevent, time){
     eventJson.created = (new Date()).toISOString()
     eventJson.creatorEmail = tevent.creatorEmail
     eventJson.start = {
-        timezone: "America/Vancouver",
-        datetime: moment(time.startTime).toISOString()
+        timeZone: "America/Vancouver",
+        dateTime: moment(time.startTime).toISOString().replace(/\.000Z/, '-08:00')
     }
     eventJson.end = {
-        timezone: "America/Vancouver",
-        datetime: moment(time.endTime).toISOString()
+        timeZone: "America/Vancouver",
+        dateTime: moment(time.endTime).toISOString().replace(/\.000Z/, '-08:00')
     }
     eventJson.attendees = getAttendees(tevent)
     eventJson.recurrence = []
@@ -190,7 +204,7 @@ function finalizeEvent(tevent, time){
 
 function getAttendees(event){
     return event.responses.reduce(function(prev, curr){
-        if(!curr.declined) prev.push(curr)
+        if(!curr.declined) prev.push(curr.email)
 
         return prev
     }, [])
@@ -222,5 +236,6 @@ module.exports = {
     relatedEvents,
     relatedTEvents,
     respondEvent,
-    activateEvent
+    activateEvent,
+    getEvent
 }

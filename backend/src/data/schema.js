@@ -9,8 +9,16 @@ let eventModel = new Schema({
     location: String,
     colorId: String,
     creatorEmail: {type: String, index: true},
-    start: Mixed,
-    end:  Mixed,
+    start: {
+        timeZone: String,
+        dateTime: String,
+        date: String
+    },
+    end:  {
+        timeZone: String,
+        dateTime: String,
+        date: String
+    },
     attendees: [String],
     recurrence: Array,
     id: {type: String, index: true},

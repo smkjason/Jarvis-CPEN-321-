@@ -81,6 +81,7 @@ async function sendEventNotifications(socket){
     if(!socket.email) return socket.emit('error', {msg: 'user does not have a record in the db'})
 
     var tevents = await EventFunctions.relatedTEvents(socket.email)
+    console.log(tevents)
     for(const event of tevents){
         var responseEmails = event.responses.map(function(res){return res.email})
         if(!responseEmails.includes(socket.email)){

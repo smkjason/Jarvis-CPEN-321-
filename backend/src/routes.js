@@ -82,13 +82,22 @@ function routes(app){
     })
 
     /*
+        view the status of an event
+    */
+    app.get('/events/:id', async function(req, res){
+        log(req)
+        var response = await EventFunctions.getEvent(req.params.id, await auth(req))
+        res.send(response)
+    })
+
+    /*
         creates a real event out of a tentative one
     */
-   app.post('/events/:id/activate', async function(req, res){
-       log(req)
-       var response = await EventFunctions.activateEvent(req.params.id, await auth(req, req.params.email), req.body)
-       res.send(response)
-   })
+    app.post('/events/:id/activate', async function(req, res){
+        log(req)
+        var response = await EventFunctions.activateEvent(req.params.id, await auth(req, req.params.email), req.body)
+        res.send(response)
+    })
 
     /*
         returns all the chat messages for a given event before a certain time
