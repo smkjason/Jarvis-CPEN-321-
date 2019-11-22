@@ -68,6 +68,7 @@ function routes(app){
     */
     app.post('/user/:email/events', async function(req, res){
         log(req)
+        console.log(req.body)
         var event = await EventFunctions.createEvent(await auth(req, req.params.email), req.body)
         res.send(event)
     })
@@ -82,11 +83,29 @@ function routes(app){
     })
 
     /*
+        updates a user's location
+    */
+    app.put('/user/:email/location', async function(req, res){
+        log(req)
+        var response = await UserFunctions.updateLocation(await auth(req, req.params.email), req.body)
+        res.send(response)
+    })
+
+    /*
         view the status of an event
     */
     app.get('/events/:id', async function(req, res){
         log(req)
         var response = await EventFunctions.getEvent(req.params.id, await auth(req))
+        res.send(response)
+    })
+
+    /*
+        gets the locations of an event's attendees
+    */
+    app.get('/events/:id/locations', async function(req, res){
+        log(req)
+        var response = await EventFunctions.userLocations(req.params.id, await auth(req))
         res.send(response)
     })
 

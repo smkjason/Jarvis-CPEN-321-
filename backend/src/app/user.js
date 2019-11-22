@@ -57,6 +57,19 @@ async function verifyAndRetrieveToken(email, code){
     }
 }
 
+/*
+    update location
+*/
+async function updateLocation(email, location){
+    var user = await User.findOne({email: email}).exec()
+    if(!user) return {status: "error", error: "user not found"}
+
+    user.lat = location.lat
+    user.lon = location.lon
+    await user.save()
+    return {status: "success"}
+}
+
 async function getFriends(email){
     var user = await User.findOne({email: email}).exec()
     return user.friends
@@ -76,5 +89,6 @@ module.exports = {
     getFriends, 
     removeFriend, 
     addFriend,
-    getUsers
+    getUsers,
+    updateLocation
 }
