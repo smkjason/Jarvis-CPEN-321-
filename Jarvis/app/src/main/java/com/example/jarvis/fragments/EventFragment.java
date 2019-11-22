@@ -1,25 +1,15 @@
 package com.example.jarvis.fragments;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import io.socket.client.Socket;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.jarvis.GroupChatActivity;
-import com.example.jarvis.adapter.CustomAdapter;
 import com.example.jarvis.R;
-
+import com.example.jarvis.adapter.CustomAdapter;
 import com.example.jarvis.jarvis_types.jarvisevent;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -38,6 +28,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import io.socket.client.Socket;
 
 public class EventFragment extends Fragment {
 
@@ -59,25 +55,6 @@ public class EventFragment extends Fragment {
         Log.i("Events", "Started events");
 
         acct = GoogleSignIn.getLastSignedInAccount(getActivity());
-
-
-//        HttpClient httpClient = new DefaultHttpClient();
-//        HttpResponse httpResponse;
-//        HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
-//        try {
-//            httpGet.addHeader("Authorization", "Bearer " + idToken);
-//            httpResponse = httpClient.execute(httpGet);
-//            HttpEntity httpEntity = httpResponse.getEntity();
-//            json_string = EntityUtils.toString(httpEntity);
-//            Log.d("http", "json_string: " + json_string);
-//            response_json = new JSONArray(json_string);
-//        } catch (ClientProtocolException e) {
-//            Log.e("Error", "Error sending ID token to backend.", e);
-//        } catch (IOException e) {
-//            Log.e("Error", "Error sending ID token to backend.", e);
-//        } catch (Exception e) {
-//            Log.e("Error", "I caught some exception.", e);
-//        }
     }
 
     private void initEvents() {

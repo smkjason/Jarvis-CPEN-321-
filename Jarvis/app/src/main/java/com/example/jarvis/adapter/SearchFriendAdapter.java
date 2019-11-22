@@ -6,12 +6,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.jarvis.FriendItem;
 import com.example.jarvis.R;
+import com.example.jarvis.jarvis_types.FriendItem;
 
 import java.util.ArrayList;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapter.SearchFriendViewHolder> {
     private OnItemClickListener mListener;

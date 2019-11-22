@@ -23,56 +23,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="215dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="24dp"
-        android:clickable="true"
-        android:hint="Choose a Date!"
-        android:textSize="17dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-    <EditText
-        android:id="@+id/name_of_event"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:ems="10"
-        android:hint="Name of the Event..."
-        android:inputType="textPersonName"
-        android:background="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <Button
-        android:id="@+id/make_event"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:text="Create"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_people_to_event"
-        app:layout_constraintVertical_bias="0.53" />
-
-    <TextView
-        android:id="@+id/add_people_to_event"
-        android:layout_width="211dp"
-        android:layout_height="146dp"
-        android:layout_marginTop="25dp"
-        android:textSize="16dp"
-        android:hint="No Added Friends..."
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-    <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvselect_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
@@ -86,8 +37,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_event_toolbar" />
 
+
+    <EditText
+        android:id="@+id/name_of_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:hint="Name of the Event..."
+        android:inputType="textPersonName"
+        android:background="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvselect_name" />
+
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tvselect_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
@@ -99,23 +64,88 @@
         app:layout_constraintBottom_toTopOf="@+id/tvDate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.00"
-        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="@+id/tvselect_name"
         app:layout_constraintTop_toBottomOf="@+id/name_of_event" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/tvDate"
+        android:layout_width="215dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:hint="Choose a Date!"
+        android:textSize="17dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvselect_date" />
+
+    <TextView
+        android:id="@+id/tvselect_length"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:fontFamily="monospace"
         android:textStyle="bold"
         android:background="@drawable/text_box"
-        android:text=" Invites: "
         android:textSize="16dp"
+        android:text=" How long is this event? "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.00"
-        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintStart_toStartOf="@+id/tvselect_date"
         app:layout_constraintTop_toBottomOf="@+id/tvDate" />
+
+
+    <TextView
+        android:id="@+id/tvShowLength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:textSize="16dp"
+        android:hint="Click Here"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvselect_length">
+    </TextView>
+
+
+    <TextView
+        android:id="@+id/tvselect_invites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_box"
+        android:fontFamily="monospace"
+        android:text=" Invites: "
+        android:textSize="16dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/tvShowLength"
+        app:layout_constraintStart_toStartOf="@+id/tvselect_name"
+        tools:layout_editor_absoluteY="391dp" />
+
+    <TextView
+        android:id="@+id/add_people_to_event"
+        android:layout_width="211dp"
+        android:layout_height="146dp"
+        android:layout_marginTop="25dp"
+        android:textSize="16dp"
+        android:hint="No Added Friends..."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvselect_invites" />
+
+    <Button
+        android:id="@+id/make_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:text="Invite!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_people_to_event"
+        app:layout_constraintVertical_bias="0.53" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

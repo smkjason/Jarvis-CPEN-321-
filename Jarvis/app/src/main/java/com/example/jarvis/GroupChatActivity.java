@@ -1,12 +1,6 @@
 package com.example.jarvis;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,7 +12,6 @@ import android.widget.Toast;
 import com.example.jarvis.adapter.ChatBoxAdapter;
 import com.example.jarvis.jarvis_types.jarvismessage;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.platforminfo.DefaultUserAgentPublisher;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,15 +22,14 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -55,20 +47,19 @@ public class GroupChatActivity extends AppCompatActivity {
     private NotificationManagerCompat notificationManagerCompat;
 
     private int message_id = 0;
-
+    //XML
     private Button SendMessageButton;
     private EditText userMessage;
-
+    public RecyclerView myRecylerView ;
+    private Toolbar toolbar;
+    
     private String currentEvent;
     private String currentUserID;
     private String currentUserName;
-    private Toolbar toolbar;
 
     //new
     private Socket mSocket;
-    public RecyclerView myRecylerView ;
     public List<jarvismessage> MessageList ;
-
     private String eventid;
     private String idToken;
 
@@ -88,7 +79,7 @@ public class GroupChatActivity extends AppCompatActivity {
         currentUserID = mAuth.getCurrentUser().getUid();
 
         mSocket = ((jarvis) getApplication()).getmSocket();
-        toolbar = findViewById(R.id.chat_toolbar);
+
         initializeFields();
         new load_old_messages(eventid, idToken);
 
@@ -134,6 +125,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private void initializeFields()
     {
+        toolbar = findViewById(R.id.chat_toolbar);
         //setting up recyler
         MessageList = new ArrayList<>();
         myRecylerView = findViewById(R.id.reyclerview_message_list);
