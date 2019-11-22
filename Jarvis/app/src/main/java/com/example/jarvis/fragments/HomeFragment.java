@@ -2,14 +2,7 @@ package com.example.jarvis.fragments;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import io.socket.client.Socket;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +11,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.jarvis.CreateEvent;
-import com.example.jarvis.GroupChatActivity;
 import com.example.jarvis.MainActivity;
 import com.example.jarvis.MapActivity;
+import com.example.jarvis.PendingEvents;
 import com.example.jarvis.R;
-
+import com.example.jarvis.SelectTime;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -30,6 +23,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.auth.FirebaseAuth;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import io.socket.client.Socket;
 
 public class HomeFragment extends Fragment {
 
@@ -84,9 +82,9 @@ public class HomeFragment extends Fragment {
 //
 //        mSocket = ((jarvis) getApplication()).getmSocket();
 
-        Button My_events = getView().findViewById(R.id.view_profile_bttn);
+        Button My_events = getView().findViewById(R.id.my_events_bttn);
         Button create_event = getView().findViewById(R.id.create_event_bttn);
-        Button chatrooms = getView().findViewById(R.id.go_to_chatroom_bttn);
+        Button Invitations = getView().findViewById(R.id.invitations_bttn);
         Button Mapp = getView().findViewById(R.id.Map_bttn);
 
         /* Testing Chat */
@@ -98,8 +96,10 @@ public class HomeFragment extends Fragment {
         My_events.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), com.example.jarvis.ViewProfile.class);
+                //The events that this user is admin
+                Intent intent = new Intent(getActivity(), SelectTime.class);
                 startActivity(intent);
+                //TODO: See all the responses? OR something
             }
         });
 
@@ -111,10 +111,10 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        chatrooms.setOnClickListener(new View.OnClickListener() {
+        Invitations.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GroupChatActivity.class);
+                Intent intent = new Intent(getActivity(), PendingEvents.class);
                 startActivity(intent);
             }
         });

@@ -17,7 +17,10 @@
         <TextView
             android:id="@+id/Toolbar_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="Invitations"
+            android:textColor="@color/colorAccent"
+            android:textSize="25dp">
         </TextView>
     </androidx.appcompat.widget.Toolbar>
 

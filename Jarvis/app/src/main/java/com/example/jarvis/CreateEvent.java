@@ -1,6 +1,7 @@
 package com.example.jarvis;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -31,17 +33,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.sql.Time;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import androidx.fragment.app.DialogFragment;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.widget.Toolbar;
 import io.socket.client.Socket;
@@ -61,17 +60,19 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
     private ViewPager viewPager;
     private EditText nameofEvent;
     private TextView peopleAtEvent;
-    private Button create;
+    private Button invite;
     private Toolbar mtoolbar;
     private TextView mDisplaydate;
     private Calendar calendar;
-    private int year, month, day;
+    private int year, month, day, hour, minute;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
+    private TextView lengthshow;
 
     //Event Details
     private Date deadline;
     private SimpleDateFormat deadlineformat;
-    private Time length;
+    private SimpleDateFormat lengthformat;
+    private Date length;
     private String eventid;
     private ArrayList<String> friendList = new ArrayList<>();
 
@@ -82,14 +83,16 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
 
         //deadline format
         deadlineformat = new SimpleDateFormat("yyyy-MM-dd");
+        lengthformat = new SimpleDateFormat("hh:mm");
 
         //TextEdits
         nameofEvent = findViewById(R.id.name_of_event);
         mDisplaydate = findViewById(R.id.tvDate);
         peopleAtEvent = findViewById(R.id.add_people_to_event);
+        lengthshow = findViewById(R.id.tvShowLength);
 
         //Button(s)
-        create = findViewById(R.id.make_event);
+        invite = findViewById(R.id.make_event);
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -107,6 +110,22 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
 
         acct = GoogleSignIn.getLastSignedInAccount(this);
 
+
+
+        mDisplaydate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+
+        lengthshow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePiccckerDialog();
+            }
+        });
+
         peopleAtEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,14 +135,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
             }
         });
 
-        mDisplaydate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
-
-        create.setOnClickListener(new View.OnClickListener() {
+        invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String eventName = nameofEvent.getText().toString();
@@ -138,13 +150,36 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                 }
                 else {
                     new makeNewEvent(eventName, deadline, length, friendList).execute();
-                    Intent intent = new Intent(CreateEvent.this, SelectTime.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(CreateEvent.this, SelectTime.class);
+////                    startActivity(intent);
+                    Toast.makeText(CreateEvent.this, "Invitated Everyone", Toast.LENGTH_LONG).show();
                 }
 
             }
         });
 
+    }
+
+    private void showTimePiccckerDialog() {
+        calendar = Calendar.getInstance();
+        hour = calendar.get(Calendar.HOUR_OF_DAY);
+        minute = calendar.get(Calendar.MINUTE);
+        TimePickerDialog mTimePicker;
+        mTimePicker = new TimePickerDialog(CreateEvent.this, R.style.Theme_AppCompat_DayNight_Dialog_MinWidth,
+                new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                String timeselected = hourOfDay + ":" + minute;
+                lengthshow.setText(timeselected);
+                try {
+                    length = lengthformat.parse(timeselected);
+                }catch (ParseException e){
+                    Log.e(TAG, "parse exception caught", e);
+                }
+            }
+        },  hour, minute, true);
+        mTimePicker.setTitle("Select Time");
+        mTimePicker.show();
     }
 
     private void showDatePickerDialog() {
@@ -169,6 +204,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         try {
             deadline = deadlineformat.parse(date);
         }catch(ParseException e){
+            Log.d(TAG, "Deadline: " + deadline);
             Log.e(TAG, "dateformat exception", e);
         }
     }
@@ -178,10 +214,10 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         String eventName;
         ArrayList<String> email;
         Date deadline;
-        Time length;
+        Date length;
 
 
-        makeNewEvent(String eventName, Date date, Time length, ArrayList<String> emails) {
+        makeNewEvent(String eventName, Date date, Date length, ArrayList<String> emails) {
             this.eventName = eventName;
             this.email = emails;
             this.deadline = date;
@@ -224,7 +260,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                 if (!jsonObject.getString("status").equals("success")) {
                     Toast.makeText(CreateEvent.this, "Something went wrong with invitation", Toast.LENGTH_LONG).show();
                 }else {
-                    Toast.makeText(CreateEvent.this, "Invitation sent!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(CreateEvent.this, "Invitations sent!", Toast.LENGTH_LONG).show();
                     eventid = jsonObject.getString("id");
                 }
             }catch (JSONException e){
