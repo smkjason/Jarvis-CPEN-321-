@@ -29,7 +29,7 @@ public class SearchFriendsTest {
 
     @Test
     public void checkUserSavedInAddedFriends() {
-        onView(withId(R.id.add_friends)).perform(click());
+        onView(withId(R.id.add_people_to_event)).perform(click());
         onView(withId(R.id.search_recyclerView))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
