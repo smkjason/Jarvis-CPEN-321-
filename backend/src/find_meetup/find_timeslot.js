@@ -27,7 +27,10 @@ var sum = [0,0,0,0,0,0,0,0,0,0,
 
 
 //list of list of events
-//only need to grab start/end time for each user
+//list of start time and end time
+//starttime : YYYY-MM-DD hh-mm
+//want to round up/down the minutes into hours 
+//for the demo maybe just use exact hours
 
 function calculateBestTimeslot(listEvents){
 
