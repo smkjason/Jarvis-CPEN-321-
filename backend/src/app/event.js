@@ -23,9 +23,10 @@ async function getEvent(eventId, email){
 
     create and save db object
 */
-async function createEvent(email, data = {}){
+async function createEvent(email, data){
     data.creatorEmail = email
     data.id = uuid().replace(/-/g, '')
+    console.log(data)
     var tevent = new TEventModel(data)
     return await tevent.save()
 }
@@ -114,7 +115,7 @@ async function respondEvent(id, email, decline, response){
     var event = await TEventModel.findOne({id: id}).exec()
     if(!event) return {error: 'no event with id' + id}
 
-    if(!event.invitees.includes(email)) return {error: `${email} not invited`}
+    if(!event.invitees.includes(email) || event.creatorEmail != email) return {error: `${email} not invited`}
     
     response.email = email
     response.declined = decline
@@ -152,6 +153,31 @@ async function activateEvent(id, email, timeSlot){
         user.new_events = (user.new_events || []).concat([eventId])
     }
     await TEventModel.deleteOne({id: event.id}).exec()
+}
+
+async function userLocations(id, email){
+    var event = await EventModel.findOne({id: id}).exec()
+    if(!event) return {error: "event not found", status: "error"}
+    console.log(Date.now() / 1000)
+    console.log(moment(event.start.dateTime).unix() - 3600)
+    if((Date.now() / 1000) < (moment(event.start.dateTime).unix() - 3600) || 
+        (Date.now() / 1000) > moment(event.end.dateTime).unix()) {
+        return {error: "event time not close"}
+    }
+    if(event.creatorEmail != email && !event.attendees.includes(email)) return {error: `${email} is not part of event`, status: "error"}
+
+    var people = event.attendees.concat(event.creatorEmail)
+    var users = await UserModel.find({email: {$in: people}}).exec()
+    var locations = []
+    for(const user of users){
+        if(user.email == email) continue
+        locations.push({
+            user: user.email,
+            lat: user.lat,
+            lon: user.lon
+        })
+    }
+    return locations
 }
 
 /* private functions  ----------- */
@@ -204,7 +230,9 @@ function finalizeEvent(tevent, time){
 
 function getAttendees(event){
     return event.responses.reduce(function(prev, curr){
-        if(!curr.declined) prev.push(curr.email)
+        if(!curr.declined && curr.email != event.creatorEmail) {
+            prev.push(curr.email)
+        }
 
         return prev
     }, [])
@@ -237,5 +265,6 @@ module.exports = {
     relatedTEvents,
     respondEvent,
     activateEvent,
-    getEvent
+    getEvent,
+    userLocations
 }
