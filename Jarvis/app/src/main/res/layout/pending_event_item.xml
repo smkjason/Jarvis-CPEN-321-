@@ -13,7 +13,7 @@
         android:layout_margin="4dp">
 
         <TextView
-            android:id="@+id/Rank"
+            android:id="@+id/tvRank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -25,36 +25,36 @@
         </TextView>
 
         <TextView
-            android:id="@+id/date"
+            android:id="@+id/tvName_Pending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/Rank"
-            android:text="Date"
+            android:layout_toRightOf="@id/tvRank"
+            android:text="Name"
             android:layout_marginLeft="5dp"
             android:textColor="@color/colorBlack"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/time"
-            android:layout_below="@+id/date"
+            android:id="@+id/tvLength_Pending"
+            android:layout_below="@+id/tvName_Pending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/date"
-            android:text="Time"
+            android:layout_alignLeft="@id/tvName_Pending"
+            android:text="Length"
             android:textColor="@color/colorBlack"
             android:textSize="10sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/selected"
+            android:id="@+id/tvAdmin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_toEndOf="@+id/time"
-            android:layout_below="@id/date"
-            android:text="Selected"
+            android:layout_toEndOf="@+id/tvLength_Pending"
+            android:layout_below="@id/tvName_Pending"
+            android:text="Admin"
             android:textColor="@color/colorBlack"
             android:textSize="10sp"
             android:textStyle="bold" />
@@ -67,15 +67,25 @@
             android:background="@android:color/white"
             android:layout_alignParentTop="true"
             />
+
         <Button
+            android:id="@+id/Accept_pending_bttn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/accept_event_bttn"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/Decline_bttn_pending"
             android:layout_toRightOf="@+id/view"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/black"
-            android:text="Create"/>
+            android:background="@color/colorPrimaryLight"
+            android:text="Accept"
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/Decline_bttn_pending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Decline"
+            android:background="@android:color/holo_red_dark">
+        </Button>
 
     </RelativeLayout>
 

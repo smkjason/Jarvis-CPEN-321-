@@ -1,19 +1,11 @@
 package com.example.jarvis;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -21,9 +13,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import java.util.List;
 
 public class ViewProfile extends AppCompatActivity {
     @Override
@@ -88,7 +77,7 @@ public class ViewProfile extends AppCompatActivity {
     }
 
     private void goToCalendar(){
-        Intent intent = new Intent(ViewProfile.this, ViewCalendar.class);
+        Intent intent = new Intent(ViewProfile.this, PendingEvents.class);
         startActivity(intent);
     }
 

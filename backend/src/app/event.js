@@ -1,17 +1,34 @@
 const EventModel = require('../data/schema').EventModel
+const TEventModel = require('../data/schema').TentativeEventModel
 const UserModel = require('../data/schema').UserModel
 const Google = require('../util/google')
 const clone = require('lodash/cloneDeep')
+const uuid = require('uuid/v1')
+const moment = require('moment')
 
 /*
-    create an event
+    gets a single event
+
+    TODO: add checking if the user can view the event
+*/
+async function getEvent(eventId, email){
+    event = await TEventModel.findOne({id: eventId}) || await EventModel.findOne({id: eventId})
+    if(!event) return
+
+    return event
+}
+
+/*
+    create a tentative event
 
     create and save db object
-    save to user google calendar
 */
-async function createEvent(name, data = {}){
-    data.creatorEmail = name
-    return data
+async function createEvent(email, data){
+    data.creatorEmail = email
+    data.id = uuid().replace(/-/g, '')
+    console.log(data)
+    var tevent = new TEventModel(data)
+    return await tevent.save()
 }
 
 /*
@@ -62,14 +79,11 @@ async function syncEvents(user){
     get the events that the user is attending or created
 */
 async function getEvents(email){
-    return await relatedEvents(email)
-}
+    var tevents = await relatedTEvents(email)
+    var events = await relatedEvents(email)
 
-function demoCalculateTime(json){
-    retval = parseEvents(json)
-    return retval
+    return tevents.concat(events)
 }
-
 
 async function relatedEvents(email){
     var user = await UserModel.findOne({email: email}).exec()
@@ -84,10 +98,90 @@ async function relatedEvents(email){
     return events
 }
 
+async function relatedTEvents(email){
+    var user = await UserModel.findOne({email: email}).exec()
+    if(!user) return []
+
+    var events = await TEventModel.find({
+        $or: [
+            {creatorEmail: user.email},
+            {invitees: {$in: [user.email]}}
+        ]
+    }).exec()
+    return events
+}
+
+async function respondEvent(id, email, decline, response){
+    var event = await TEventModel.findOne({id: id}).exec()
+    if(!event) return {error: 'no event with id' + id}
+
+    if(!event.invitees.includes(email) || event.creatorEmail != email) return {error: `${email} not invited`}
+    
+    response.email = email
+    response.declined = decline
+    event.responses.push(response)
+    await event.save()
+    return {status: "success"}
+}
+
+async function activateEvent(id, email, timeSlot){
+    var event = await TEventModel.findOne({id: id}).exec()
+
+    if(!event) return {error: 'no event with id' + id}
+    if(event.creatorEmail != email) return {error: `${email} not admin`}
+    
+    //save the event to the mongoDB db
+    var googleEvent = finalizeEvent(event, timeSlot)
+    var eventId = googleEvent.id;
+    await googleEvent.save()
+
+    //save to the goole calendar event
+    var admin = await UserModel.findOne({email: email}).exec()
+    await Google.addToCalendar(admin, googleEvent)
+
+    var attendees = getAttendees(event)
+    //save for the user
+    for(const attendee of attendees){
+        //create a calendar object for them, and save to their calendar
+        var user = await UserModel.findOne({email: attendee}).exec()
+        if(!user) continue
+
+        //save a new event to the google calendar, add the existing mongoDB event 
+        //onto the list of events to notify on
+        googleEvent.id = uuid().replace(/-/g, '')
+        Google.addToCalendar(user, googleEvent)
+        user.new_events = (user.new_events || []).concat([eventId])
+    }
+    await TEventModel.deleteOne({id: event.id}).exec()
+}
+
+async function userLocations(id, email){
+    var event = await EventModel.findOne({id: id}).exec()
+    if(!event) return {error: "event not found", status: "error"}
+    console.log(Date.now() / 1000)
+    console.log(moment(event.start.dateTime).unix() - 3600)
+    if((Date.now() / 1000) < (moment(event.start.dateTime).unix() - 3600) || 
+        (Date.now() / 1000) > moment(event.end.dateTime).unix()) {
+        return {error: "event time not close"}
+    }
+    if(event.creatorEmail != email && !event.attendees.includes(email)) return {error: `${email} is not part of event`, status: "error"}
+
+    var people = event.attendees.concat(event.creatorEmail)
+    var users = await UserModel.find({email: {$in: people}}).exec()
+    var locations = []
+    for(const user of users){
+        if(user.email == email) continue
+        locations.push({
+            user: user.email,
+            lat: user.lat,
+            lon: user.lon
+        })
+    }
+    return locations
+}
+
 /* private functions  ----------- */
 async function saveGoogleEvents(email, events){
-    console.log(events)
-    console.log('there are ' + events.data.items.length + ' items to sync')
     var currentEvents = await EventModel.find({creatorEmail: email}).exec()
     eventIds = currentEvents ? currentEvents.map(function(doc){return doc.id}) : []
 
@@ -112,6 +206,38 @@ async function saveGoogleEvents(email, events){
     return eventlist
 }
 
+function finalizeEvent(tevent, time){
+    var eventJson = {}
+    eventJson.status = "confirmed"
+    eventJson.created = (new Date()).toISOString()
+    eventJson.creatorEmail = tevent.creatorEmail
+    eventJson.start = {
+        timeZone: "America/Vancouver",
+        dateTime: moment(time.startTime).toISOString().replace(/\.000Z/, '-08:00')
+    }
+    eventJson.end = {
+        timeZone: "America/Vancouver",
+        dateTime: moment(time.endTime).toISOString().replace(/\.000Z/, '-08:00')
+    }
+    eventJson.attendees = getAttendees(tevent)
+    eventJson.recurrence = []
+    eventJson.id = uuid().replace(/-/g, '')
+    eventJson.summary = tevent.name
+    eventJson.description = ""
+    eventJson.googleEvent = false
+    return new EventModel(eventJson)
+}
+
+function getAttendees(event){
+    return event.responses.reduce(function(prev, curr){
+        if(!curr.declined && curr.email != event.creatorEmail) {
+            prev.push(curr.email)
+        }
+
+        return prev
+    }, [])
+}
+
 function parseEvents(json){
     res = []
     names = {}
@@ -130,11 +256,15 @@ function parseEvents(json){
 }
 
 module.exports = {
-    demoCalculateTime,
     syncEvents,
     getEvents,
     createEvent,
     updateEvent,
     deleteEvent,
-    relatedEvents
+    relatedEvents,
+    relatedTEvents,
+    respondEvent,
+    activateEvent,
+    getEvent,
+    userLocations
 }

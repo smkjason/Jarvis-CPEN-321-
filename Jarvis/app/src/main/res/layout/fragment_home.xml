@@ -17,20 +17,20 @@
         android:background="@color/tabtextcolor"
         android:text="Satellite"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/view_profile_bttn"
+        app:layout_constraintEnd_toStartOf="@+id/my_events_bttn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
-        android:id="@+id/view_profile_bttn"
+        android:id="@+id/my_events_bttn"
         android:layout_width="144dp"
         android:layout_height="144dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="120dp"
         android:layout_marginEnd="16dp"
         android:background="@color/tabtextcolor"
-        android:text="My Calendar"
+        android:text="My Events"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/Map_bttn"
@@ -44,27 +44,27 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:text="Find a Time!"
         android:background="@color/tabtextcolor"
+        android:text="Find a Time!"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/go_to_chatroom_bttn"
+        app:layout_constraintEnd_toStartOf="@+id/invitations_bttn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Map_bttn"
-        app:layout_constraintVertical_bias="0.060000002" />
+        app:layout_constraintVertical_bias="0.061" />
 
     <Button
-        android:id="@+id/go_to_chatroom_bttn"
+        android:id="@+id/invitations_bttn"
         android:layout_width="144dp"
         android:layout_height="144dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:text="Discussions"
+        android:text="Invitations"
         android:background="@color/tabtextcolor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/create_event_bttn"
-        app:layout_constraintTop_toBottomOf="@+id/view_profile_bttn"
+        app:layout_constraintTop_toBottomOf="@+id/my_events_bttn"
         app:layout_constraintVertical_bias="0.06" />
 
 

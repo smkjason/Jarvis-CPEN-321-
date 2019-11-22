@@ -1,4 +1,4 @@
-package com.example.jarvis;
+package com.example.jarvis.jarvis_types;
 
 public class FriendItem {
     private int mImageResource;

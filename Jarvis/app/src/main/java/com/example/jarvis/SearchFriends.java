@@ -6,12 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.jarvis.adapter.SearchFriendAdapter;
+import com.example.jarvis.jarvis_types.FriendItem;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
@@ -29,7 +25,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class SearchFriends extends AppCompatActivity {
+    private static final String TAG = "SearchFriends";
+
     private RecyclerView mRecyclerView;
     private SearchFriendAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -92,6 +95,7 @@ public class SearchFriends extends AppCompatActivity {
         if (!addedList.contains(friendList.get(position).getFriend())) {
             addedList.add(friendList.get(position).getFriend());
         }
+        Toast.makeText(SearchFriends.this , "Friend " + position + "added!", Toast.LENGTH_LONG).show();
         friendList.remove(position);
         mAdapter.notifyItemRemoved(position);
     }
@@ -123,7 +127,7 @@ public class SearchFriends extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(JSONArray jsonArray) {
+        protected void onPostExecute(JSONArray jsonArray){
             super.onPostExecute(jsonArray);
             JSONObject cur;
             if(jsonArray == null || jsonArray.length() == 0){
