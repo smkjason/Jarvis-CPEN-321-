@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +33,7 @@ public class SearchFriends extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private SearchFriendAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Toolbar toolbar;
     ArrayList<FriendItem> friendList = new ArrayList<>();
     ArrayList<String> addedList;
     GoogleSignInAccount acct;
@@ -49,6 +51,10 @@ public class SearchFriends extends AppCompatActivity {
         Intent intent = getIntent();
         addedList = intent.getStringArrayListExtra("Added Friends");
 
+        toolbar = findViewById(R.id.searchfriends_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Invite Friends");
+
         new getUsernames().execute();
 
         mRecyclerView = findViewById(R.id.search_recyclerView);
@@ -65,17 +71,15 @@ public class SearchFriends extends AppCompatActivity {
                 addedFriend(position);
             }
         });
-
-
     }
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Intent i = new Intent();
         Log.d("Back","going back");
         i.putExtra("Added Friends", addedList); //need to change array
         setResult(RESULT_OK,i);
-        super.onBackPressed();
         finish();
     }
 

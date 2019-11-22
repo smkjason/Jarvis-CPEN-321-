@@ -1,43 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="4dp">
 
     <RelativeLayout
+        android:id="@+id/RLtime"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="4dp">
+
+        <TextView
+            android:id="@+id/Rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="2dp"
+            android:text="#"
+            android:fontFamily="@font/aclonica"
+            android:textSize="25dp">
+        </TextView>
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/Rank"
             android:text="Date"
+            android:layout_marginLeft="5dp"
             android:textColor="@color/colorBlack"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/time"
+            android:layout_below="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/date"
+            android:layout_alignLeft="@id/date"
             android:text="Time"
             android:textColor="@color/colorBlack"
-            android:textSize="20sp"
+            android:textSize="10sp"
             android:textStyle="bold" />
+
         <TextView
             android:id="@+id/selected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/time"
+            android:layout_below="@id/date"
             android:text="Selected"
             android:textColor="@color/colorBlack"
-            android:textSize="20sp"
+            android:textSize="10sp"
             android:textStyle="bold" />
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="@dimen/abc_action_button_min_height_material"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/view"
+            android:background="@android:color/white"
+            android:layout_alignParentTop="true"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button2"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/view"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/black"
+            android:text="Create"/>
 
     </RelativeLayout>
 
