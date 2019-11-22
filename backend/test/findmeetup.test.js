@@ -17,7 +17,8 @@ var expected = [0,0,0,0,0,0,0,0,0,0,
 
 var test = true;
 
-test('find_timeslot returns correct times', () => {
+describe('meet up schedule algorithm test', () => {
+    test('find_timeslot returns correct times', () => {
     var sum = find_timeslot.calculateBestTimeslot(listofevents);
 
     if(sum.length != expected.length){
@@ -32,4 +33,5 @@ test('find_timeslot returns correct times', () => {
     }
 
     expect(test).toBe(true);
+    })
 })
