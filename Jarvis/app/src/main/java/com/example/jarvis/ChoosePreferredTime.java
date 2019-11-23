@@ -1,8 +1,7 @@
 package com.example.jarvis;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -11,7 +10,11 @@ import com.example.jarvis.adapter.PreferredTimeAdapter;
 import com.example.jarvis.jarvis_types.jarvis_pt;
 import com.google.android.material.appbar.AppBarLayout;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 //TODO: Finish this
-public class ChoosePreferredTime extends AppCompatActivity {
+public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.PTDialogListener {
     private static final String TAG = "ChoosePreferredTime";
 
     //XML
@@ -35,7 +38,7 @@ public class ChoosePreferredTime extends AppCompatActivity {
     private String eventname;
 
     //To send Backend
-    private ArrayList<jarvis_pt> dates = new ArrayList<jarvis_pt>(); //Array of preferred times.
+    private ArrayList<jarvis_pt> list_of_pt = new ArrayList<jarvis_pt>(); //Array of preferred times.
 
     private void getIncomingIntent(){
         if(getIntent().hasExtra("eventid") && getIntent().hasExtra("eventname")){
@@ -69,7 +72,7 @@ public class ChoosePreferredTime extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        PreferredTimeAdapter preferredTimeAdapter = new PreferredTimeAdapter(dates);
+        PreferredTimeAdapter preferredTimeAdapter = new PreferredTimeAdapter(list_of_pt);
         preferredTimeAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(preferredTimeAdapter);
     }
@@ -85,21 +88,73 @@ public class ChoosePreferredTime extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         if(item.getItemId() == R.id.add_pt_bttn){
-            //TODO: prompt user to input start and endtime
-            Intent intent = new Intent(getApplicationContext(), Popup.class);
-            startActivityForResult(intent, 1);
+            PTDialog ptDialog = new PTDialog();
+            ptDialog.show(getSupportFragmentManager(), "Preferred Time D");
+//            Intent intent = new Intent(getApplicationContext(), Popup.class);
+//            startActivityForResult(intent, 1);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if(requestCode == Activity.RESULT_OK){
+//            //TODO: add a new adapter
+//        }else if(requestCode == Activity.RESULT_CANCELED){
+//            //TODO:
+//        }
+//    }
 
-        if(requestCode == Activity.RESULT_OK){
-            //TODO: add a new adapter
-        }else if(requestCode == Activity.RESULT_CANCELED){
-            //TODO:
+    @Override
+    public void applyTexts(Date startdate, Date starttime, Date enddate, Date endtime) {
+
+        DateFormat dateTimeFormatter = new SimpleDateFormat("MM-dd, yyyy h:mm");
+        DateFormat parseDate = new SimpleDateFormat("MM-dd, yyyy");
+        DateFormat parseTime = new SimpleDateFormat("hh:mm");
+
+
+        // Need to combine Date and Time
+
+        //For start PT
+        String parsed_date = parseDate.format(startdate);
+        String parsed_time = parseTime.format(starttime);
+
+        Log.d(TAG, "parseddate: " + parsed_date);
+        Log.d(TAG, "parsed_time: " + parsed_time);
+
+        try {
+            startdate = dateTimeFormatter.parse(parsed_date + parsed_time);
+        }catch(ParseException e){
+            Log.e(TAG, "Couldn't parse dates", e);
         }
+
+        Log.d(TAG, "Full Parsing: Start Date: " + startdate);
+
+
+        //For END PT
+        parsed_date = parseDate.format(enddate);
+        parsed_time = parseTime.format(endtime);
+
+        Log.d(TAG, "parseddate: " + parsed_date);
+        Log.d(TAG, "parsed_time: " + parsed_time);
+
+        try {
+            enddate = dateTimeFormatter.parse(parsed_date + parsed_time);
+        }catch(ParseException e){
+            Log.e(TAG, "Couldn't parse dates", e);
+        }
+
+        Log.d(TAG, "Full Parsing: End Date: " + enddate);
+
+        //Add the adapter
+        jarvis_pt pt = new jarvis_pt(startdate, enddate);
+
+        list_of_pt.add(pt);
+
+        PreferredTimeAdapter preferredTimeAdapter = new PreferredTimeAdapter(list_of_pt);
+        preferredTimeAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(preferredTimeAdapter);
     }
 }

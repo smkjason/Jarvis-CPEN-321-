@@ -5,10 +5,17 @@ import java.util.Date;
 
 //Preferred Period the user wants the event to happen
 public class jarvis_pt {
-    private Date starttime, endtime;
+    private Date startD, starttime, endD, endtime;
 
     public jarvis_pt(Date starttime, Date endtime) {
         this.starttime = starttime;
+        this.endtime = endtime;
+    }
+
+    public jarvis_pt(Date startD, Date starttime, Date endD, Date endtime) {
+        this.startD = startD;
+        this.starttime = starttime;
+        this.endD = endD;
         this.endtime = endtime;
     }
 
