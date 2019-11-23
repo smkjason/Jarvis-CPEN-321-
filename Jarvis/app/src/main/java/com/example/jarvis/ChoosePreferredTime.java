@@ -1,8 +1,8 @@
 package com.example.jarvis;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 //TODO: Finish this
 public class ChoosePreferredTime extends AppCompatActivity {
@@ -44,7 +45,7 @@ public class ChoosePreferredTime extends AppCompatActivity {
         } else{
             Toast.makeText(ChoosePreferredTime.this,"Couldn't load event info...", Toast.LENGTH_LONG)
                     .show();
-            //TODO: go back to where the user came from
+            finish();
         }
     }
 
@@ -52,12 +53,16 @@ public class ChoosePreferredTime extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choosepreferredtime);
-        getIncomingIntent();
+        //getIncomingIntent();
         initialize();
     }
 
     private void initialize() {
-        toolbar = findViewById(R.id.preferredtimes_toolbar);
+        toolbar = findViewById(R.id.choosept_toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Choose Preferred TImes");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         recyclerView = findViewById(R.id.preferredtimes_recyclerv);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -67,20 +72,10 @@ public class ChoosePreferredTime extends AppCompatActivity {
         PreferredTimeAdapter preferredTimeAdapter = new PreferredTimeAdapter(dates);
         preferredTimeAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(preferredTimeAdapter);
-
-        //This may not work...
-        try {
-            getSupportActionBar().setTitle("When do you prefer?");
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }catch (NullPointerException e){
-            Log.w(TAG, "ActionBar Null");
-        }
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.add_preferredtime_menu, menu);
         return true;
     }
@@ -92,8 +87,19 @@ public class ChoosePreferredTime extends AppCompatActivity {
         if(item.getItemId() == R.id.add_pt_bttn){
             //TODO: prompt user to input start and endtime
             Intent intent = new Intent(getApplicationContext(), Popup.class);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == Activity.RESULT_OK){
+            //TODO: add a new adapter
+        }else if(requestCode == Activity.RESULT_CANCELED){
+            //TODO:
+        }
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,4 +7,104 @@
     android:background="@drawable/pop_bg"
     tools:context=".Popup">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tvDate_Pop_st"
+        android:layout_width="187dp"
+        android:layout_height="43dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="192dp"
+        android:text="Start Date..."
+        android:textColor="@color/colorAccent"
+        android:textSize="24dp" />
+
+    <Button
+        android:id="@+id/choosedate_pop_bttn_st"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="192dp"
+        android:layout_marginEnd="30dp"
+        android:layout_toEndOf="@+id/tvDate_Pop_st"
+        android:text="Choose" />
+
+    <TextView
+        android:id="@+id/tvTime_Pop_st"
+        android:layout_width="187dp"
+        android:layout_height="43dp"
+        android:layout_below="@+id/tvDate_Pop_st"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="25dp"
+        android:text="Start Time..."
+        android:textColor="@color/colorAccent"
+        android:textSize="24dp" />
+
+    <Button
+        android:id="@+id/choosetime_pop_bttn_st"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choosedate_pop_bttn_st"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="30dp"
+        android:layout_toEndOf="@+id/tvTime_Pop_st"
+        android:text="Choose" />
+
+    <TextView
+        android:id="@+id/tvDate_pop_end"
+        android:layout_width="187dp"
+        android:layout_height="43dp"
+        android:layout_above="@+id/tvTime_pop_end"
+        android:layout_below="@+id/tvTime_Pop_st"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="110dp"
+        android:layout_marginBottom="43dp"
+        android:text="End Date..."
+        android:textColor="@color/colorAccent"
+        android:textSize="24dp"/>
+
+    <TextView
+        android:id="@+id/tvTime_pop_end"
+        android:layout_width="187dp"
+        android:layout_height="43dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="195dp"
+        android:text="End Time..."
+        android:textColor="@color/colorAccent"
+        android:textSize="24dp"/>
+
+    <Button
+        android:id="@+id/enddate_bttn"
+        android:layout_width="133dp"
+        android:layout_height="49dp"
+        android:layout_above="@+id/endtime_bttn"
+        android:layout_below="@+id/choosetime_pop_bttn_st"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="99dp"
+        android:layout_marginEnd="31dp"
+        android:layout_marginBottom="30dp"
+        android:layout_toEndOf="@+id/tvDate_pop_end"
+        android:text="Choose" />
+
+    <Button
+        android:id="@+id/endtime_bttn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="192dp"
+        android:layout_toEndOf="@+id/tvTime_pop_end"
+        android:text="Choose" />
+
+</RelativeLayout>

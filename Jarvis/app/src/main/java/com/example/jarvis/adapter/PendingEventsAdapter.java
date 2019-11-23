@@ -1,6 +1,7 @@
 package com.example.jarvis.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.jarvis.ChoosePreferredTime;
 import com.example.jarvis.R;
 import com.example.jarvis.jarvis_types.jarvisevent;
 
@@ -65,6 +67,8 @@ public class PendingEventsAdapter extends RecyclerView.Adapter{
                 Toast.makeText(mContext, "Invitation Accepted!", Toast.LENGTH_LONG).show();
                 list_of_invited_events.remove(position);
                 notifyItemRemoved(position);
+                Intent intent = new Intent(mContext, ChoosePreferredTime.class);
+                mContext.startActivity(intent);
                 //TODO: Notify Backend
             }
         });
