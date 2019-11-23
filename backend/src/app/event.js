@@ -82,7 +82,7 @@ async function getEvents(email){
     var tevents = await relatedTEvents(email)
     var events = await relatedEvents(email)
 
-    return tevents.concat(events)
+    return {events: tevents.concat(events)}
 }
 
 async function relatedEvents(email){
