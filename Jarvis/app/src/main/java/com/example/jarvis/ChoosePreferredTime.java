@@ -189,7 +189,7 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
         String idToken;
 
 
-        public sendPT(ArrayList<jarvis_pt> list_of_pt_final, String email, String eventid, String idToken) {
+        sendPT(ArrayList<jarvis_pt> list_of_pt_final, String email, String eventid, String idToken) {
             this.list_of_pt_final = list_of_pt_final;
             this.email = email;
             this.eventid = eventid;

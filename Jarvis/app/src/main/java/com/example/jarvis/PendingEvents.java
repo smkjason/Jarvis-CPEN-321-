@@ -54,7 +54,6 @@ public class PendingEvents extends AppCompatActivity {
     }
 
     private void initializeFields() {
-        //TODO: Fetch all the invitations
         toolbar = findViewById(R.id.invites_ToolBar);
 
         recyclerView = findViewById(R.id.rvInvites);
@@ -69,6 +68,7 @@ public class PendingEvents extends AppCompatActivity {
                 idToken, user_email);
         pendingEventsAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(pendingEventsAdapter);
+        new fetchInvites(user_email, idToken).execute();
     }
 
     private class fetchInvites extends AsyncTask<Void, Void, JSONObject> {
@@ -76,7 +76,7 @@ public class PendingEvents extends AppCompatActivity {
         private String user_email;
         private String idToken;
 
-        public void fetchInvites(String user_email, String idToken){
+        fetchInvites(String user_email, String idToken){
             this.user_email = user_email;
             this.idToken = idToken;
         }
@@ -87,7 +87,7 @@ public class PendingEvents extends AppCompatActivity {
             HttpResponse httpResponse;
             JSONArray jsonArray = new JSONArray();
             JSONObject jsonObject = new JSONObject();
-            HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + user_email + "/invites");// + eventId + "/locations");
+            HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + user_email + "/invites");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
                 httpResponse = httpClient.execute(httpGet);
