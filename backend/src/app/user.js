@@ -58,6 +58,24 @@ async function verifyAndRetrieveToken(email, code){
 }
 
 /*
+    get all invited events
+*/
+async function invitedEvents(email){
+    var user = await User.findOne({email: email}).exec()
+    if(!user) return {error: `${email} does not exist`, status: "error"}
+
+    var toRespond = []
+    var tevents = await EventFunctions.relatedTEvents(email)
+    for(const event of tevents){
+        if(event.creatorEmail == email) continue
+
+        var responseEmails = event.responses.map(function(res){return res.email})
+        if(!responseEmails.includes(email)) toRespond.push(event)
+    }
+    return {events: toRespond}
+}
+
+/*
     update location
 */
 async function updateLocation(email, location){
@@ -90,5 +108,6 @@ module.exports = {
     removeFriend, 
     addFriend,
     getUsers,
-    updateLocation
+    updateLocation,
+    invitedEvents
 }

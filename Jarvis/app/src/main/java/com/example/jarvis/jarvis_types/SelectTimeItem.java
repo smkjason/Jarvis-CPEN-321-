@@ -1,28 +1,19 @@
 package com.example.jarvis.jarvis_types;
 
 public class SelectTimeItem {
-    private String mDate;
-    private String mTime;
-    private String mSelected;
+    private String mStart;
+    private String mEnd;
 
-    public SelectTimeItem(String date, String time, String selected){
-        mDate = date;
-        mTime = time;
-        mSelected = selected;
+    public SelectTimeItem(String start, String end){
+        mStart = start;
+        mEnd = end;
     }
 
-    public String getDate() {
-        return mDate;
+    public String getStart() {
+        return mStart;
     }
 
-    public String getTime(){
-        return mTime;
+    public String getEnd(){
+        return mEnd;
     }
-
-    public String getSelected() {return mSelected;}
-
-    public void selected() {
-        mSelected = "  Selected";
-    }
-
 }
