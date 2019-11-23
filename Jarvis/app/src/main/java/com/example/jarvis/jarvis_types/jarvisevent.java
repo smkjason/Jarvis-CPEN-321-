@@ -7,6 +7,7 @@ public class jarvisevent {
     private String name_of_event;
     private Date due;
     private String eventid;
+    private String tentative_event_id;
     private String admin;
     private String length;
     private ArrayList<String> attendees;
@@ -15,7 +16,7 @@ public class jarvisevent {
     //For Pending Events
     public jarvisevent(String name_of_event, String eventid, String admin, String length) {
         this.name_of_event = name_of_event;
-        this.eventid = eventid;
+        this.tentative_event_id = eventid;
         this.admin = admin;
         this.length = length;
     }
@@ -34,12 +35,16 @@ public class jarvisevent {
         return due;
     }
 
-    public String getEventid() {
-        return eventid;
+    public String getTentative_event_id() {
+        return tentative_event_id;
     }
 
     public String getAdmin() {
         return admin;
+    }
+
+    public String getEventid() {
+        return eventid;
     }
 
     public String getLength() {

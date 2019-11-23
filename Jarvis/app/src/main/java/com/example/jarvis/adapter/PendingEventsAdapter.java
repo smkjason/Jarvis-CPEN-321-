@@ -23,9 +23,14 @@ public class PendingEventsAdapter extends RecyclerView.Adapter{
     private ArrayList<jarvisevent> list_of_invited_events;
     private Context mContext;
 
-    public PendingEventsAdapter(ArrayList<jarvisevent> list_of_invited_events, Context context) {
+    private String user_email, idToken, eventid;
+
+    public PendingEventsAdapter(ArrayList<jarvisevent> list_of_invited_events, Context context, String idToken,
+                                String user_email) {
         this.list_of_invited_events = list_of_invited_events;
         mContext = context;
+        this.user_email = user_email;
+        this.idToken = idToken;
     }
 
     public class PendingEVH extends RecyclerView.ViewHolder {
@@ -56,6 +61,8 @@ public class PendingEventsAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         jarvisevent event = list_of_invited_events.get(position);
+        final String name = event.getName_of_event();
+        final String eventid = event.getTentative_event_id();
         ((PendingEVH) holder).event_name.setText(event.getName_of_event());
         ((PendingEVH) holder).admin.setText(event.getAdmin());
 //        ((PendingEVH) holder).rank.setText(event.getName_of_event());
@@ -68,6 +75,10 @@ public class PendingEventsAdapter extends RecyclerView.Adapter{
                 list_of_invited_events.remove(position);
                 notifyItemRemoved(position);
                 Intent intent = new Intent(mContext, ChoosePreferredTime.class);
+                intent.putExtra("eventid", eventid);
+                intent.putExtra("eventname", name);
+                intent.putExtra("email", user_email);
+                intent.putExtra("idToken", idToken);
                 mContext.startActivity(intent);
                 //TODO: Notify Backend
             }
