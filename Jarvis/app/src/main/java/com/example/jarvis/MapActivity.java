@@ -10,21 +10,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.appcompat.widget.TooltipCompat;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.example.jarvis.adapter.CustomAdapter;
-import com.example.jarvis.jarvis_types.jarvisevent;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -40,11 +27,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -55,7 +40,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
