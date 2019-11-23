@@ -28,38 +28,34 @@ public class SelectTimeAdapter extends RecyclerView.Adapter<SelectTimeAdapter.Se
     }
 
     public static class SelectTimeViewHolder extends RecyclerView.ViewHolder {
-        public TextView mDate;
-        public TextView mTime;
-        public TextView mSelected;
-        public Button select;
+        public TextView mStart;
+        public TextView mEnd;
 
 
         public SelectTimeViewHolder(View itemView, final SelectTimeAdapter.OnItemClickListener listener) {
             super(itemView);
-            mDate = itemView.findViewById(R.id.date);
-            mTime = itemView.findViewById(R.id.time);
-            mSelected = itemView.findViewById(R.id.selected);
-            select = itemView.findViewById(R.id.accept_event_bttn);
+            mStart = itemView.findViewById(R.id.start);
+            mEnd = itemView.findViewById(R.id.end);
 
-//            select.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if(listener != null) {
-//                        int position = getAdapterPosition();
-//                        if (position != RecyclerView.NO_POSITION) {
-//                            listener.onItemCLick(position);
-//                        }
-//                    }
-//                }
-//            });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemCLick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
     private ArrayList<SelectTimeItem> mTimesList;
 
-    public SelectTimeAdapter(ArrayList<SelectTimeItem> friendList, Context mContext, String eventID) {
+    public SelectTimeAdapter(ArrayList<SelectTimeItem> timesList, Context mContext, String eventID) {
         this.mContext = mContext;
-        mTimesList = friendList;
+        mTimesList = timesList;
         event_id = eventID;
     }
 
@@ -73,17 +69,8 @@ public class SelectTimeAdapter extends RecyclerView.Adapter<SelectTimeAdapter.Se
     @Override
     public void onBindViewHolder(SelectTimeAdapter.SelectTimeViewHolder holder, int position) {
         SelectTimeItem currentItem = mTimesList.get(position);
-        holder.mDate.setText(currentItem.getDate());
-        holder.mTime.setText(currentItem.getTime());
-        holder.mSelected.setText(currentItem.getSelected());
-        holder.select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, "Creating...", Toast.LENGTH_LONG).show();
-                // TODO: Notify backend that the user has accepted this event invitation.
-                // TODO: Make the user choose preferred times.
-            }
-        });
+        holder.mStart.setText(currentItem.getStart());
+        holder.mEnd.setText(currentItem.getEnd());
     }
 
     @Override

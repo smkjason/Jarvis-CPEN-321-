@@ -110,6 +110,7 @@ public class EventFragment extends Fragment {
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
+                httpGet.addHeader("Content-Type", "application/json");
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String json_string = EntityUtils.toString(httpEntity);
@@ -129,15 +130,22 @@ public class EventFragment extends Fragment {
         protected void onPostExecute(JSONArray jsonArray) {
             super.onPostExecute(jsonArray);
             JSONObject cur;
-            if(jsonArray == null || jsonArray.length() == 0){
+            String name, eventid, creator;
+            if(jsonArray == null ){
                 Toast.makeText(getActivity(), "!!couldn't get jsonarray!!", Toast.LENGTH_LONG).show();
+            }else if(jsonArray.length() == 0){
+                Toast.makeText(getActivity(), "You have no events.", Toast.LENGTH_LONG).show();
             }
             else{
                 Log.d(TAG, "jsonArray: " + jsonArray);
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        jarvisevent event = new jarvisevent(cur.getString("summary"), cur.getString("id"));
+                        //TODO: Double check with Charles about the schema
+                        name = cur.getString("name");
+                        eventid = cur.getString("id");
+                        creator = cur.getString("creatorEmail");
+                        jarvisevent event = new jarvisevent(name, eventid, creator);
                         mEvents.add(event);
                         Log.d(TAG, "jsonobj: " + cur.getString("summary"));
                     }catch(JSONException e){
@@ -150,11 +158,6 @@ public class EventFragment extends Fragment {
                 recyclerView.setAdapter(mAdapter);
                 recyclerView.scrollToPosition(mEvents.size() - 1);
             }
-
-//            Intent intent = new Intent(getActivity(), GroupChatActivity.class);
-//            intent.putExtra("eventname", "Nothing for now");
-//            intent.putExtra("idToken", idToken);
-//            startActivity(intent);
         }
     }
 

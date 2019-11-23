@@ -25,57 +25,25 @@
         </TextView>
 
         <TextView
-            android:id="@+id/date"
+            android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/Rank"
-            android:text="Date"
-            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/Rank"
+            android:text="Start Time"
             android:textColor="@color/colorBlack"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/time"
-            android:layout_below="@+id/date"
+            android:id="@+id/end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/date"
-            android:text="Time"
+            android:layout_toRightOf="@+id/Rank"
+            android:layout_below="@+id/start"
+            android:text="End Time"
             android:textColor="@color/colorBlack"
-            android:textSize="10sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/selected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_toEndOf="@+id/time"
-            android:layout_below="@id/date"
-            android:text="Selected"
-            android:textColor="@color/colorBlack"
-            android:textSize="10sp"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="2dp"
-            android:layout_height="@dimen/abc_action_button_min_height_material"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/view"
-            android:background="@android:color/white"
-            android:layout_alignParentTop="true"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/accept_event_bttn"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/view"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/black"
-            android:text="Create"/>
 
     </RelativeLayout>
 

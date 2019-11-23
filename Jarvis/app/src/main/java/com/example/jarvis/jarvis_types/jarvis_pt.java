@@ -12,13 +12,6 @@ public class jarvis_pt {
         this.endtime = endtime;
     }
 
-    public jarvis_pt(Date startD, Date starttime, Date endD, Date endtime) {
-        this.startD = startD;
-        this.starttime = starttime;
-        this.endD = endD;
-        this.endtime = endtime;
-    }
-
     public Date getStarttime() {
         return starttime;
     }

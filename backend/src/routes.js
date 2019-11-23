@@ -143,6 +143,15 @@ function routes(app){
         var msgs = await ChatFunctions.getMessages(req.params.id, await auth(req), req.query.before)
         res.send(msgs)
     })
+
+    /*
+        returns available time slot for ALL invitees to attend 
+    */
+    app.get('/events/:id/preferred', async function(req,res){
+        log(req)
+        var response = await EventFunctions.getPreferredTime(req.params.id, await auth(req, req.params.email))
+        res.send(response)
+    })
 }
 
 function log(req){
