@@ -44,7 +44,7 @@ function socketSetup(server){
 
             //we will now set up all the other event messages
             await setupEvents(socket)
-            await sendEventNotifications(socket)
+            //await sendEventNotifications(socket)
         })
         socket.email = null
     })
@@ -52,6 +52,28 @@ function socketSetup(server){
     base.on("test", function(data){
         socket.emit("test_echo", data)
     })
+}
+
+/*
+    test for notification
+*/
+function sendNotification(email){
+    //send notification
+    var admin = require('firebase-admin')
+    var serviceAccount = require('../../firebasecred.json')
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      databaseURL: "https://jarvis-cpen321.firebaseio.com"
+    })
+
+    var message = {
+        data: {message: 'hello world can you hear me'},
+        token: "token"
+    }
+
+    var response = await admin.messaging().send(message)
+    return response
 }
 
 /*private functions ----------------- */
@@ -95,5 +117,6 @@ async function sendEventNotifications(socket){
 
 module.exports = {
     socketSetup,
-    getMessages
+    getMessages,
+    sendNotification
 }

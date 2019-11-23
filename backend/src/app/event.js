@@ -79,10 +79,10 @@ async function syncEvents(user){
     get the events that the user is attending or created
 */
 async function getEvents(email){
-    var tevents = await relatedTEvents(email)
+    //var tevents = await relatedTEvents(email)
     var events = await relatedEvents(email)
 
-    return {events: tevents.concat(events)}
+    return {events: events}
 }
 
 async function relatedEvents(email){
