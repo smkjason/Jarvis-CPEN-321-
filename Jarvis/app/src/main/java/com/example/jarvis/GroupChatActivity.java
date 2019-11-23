@@ -186,7 +186,7 @@ public class GroupChatActivity extends AppCompatActivity {
         }
 
         if(getIntent().hasExtra("eventid")){
-        this.eventid = getIntent().getStringExtra("eventid");
+            this.eventid = getIntent().getStringExtra("eventid");
         }
 
         if(getIntent().hasExtra("idToken")){
