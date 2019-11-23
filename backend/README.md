@@ -88,16 +88,6 @@ All of these commands needs to have the user's google api key, since that's how 
     }
     ```
 
- - upload location information
-    `POST /user/<id>/location`
-    expects: 
-    ```json
-    {
-        "latitude":"string float",
-        "longitude":"string float"
-    }
-    ```
-
  - add friend
     `POST /user/<id>/friend_request
     expects:
@@ -209,6 +199,23 @@ weight is used for when the user enters in free slots, and our app will calculat
 
 ## Event Creation
 
+ - front end can retrieve all the events of a user here:
+ `GET user/:email/events`
+
+ returns:
+ ```json
+{
+    "events":[
+        {
+            //event one
+        },
+        {
+            //event two
+        }
+    ]
+}
+ ```
+
  - admin inputs event creation constraints
  `POST user/:email/events/`
  ```json
@@ -230,9 +237,21 @@ return:
 }
 ```
 
- - backend sends notification to all attendees
- (TBD)
- (socket sends status event?)
+ - backend provides an endpoint to view all invites
+ `GET user/:email/invites`
+ 
+ return:
+ ```json
+ {
+     "events":[
+         {
+             "id": "uuid",
+             "name": "event name"
+             (all other information related to an event)
+         }
+     ]
+ }
+ ```
 
  - front end receives notification, calls backend to display contraints
 
