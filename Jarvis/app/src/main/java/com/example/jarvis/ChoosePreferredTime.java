@@ -71,7 +71,7 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choosepreferredtime);
-        //getIncomingIntent();
+        getIncomingIntent();
         initialize();
     }
 

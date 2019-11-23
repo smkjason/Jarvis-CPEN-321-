@@ -12,6 +12,7 @@ public class jarvisevent {
     private String length;
     private ArrayList<String> attendees;
     private ArrayList<String> invitees;
+    private Boolean Actual;
 
     //For Pending Events
     public jarvisevent(String name_of_event, String eventid, String admin, String length) {
@@ -19,16 +20,12 @@ public class jarvisevent {
         this.tentative_event_id = eventid;
         this.admin = admin;
         this.length = length;
-    }
-
-    //for list of events that are happening (Fragment)
-    public jarvisevent(String name_of_event, String eventid) {
-        this.name_of_event = name_of_event;
-        this.eventid = eventid;
+        Actual = false;
     }
 
     public jarvisevent(String name_of_event, Date due, String eventid, String admin,
-                       String length, ArrayList<String> attendees, ArrayList<String> invitees) {
+                       String length, ArrayList<String> attendees,
+                       ArrayList<String> invitees, Boolean real) {
         this.name_of_event = name_of_event;
         this.due = due;
         this.eventid = eventid;
@@ -37,12 +34,14 @@ public class jarvisevent {
         this.attendees = attendees;
         this.invitees = invitees;
         this.tentative_event_id = null;
+        Actual = real;
     }
 
     public jarvisevent(String name_of_event, String eventid, String admin) {
         this.name_of_event = name_of_event;
         this.eventid = eventid;
         this.admin = admin;
+        Actual = true;
     }
 
     public String getName_of_event() {
