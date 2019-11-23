@@ -78,11 +78,11 @@ public class SearchFriends extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Intent i = new Intent();
         Log.d("Back","going back");
         i.putExtra("Added Friends", addedList); //need to change array
         setResult(RESULT_OK,i);
+        super.onBackPressed();
         finish();
     }
 
