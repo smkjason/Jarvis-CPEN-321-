@@ -75,10 +75,10 @@ function routes(app){
     /*
         gets all tentative invites for a user
     */
-    app.post('/user/:email/invites', async function(req, res){
+    app.get('/user/:email/invites', async function(req, res){
         log(req)
-        var events = await UserFuncitons.invitedEvents(await auth(req, req.params.email))
-        return events
+        var events = await UserFunctions.invitedEvents(await auth(req, req.params.email))
+        res.send(events)
     })
 
     /*

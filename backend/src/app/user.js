@@ -67,8 +67,10 @@ async function invitedEvents(email){
     var toRespond = []
     var tevents = await EventFunctions.relatedTEvents(email)
     for(const event of tevents){
+        if(event.creatorEmail == email) continue
+
         var responseEmails = event.responses.map(function(res){return res.email})
-        if(!responseEmails.includes(socket.email)) toRespond.push(event)
+        if(!responseEmails.includes(email)) toRespond.push(event)
     }
     return {events: toRespond}
 }
