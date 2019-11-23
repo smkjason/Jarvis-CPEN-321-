@@ -71,7 +71,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean refLocation = false;
 
     Toolbar mMapToolbar;
-    private int eventId;
+    private String eventId;
 
 
 
@@ -96,7 +96,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         }
 
-        if (eventId == -1) {
+        if (eventId.equals("")) {
             Toast.makeText(MapActivity.this, "Could not find specified event",Toast.LENGTH_LONG).show();
         }
 
@@ -108,7 +108,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
 
         Intent intent = getIntent();
-        eventId = intent.getIntExtra("eventId",-1); //if id not found cannot find other use locations
+        eventId = intent.getStringExtra("eventId"); //if id not found cannot find other use locations
 
         acct = GoogleSignIn.getLastSignedInAccount(this);
         myemail = acct.getEmail();

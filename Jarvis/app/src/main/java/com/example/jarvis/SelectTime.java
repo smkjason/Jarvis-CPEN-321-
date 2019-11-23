@@ -33,7 +33,9 @@ public class SelectTime extends AppCompatActivity {
 
         //TODO: Collect all the Inivitations sent to this user.
         //TODO: SET eventid;
-        timesList.add(new SelectTimeItem("December 1 2019", "8:00 pm", ""));
+        timesList.add(new SelectTimeItem("2019-11-30 16:00", "2019-11-30 20:00"));
+        timesList.add(new SelectTimeItem("2019-12-05 03:00", "2019-12-05 10:00"));
+        timesList.add(new SelectTimeItem("2019-12-24 12:00", "2019-12-25 12:00"));
 
         mRecyclerView = findViewById(R.id.select_recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -42,22 +44,21 @@ public class SelectTime extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        //IDK what this is for.
-//        mAdapter.setOnItemClickListener(new SelectTimeAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemCLick(int position) {
-//                confirmEvent(position);
-//            }
-//        });
+        mAdapter.setOnItemClickListener(new SelectTimeAdapter.OnItemClickListener() {
+            @Override
+            public void onItemCLick(int position) {
+                confirmEvent(position);
+            }
+        });
     }
 
-    public void confirmEvent(int position){
-        timesList.get(position).selected();
-        mAdapter.notifyItemChanged(position);
+    public void confirmEvent(int position){ //send selected time to server to finialize
+        timesList.remove(position);
+        mAdapter.notifyItemRemoved(position);
 
         Toast.makeText(SelectTime.this,"Event created",Toast.LENGTH_LONG);
 
-        gotoHome();
+       // gotoHome();
     }
 
     public void gotoHome() {
