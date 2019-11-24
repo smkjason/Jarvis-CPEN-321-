@@ -57,7 +57,7 @@ function socketSetup(server){
 /*
     test for notification
 */
-function sendNotification(email){
+async function sendNotification(email){
     //send notification
     var admin = require('firebase-admin')
     var serviceAccount = require('../../firebasecred.json')

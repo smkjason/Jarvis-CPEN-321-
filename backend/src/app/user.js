@@ -5,8 +5,10 @@ const configs = require('../configs')
 
 const EventFunctions = require('./event')
 const User = schema.UserModel
+const TEvent = schema.TentativeEventModel
 
 async function getUsers(query){
+    query = query || ''
     var users = await User.find({email: {$regex: query, $options: 'i'}})
         .select(['-refresh_token', '-google_token']).exec()
     return users
@@ -66,13 +68,20 @@ async function invitedEvents(email){
 
     var toRespond = []
     var tevents = await EventFunctions.relatedTEvents(email)
+    console.log(tevents)
     for(const event of tevents){
-        if(event.creatorEmail == email) continue
-
         var responseEmails = event.responses.map(function(res){return res.email})
         if(!responseEmails.includes(email)) toRespond.push(event)
     }
     return {events: toRespond}
+}
+
+/*
+
+*/
+async function getAdminEvents(email){
+    var events = await TEvent.find({creatorEmail: email}).exec()
+    return {events: events}
 }
 
 /*
@@ -109,5 +118,6 @@ module.exports = {
     addFriend,
     getUsers,
     updateLocation,
-    invitedEvents
+    invitedEvents,
+    getAdminEvents
 }

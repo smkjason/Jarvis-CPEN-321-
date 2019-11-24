@@ -19,21 +19,21 @@ const moment = require('moment')
     now HOW TO access these responses? (using the event id?)
 
 */
-function getPreferredTime(eventId, email){
-    var event = await TEventModel.findOne({id:eventId}).exec()
-    if(!event) return {error: 'no event with eventId' + eventId}
+// function getPreferredTime(eventId, email){
+//     var event = await TEventModel.findOne({id:eventId}).exec()
+//     if(!event) return {error: 'no event with eventId' + eventId}
 
-    if(email != event.creatorEmail) return{error: `${email} is not the admin`}
-    if(!event.invitees.includes(email)) return{error: `${email} not invited`}
+//     if(email != event.creatorEmail) return{error: `${email} is not the admin`}
+//     if(!event.invitees.includes(email)) return{error: `${email} not invited`}
 
     
-    var prefertime = new TEventModel()
-    //now input the responses into the scheduling algorithm 
-    prefertime.responses.timeslots = calculateBestTimeslot(eventId)
+//     var prefertime = new TEventModel()
+//     //now input the responses into the scheduling algorithm 
+//     prefertime.responses.timeslots = calculateBestTimeslot(eventId)
 
-    //the responses in this var should include the prefer timeslots
-    return prefertime
-}
+//     //the responses in this var should include the prefer timeslots
+//     return prefertime
+// }
 
 /*
     gets a single event
@@ -41,7 +41,7 @@ function getPreferredTime(eventId, email){
     TODO: add checking if the user can view the event
 */
 async function getEvent(eventId, email){
-    event = await TEventModel.findOne({id: eventId}) || await EventModel.findOne({id: eventId})
+    event = await TEventModel.findOne({id: eventId}).exec() || await EventModel.findOne({id: eventId}).exec()
     if(!event) return
 
     return event
@@ -55,7 +55,6 @@ async function getEvent(eventId, email){
 async function createEvent(email, data){
     data.creatorEmail = email
     data.id = uuid().replace(/-/g, '')
-    console.log(data)
     var tevent = new TEventModel(data)
     return await tevent.save()
 }
@@ -86,12 +85,10 @@ async function deleteEvent(data){
 async function syncEvents(user){
     //called when we first log in
     var calendar = Google.getUserCalendar(user)
-    var eventList = [];
     events = await calendar.events.list({
         calendarId: 'primary',
     })
-    eventList = eventList.concat(events)
-    await saveGoogleEvents(user.email, events)
+    var eventList = await saveGoogleEvents(user.email, events)
 
     while(events.pageToken){
         events = await calendar.events.list({
@@ -115,26 +112,20 @@ async function getEvents(email){
 }
 
 async function relatedEvents(email){
-    var user = await UserModel.findOne({email: email}).exec()
-    if(!user) return []
-
     var events = await EventModel.find({
         $or: [
-            {creatorEmail: user.email},
-            {attendees: {$in: [user.email]}}
+            {creatorEmail: email},
+            {attendees: {$in: [email]}}
         ]
     }).exec()
     return events
 }
 
 async function relatedTEvents(email){
-    var user = await UserModel.findOne({email: email}).exec()
-    if(!user) return []
-
     var events = await TEventModel.find({
         $or: [
-            {creatorEmail: user.email},
-            {invitees: {$in: [user.email]}}
+            {creatorEmail: email},
+            {invitees: {$in: [email]}}
         ]
     }).exec()
     return events
@@ -144,13 +135,14 @@ async function respondEvent(id, email, decline, response){
     var event = await TEventModel.findOne({id: id}).exec()
     if(!event) return {error: 'no event with id' + id}
 
-    if(!event.invitees.includes(email) || event.creatorEmail != email) return {error: `${email} not invited`}
+    if(!event.invitees.includes(email) && event.creatorEmail != email) return {error: `${email} not invited`}
     
     response.email = email
     response.declined = decline
     event.responses.push(response)
+    
     await event.save()
-    return {status: "success"}
+    return {status: 'success'}
 }
 
 async function activateEvent(id, email, timeSlot){
@@ -182,13 +174,13 @@ async function activateEvent(id, email, timeSlot){
         user.new_events = (user.new_events || []).concat([eventId])
     }
     await TEventModel.deleteOne({id: event.id}).exec()
+    return googleEvent
 }
 
 async function userLocations(id, email){
     var event = await EventModel.findOne({id: id}).exec()
     if(!event) return {error: "event not found", status: "error"}
-    console.log(Date.now() / 1000)
-    console.log(moment(event.start.dateTime).unix() - 3600)
+
     if((Date.now() / 1000) < (moment(event.start.dateTime).unix() - 3600) || 
         (Date.now() / 1000) > moment(event.end.dateTime).unix()) {
         return {error: "event time not close"}
@@ -219,9 +211,9 @@ async function saveGoogleEvents(email, events){
     for(const event of events.data.items){
         //skip over events we already have
         if(eventIds.includes(event.id)) continue
-
+        
         var json = clone(event)
-        json.creatorEmail = json.creator.email
+        json.creatorEmail = (json.creator || {}).email
         json.googleEvent = true
         json.attendees = (json.attendees || []).map(function(attendee){return attendee.email})
         var mongoEvent = new EventModel(json)
