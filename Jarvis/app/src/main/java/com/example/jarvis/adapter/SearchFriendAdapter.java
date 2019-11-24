@@ -17,7 +17,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
     private OnItemClickListener mListener;
 
     public interface OnItemClickListener {
-        void onItemCLick(int position);
+        void onItemClick(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -39,7 +39,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
                     if(listener != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemCLick(position);
+                            listener.onItemClick(position);
                         }
                     }
                 }

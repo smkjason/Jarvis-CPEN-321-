@@ -54,7 +54,6 @@ public class TentativeEvents extends AppCompatActivity {
 
         mEventsList.add(new TentativeEventItem("Event title", "Deadline time", "eventId"));
 
-        new getTentativeEvents().execute();
 
         mRecyclerView = findViewById(R.id.tentative_recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -123,7 +122,7 @@ public class TentativeEvents extends AppCompatActivity {
             super.onPostExecute(jsonArray);
             JSONObject cur;
             if(jsonArray == null || jsonArray.length() == 0){
-                Toast.makeText(TentativeEvents.this, "No Events to finalize", Toast.LENGTH_LONG).show();
+                //Toast.makeText(TentativeEvents.this, "No Events to finalize", Toast.LENGTH_LONG).show();
             }
             else{
                 for(int index = 0; index < jsonArray.length(); index++){
@@ -143,4 +142,9 @@ public class TentativeEvents extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new getTentativeEvents().execute();
+    }
 }

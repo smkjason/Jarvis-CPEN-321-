@@ -79,7 +79,7 @@ public class SelectTime extends AppCompatActivity {
 
         mAdapter.setOnItemClickListener(new SelectTimeAdapter.OnItemClickListener() {
             @Override
-            public void onItemCLick(int position) {
+            public void onItemClick(int position) {
                 confirmEvent(position);
             }
         });
@@ -127,10 +127,8 @@ public class SelectTime extends AppCompatActivity {
         protected void onPostExecute(JSONArray jsonArray){
             super.onPostExecute(jsonArray);
             JSONObject cur;
-            if(jsonArray == null){
-                Toast.makeText(SelectTime.this, "Have not finished calculating recommended times", Toast.LENGTH_LONG).show();
-            } else if (jsonArray.length() == 0) {
-                Toast.makeText(SelectTime.this, "No Recommended Times by the deadline", Toast.LENGTH_LONG).show();
+            if(jsonArray == null || jsonArray.length() == 0) {
+                //Toast.makeText(SelectTime.this, "No Recommended Times by the deadline", Toast.LENGTH_LONG).show();
             }
             else{
                 for(int index = 0; index < jsonArray.length(); index++){
