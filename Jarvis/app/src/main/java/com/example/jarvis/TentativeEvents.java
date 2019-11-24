@@ -75,8 +75,7 @@ public class TentativeEvents extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), SelectTime.class);
         intent.putExtra("Event Title", mEventsList.get(position).getTitle());
         intent.putExtra("Event Id", mEventsList.get(position).getEventId());
-        startActivity(intent);
-        //startActivityForResult(intent,77);
+        startActivityForResult(intent,77);
 //            mEventsList.remove(position);
 //            mAdapter.notifyItemChanged(position);
 
@@ -91,6 +90,9 @@ public class TentativeEvents extends AppCompatActivity {
         if (requestCode == 77 && resultCode == RESULT_OK) {
 //            ArrayList<String> newList = data.getStringArrayListExtra("Added Friends");
             //TODO: maybe delete event? or update list from backend?
+            mEventsList.clear();
+            mAdapter.notifyDataSetChanged();
+            new getTentativeEvents().execute();
         }
 
     }
@@ -133,11 +135,12 @@ public class TentativeEvents extends AppCompatActivity {
                         Log.d("Email",cur.getString("email"));
                     }catch(JSONException e){
                         e.printStackTrace();
-                        Log.e("Find c", "TentativeEvents(): JSONException", e);
+                        Log.e("TentativeEvents", "Reading info from JSONObject: JSONException", e);
                     }
                 }
                 mAdapter.notifyDataSetChanged();
             }
         }
     }
+
 }
