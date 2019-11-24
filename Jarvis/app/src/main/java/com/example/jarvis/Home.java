@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.example.jarvis.fragments.EventFragment;
 import com.example.jarvis.fragments.HomeFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,6 +38,10 @@ public class Home extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInAccount acct;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     protected void onStart() {
@@ -45,13 +50,13 @@ public class Home extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
-        Toolbar toolbar;
-        TabLayout tabLayout;
-        ViewPager viewPager;
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
+        initializeFrags();
+    }
+
+    private void initializeFrags(){
         toolbar = findViewById(R.id.home_toolbar);
         tabLayout = findViewById(R.id.tablayout_id);
         viewPager = findViewById(R.id.viewpager_id);
@@ -61,12 +66,12 @@ public class Home extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        acct = GoogleSignIn.getLastSignedInAccount(Home.this);
         mAuth = FirebaseAuth.getInstance();
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Jarvis");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         //Add the fragments
         EventFragment eventFragment = new EventFragment();
@@ -89,24 +94,6 @@ public class Home extends AppCompatActivity {
                     }
                 });
     }
-    private void revokeAccess() {
-        mAuth.getCurrentUser().delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(Home.this, "User Removed", Toast.LENGTH_LONG).show();
-                    }
-                });
-        mGoogleSignInClient.revokeAccess()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(Home.this, "Revoked", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                });
-
-    }
 
     /* This is for drop down menu */
     @Override
@@ -126,11 +113,12 @@ public class Home extends AppCompatActivity {
             startActivity(intent);
         }
 
-        if(item.getItemId() == R.id.Settings_menu){
-
+        if(item.getItemId() == R.id.refresh_events){
+            initializeFrags();
         }
+
         if(item.getItemId() == R.id.Log_out_menu){
-            revokeAccess();
+            signOut();
         }
 
         return super.onOptionsItemSelected(item);

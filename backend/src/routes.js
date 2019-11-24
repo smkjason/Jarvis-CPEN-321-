@@ -32,7 +32,7 @@ function routes(app){
     */
     app.post('/user', async function(req, res){
         log(req)
-        var user = await UserFunctions.authCreateUser(await auth(req), req.body.code)
+        var user = await UserFunctions.authCreateUser(await auth(req), req.body)
         res.send(user)
     })
 
@@ -48,11 +48,11 @@ function routes(app){
     /*
         see friends
     */
-   app.get('/user/:email/friends', async function(req, req){
-       log(req)
-       var friends = await UserFunctions.getFriends(auth(req, req.params.email))
-       res.send(friends)
-   })
+    app.get('/user/:email/friends', async function(req, req){
+        log(req)
+        var friends = await UserFunctions.getFriends(auth(req, req.params.email))
+        res.send(friends)
+    })
 
     /*
         returns a user's events
@@ -60,6 +60,15 @@ function routes(app){
     app.get('/user/:email/events', async function(req, res){
         log(req)
         var events = await EventFunctions.getEvents(await auth(req, req.params.email))
+        res.send(events)
+    })
+
+    /*
+        returns events where user is admin
+    */
+    app.get('/user/:email/admin', async function(req, res){
+        log(req)
+        var events = await UserFunctions.getAdminEvents(await auth(req, req.params.email))
         res.send(events)
     })
 
@@ -149,8 +158,15 @@ function routes(app){
     */
     app.get('/events/:id/preferred', async function(req,res){
         log(req)
-        var response = await EventFunctions.getPreferredTime(req.params.id, await auth(req, req.params.email))
-        res.send(response)
+        //var response = await EventFunctions.getPreferredTime(req.params.id, await auth(req, req.params.email))
+        res.send({
+            timeslots:[
+                {
+                    startTime: "2019-11-23 00:00",
+                    endTime: "2019-12-31 23:59"
+                }
+            ]
+        })
     })
 }
 

@@ -92,7 +92,6 @@ describe('getUserCalendar', () => {
 
         expect(setCredMock).toHaveBeenCalledTimes(1)
         var args = setCredMock.mock.calls[0][0]
-        console.log(args)
         expect(args.refresh_token).toBe('token1')
         expect(args.access_token).toBe('token2')
         expect(google.calendar_v3.Calendar).toHaveBeenCalledTimes(1)

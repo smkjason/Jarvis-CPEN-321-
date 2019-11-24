@@ -2,6 +2,13 @@ const {OAuth2Client} = require('google-auth-library')
 const google = require('googleapis')
 const configs = require('../configs')
 
+const admin = require('firebase-admin')
+const serviceAccount = require('../../firebasecred.json')
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://jarvis-cpen321.firebaseio.com"
+})
+
 function getUserCalendar(user){
     var client = new OAuth2Client({clientId: configs.CLIENT_ID, clientSecret: configs.CLIENT_SECRET})
     client.setCredentials({
@@ -23,7 +30,6 @@ async function auth(req, name = null){
         idToken: token,
         audience: configs.CLIENT_ID
     })
-    console.log('authenticated request')
     var payload = ret.getPayload()
     if(!payload.email) throw {err: 'payload does not have an id token!'}
     if(name && name != payload.email) throw {err: 'payload email does not match request'}
@@ -39,7 +45,6 @@ async function addToCalendar(user, event){
     delete eventJson.__v
     delete eventJson.creatorEmail
     delete eventJson.googleEvent
-    console.log(eventJson)
 
     await calendar.events.insert({
         calendarId: "primary",
@@ -47,8 +52,26 @@ async function addToCalendar(user, event){
     })
 }
 
+/*
+    test for notification
+*/
+async function sendNotification(user, title, body){
+    //send notification
+    var packet = {
+        notification: {
+            title: title,
+            body: body
+        },
+        token: user.fcm_token
+    }
+
+    var response = await admin.messaging().send(packet)
+    return response
+}
+
 module.exports = {
     getUserCalendar,
     auth,
-    addToCalendar
+    addToCalendar,
+    sendNotification
 }

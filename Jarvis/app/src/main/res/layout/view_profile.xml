@@ -70,35 +70,11 @@
     <!--        android:text="Revoke" />-->
 
     <Button
-        android:id="@+id/button"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="148dp"
-        android:layout_height="91dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="View my Calendar"
-        android:textColor="#FF5722"
-        app:layout_constraintBottom_toTopOf="@+id/CreateEvent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/backendMessage"
-        android:layout_width="315dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/urlconnection" />
-
-    <Button
         android:id="@+id/CreateEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create"
-        app:layout_constraintBottom_toTopOf="@+id/FriendList"
+        app:layout_constraintBottom_toTopOf="@+id/Revoke"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/Userphoto"
         app:layout_constraintStart_toStartOf="parent" />
@@ -113,10 +89,10 @@
     <!--        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
 
     <Button
-        android:id="@+id/FriendList"
+        android:id="@+id/Revoke"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Friends"
+        android:text="REVOKE"
         app:layout_constraintBottom_toTopOf="@+id/urlconnection"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

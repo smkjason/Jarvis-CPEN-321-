@@ -202,12 +202,7 @@ public class MainActivity extends AppCompatActivity{
 //                        new sendRegistrationToServer(FCMToken, idToken);
 //                    }
                 });
-
-
     }
-
-
-
 
     /* Goes to home activity */
     private void sendUsertoHomeActivity(){
@@ -238,8 +233,9 @@ public class MainActivity extends AppCompatActivity{
                 json.put("idToken", idToken);
                 json.put("code", authCode);
                 json.put("FCMToken", fcmToken);
-                Log.i("Information", "idToken is: " + idToken);
-                Log.i("Information", "authCode is: " + authCode);
+
+                Log.i(TAG, "idToken is: " + idToken);
+                Log.i(TAG, "authCode is: " + authCode);
                 Log.i(TAG, "FCMToken is: " + fcmToken);
                 httpPost.setEntity(new StringEntity(json.toString()));
                 httpPost.setHeader("Content-Type", "application/json");

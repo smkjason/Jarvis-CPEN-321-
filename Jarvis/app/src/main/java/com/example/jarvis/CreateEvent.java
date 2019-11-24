@@ -14,10 +14,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -28,7 +24,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -40,7 +36,6 @@ import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
 import io.socket.client.Socket;
 
 public class CreateEvent extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
@@ -50,12 +45,8 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private Socket mSocket;
-    private GoogleSignInAccount acct;
 
     //XML
-    private TabLayout tabLayout;
-    private AppBarLayout appBarLayout;
-    private ViewPager viewPager;
     private EditText nameofEvent;
     private TextView peopleAtEvent;
     private Button invite;
@@ -63,15 +54,12 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
     private TextView mDisplaydate;
     private Calendar calendar;
     private int year, month, day, hour, minute;
-    private DatePickerDialog.OnDateSetListener mDateSetListener;
     private TextView lengthshow;
 
     //Event Details
     private Date deadline;
     private SimpleDateFormat deadlineformat;
     private SimpleDateFormat lengthformat;
-    private Date length;
-    private String eventid;
     private ArrayList<String> friendList = new ArrayList<>();
     private String timeselected;
     private String date_selected;
@@ -79,7 +67,6 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
     //User
     private String user_email;
     private String idToken;
-    private String init_event_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +107,6 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         setSupportActionBar(mtoolbar);
         getSupportActionBar().setTitle("Create an Event");
 
-        acct = GoogleSignIn.getLastSignedInAccount(this);
 
 
         mDisplaydate.setOnClickListener(new View.OnClickListener() {
@@ -160,7 +146,6 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                     Toast.makeText(CreateEvent.this, "The length of the event is invalid.", Toast.LENGTH_LONG).show();
                 }
                 else {
-                    Toast.makeText(CreateEvent.this, "I am here...", Toast.LENGTH_LONG).show();
                     new makeNewEvent(eventName, date_selected, timeselected, friendList, user_email, idToken).execute();
                 }
 
@@ -181,7 +166,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                 timeselected = hourOfDay + ":" + minute;
                 lengthshow.setText(timeselected);
                 try {
-                    length = lengthformat.parse(timeselected);
+                    Date length = lengthformat.parse(timeselected);
                 }catch (ParseException e){
                     Log.e(TAG, "parse exception caught", e);
                 }
@@ -208,7 +193,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        date_selected = year + "-" + month + "-" + dayOfMonth;
+        date_selected = year + "-" + ++month + "-" + dayOfMonth;
         mDisplaydate.setText(date_selected);
         try {
             deadline = deadlineformat.parse(date_selected);
@@ -248,10 +233,11 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                 HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + admin_email + "/events/");
                 Log.d(TAG, "\nThe year: " + year + "\nThe month: " + month + "\nThe day" + day);
                 JSONObject json = new JSONObject();
+                JSONArray jsonArray = new JSONArray(friendList);
                 json.put("name", eventName);
                 json.put("deadline", deadline);
                 json.put("length", length);
-                json.put("invitees", friendList);
+                json.put("invitees", jsonArray);
                 httpPost.setEntity(new StringEntity(json.toString()));
                 httpPost.setHeader("Authorization", "Bearer " + idToken);
                 httpPost.setHeader("Content-Type", "application/json");
@@ -272,17 +258,12 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            try {
-                if (!jsonObject.has("id")) {
-                    Toast.makeText(CreateEvent.this, "Something went wrong with invitation", Toast.LENGTH_LONG).show();
-                    finish();
-                }else {
-                    Toast.makeText(CreateEvent.this, "Invitations sent!", Toast.LENGTH_LONG).show();
-                    eventid = jsonObject.getString("id");
-                    finish();
-                }
-            }catch (JSONException e){
-                Log.e(TAG, "JSONException caught", e);
+            if (!jsonObject.has("id")) {
+                Toast.makeText(CreateEvent.this, "Something went wrong with invitation", Toast.LENGTH_LONG).show();
+                finish();
+            }else {
+                Toast.makeText(CreateEvent.this, "Invitations sent!", Toast.LENGTH_LONG).show();
+                finish();
             }
         }
     }
@@ -310,6 +291,4 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
             Log.d("Back", String.valueOf(resultCode));
         }
     }
-
-
 }

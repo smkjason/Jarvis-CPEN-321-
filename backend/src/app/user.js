@@ -5,8 +5,10 @@ const configs = require('../configs')
 
 const EventFunctions = require('./event')
 const User = schema.UserModel
+const TEvent = schema.TentativeEventModel
 
 async function getUsers(query){
+    query = query || ''
     var users = await User.find({email: {$regex: query, $options: 'i'}})
         .select(['-refresh_token', '-google_token']).exec()
     return users
@@ -20,41 +22,38 @@ async function getUser(name){
 }
 
 //will have a return json
-async function authCreateUser(email, code){
-    return await verifyAndRetrieveToken(email, code)
+async function authCreateUser(email, body){
+    return await verifyAndRetrieveToken(email, body)
 }
 
 /*
     verifies token, creates user if it doesn't exist, and returns user
 */
-async function verifyAndRetrieveToken(email, code){
+async function verifyAndRetrieveToken(email, body){
     user = await User.findOne({email: email}).exec()
-    if(user && user.email){
-        return user;
-    } else {
+    if(!user) user = new User({email: email, name: email})
+
+    if(body.code){
         var response = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
-            code: code,
+            code: body.code,
             client_id: configs.CLIENT_ID,
             client_secret: configs.CLIENT_SECRET,
             grant_type: 'authorization_code',
             access_type: 'offline'
         })
-
-        var user = new User({
-            email: email,
-            name: email,
-            refresh_token: response.data.refresh_token,
-            google_token: response.data.access_token
-        })
-        console.log({msg: 'created user', user: user})
-        try{
-            await user.save()
-            await EventFunctions.syncEvents(user)
-        } catch(err){
-            console.log(err)
-        }
-        return user
+        
+        user.refresh_token = response.data.refresh_token || user.refresh_token
+        user.google_token = response.data.google_token || user.google_token
     }
+    
+    if(body.FCMToken){
+        user.fcm_token = body.FCMToken || user.fcm_token
+    }
+
+    await user.save()
+    await EventFunctions.syncEvents(user)
+
+    return user
 }
 
 /*
@@ -67,12 +66,18 @@ async function invitedEvents(email){
     var toRespond = []
     var tevents = await EventFunctions.relatedTEvents(email)
     for(const event of tevents){
-        if(event.creatorEmail == email) continue
-
         var responseEmails = event.responses.map(function(res){return res.email})
         if(!responseEmails.includes(email)) toRespond.push(event)
     }
     return {events: toRespond}
+}
+
+/*
+
+*/
+async function getAdminEvents(email){
+    var events = await TEvent.find({creatorEmail: email}).exec()
+    return {events: events}
 }
 
 /*
@@ -88,26 +93,11 @@ async function updateLocation(email, location){
     return {status: "success"}
 }
 
-async function getFriends(email){
-    var user = await User.findOne({email: email}).exec()
-    return user.friends
-}
-
-async function removeFriend(email, friend){
-
-}
-
-async function addFriend(email, friend){
-
-}
-
 module.exports = {
     authCreateUser,
     getUser,
-    getFriends, 
-    removeFriend, 
-    addFriend,
     getUsers,
     updateLocation,
-    invitedEvents
+    invitedEvents,
+    getAdminEvents
 }
