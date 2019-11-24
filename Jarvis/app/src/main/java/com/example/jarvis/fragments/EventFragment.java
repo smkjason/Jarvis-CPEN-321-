@@ -78,9 +78,13 @@ public class EventFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
         recyclerView.scrollToPosition(mEvents.size() - 1);
 
-        new GetEventIDs(idToken, email).execute();
+        loadEvents(idToken, email);
 
         return view;
+    }
+
+    public void loadEvents(String idToken, String email) {
+        new GetEventIDs(idToken, email).execute();
     }
 
     private class GetEventIDs extends AsyncTask<Void, Void, JSONArray> {
@@ -130,6 +134,7 @@ public class EventFragment extends Fragment {
                 Toast.makeText(getActivity(), "You have no events.", Toast.LENGTH_LONG).show();
             }
             else{
+                mEvents.clear();
                 Log.d(TAG, "jsonArray: " + jsonArray);
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{

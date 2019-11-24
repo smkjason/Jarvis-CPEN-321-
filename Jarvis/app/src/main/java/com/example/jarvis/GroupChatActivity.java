@@ -177,7 +177,7 @@ public class GroupChatActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 Log.e("Error", "Failed making json object");
             }
-            Toast.makeText(GroupChatActivity.this, "Message sent to server" + message, Toast.LENGTH_LONG).show();
+            Toast.makeText(GroupChatActivity.this, "Message sending to server... ", Toast.LENGTH_LONG).show();
         }
     }
 
