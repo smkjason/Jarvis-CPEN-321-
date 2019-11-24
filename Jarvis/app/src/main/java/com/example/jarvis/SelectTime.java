@@ -29,6 +29,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mortbay.util.ajax.JSON;
 
 //List of events that this user created (Admin)
 public class SelectTime extends AppCompatActivity {
@@ -67,7 +68,7 @@ public class SelectTime extends AppCompatActivity {
         timesList.add(new SelectTimeItem("2019-12-05 03:00", "2019-12-05 10:00"));
         timesList.add(new SelectTimeItem("2019-12-24 12:00", "2019-12-25 12:00"));
 
-        //new getRecommendedTime().execute();
+        new getRecommendedTime().execute();
 
         mRecyclerView = findViewById(R.id.select_recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -88,15 +89,15 @@ public class SelectTime extends AppCompatActivity {
         timesList.remove(position);
         mAdapter.notifyItemRemoved(position);
 
-        Toast.makeText(SelectTime.this,"Event created",Toast.LENGTH_LONG).show();
+        Toast.makeText(SelectTime.this,selectTimeTitle.getText() + " Event created",Toast.LENGTH_LONG).show();
 
         returntoTentativeEvent();
     }
 
     public void returntoTentativeEvent() {
-//        Intent i = new Intent();
-        //i.putExtra("Added Friends", addedList); //need to change array
-//        setResult(RESULT_OK,i);
+        Intent i = new Intent();
+       // i.putExtra("Added Friends", addedList); //need to change array
+        setResult(RESULT_OK,i);
         finish();
     }
 
@@ -112,9 +113,10 @@ public class SelectTime extends AppCompatActivity {
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
-                String jsonObject = EntityUtils.toString(httpEntity);
-                Log.d("Get Recommended Times", jsonObject);
-                //jsonArray = new JSONArray(jsonObject.);
+                String jsonString = EntityUtils.toString(httpEntity);
+                Log.d("Get Recommended Times", jsonString);
+                JSONObject jsonObject = new JSONObject(jsonString);
+                jsonArray = new JSONArray(jsonObject.getJSONArray("timeslots"));
             } catch (Exception e) {
                 Log.e("Error", "I caught some exception.", e);
             }
@@ -125,18 +127,19 @@ public class SelectTime extends AppCompatActivity {
         protected void onPostExecute(JSONArray jsonArray){
             super.onPostExecute(jsonArray);
             JSONObject cur;
-            if(jsonArray == null || jsonArray.length() == 0){
+            if(jsonArray == null){
+                Toast.makeText(SelectTime.this, "Have not finished calculating recommended times", Toast.LENGTH_LONG).show();
+            } else if (jsonArray.length() == 0) {
                 Toast.makeText(SelectTime.this, "No Recommended Times by the deadline", Toast.LENGTH_LONG).show();
             }
             else{
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        timesList.add(new SelectTimeItem("2019-11-30 16:00", "2019-11-30 20:00"));
-                        //Log.d("Select Time", );
+                        timesList.add(new SelectTimeItem(cur.getString("startTime"), cur.getString("endTime")));
                     }catch(JSONException e){
                         e.printStackTrace();
-                        Log.e("Find c", "TentativeEvents(): JSONException", e);
+                        Log.e("SelectTime", "Reading info from JSONObject: JSONException", e);
                     }
                 }
                 mAdapter.notifyDataSetChanged();
