@@ -102,7 +102,6 @@ public class PendingEventsAdapter extends RecyclerView.Adapter{
                 new notifyDecline(user_email, idToken, eventid).execute();
                 list_of_invited_events.remove(position);
                 notifyItemRemoved(position);
-
             }
         });
     }

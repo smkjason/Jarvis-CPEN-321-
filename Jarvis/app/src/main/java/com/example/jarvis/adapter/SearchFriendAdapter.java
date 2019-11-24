@@ -15,9 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapter.SearchFriendViewHolder> {
     private OnItemClickListener mListener;
+
     public interface OnItemClickListener {
         void onItemCLick(int position);
     }
+
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
     }
