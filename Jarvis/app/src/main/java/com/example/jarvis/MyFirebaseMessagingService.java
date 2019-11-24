@@ -1,13 +1,10 @@
 package com.example.jarvis;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -48,7 +45,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void generateNotification(String body, String title) {
-        //createNotificationChannel();
         Intent intent = new Intent(this, GroupChatActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -86,7 +82,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-        //new sendRegistrationToServer(token).execute();
+        new sendRegistrationToServer(token).execute();
     }
 
     private class sendRegistrationToServer extends AsyncTask<Void, Void, Integer> {
@@ -132,22 +128,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             super.onPostExecute(response);
             JSONObject authenticate_json = new JSONObject();
 
-        }
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(MSG_CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
         }
     }
 
