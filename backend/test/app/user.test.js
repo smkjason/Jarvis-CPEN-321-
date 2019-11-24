@@ -5,7 +5,7 @@ beforeEach(() => {
 
 describe('getUsers', () => {
     test('gets users without sensitive info', () => {
-
+        
     })
 
     test('filters', () => {
