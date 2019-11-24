@@ -8,9 +8,10 @@
         app:showAsAction="never">
     </item>
     <item
-        android:title="Settings"
-        android:id="@+id/Settings_menu"
-        app:showAsAction="never">
+        android:icon="@drawable/ic_refresh"
+        android:id="@+id/refresh_events"
+        app:showAsAction="always"
+        android:title="Refresh Events">
     </item>
     <item
         android:title="Log Out"

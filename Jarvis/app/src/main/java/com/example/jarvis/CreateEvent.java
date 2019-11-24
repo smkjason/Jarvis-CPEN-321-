@@ -146,7 +146,6 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                     Toast.makeText(CreateEvent.this, "The length of the event is invalid.", Toast.LENGTH_LONG).show();
                 }
                 else {
-                    Toast.makeText(CreateEvent.this, "I am here...", Toast.LENGTH_LONG).show();
                     new makeNewEvent(eventName, date_selected, timeselected, friendList, user_email, idToken).execute();
                 }
 
@@ -194,7 +193,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        date_selected = year + "-" + month + "-" + dayOfMonth;
+        date_selected = year + "-" + ++month + "-" + dayOfMonth;
         mDisplaydate.setText(date_selected);
         try {
             deadline = deadlineformat.parse(date_selected);
