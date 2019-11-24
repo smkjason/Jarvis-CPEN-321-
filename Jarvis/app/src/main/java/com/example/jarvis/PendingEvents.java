@@ -46,11 +46,14 @@ public class PendingEvents extends AppCompatActivity {
             this.user_email = getIntent().getStringExtra("email");
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.invites);
+        getIncomingIntent();
         initializeFields();
+
     }
 
     private void initializeFields() {
@@ -83,6 +86,7 @@ public class PendingEvents extends AppCompatActivity {
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse httpResponse;
             JSONObject jsonObject = new JSONObject();
+            Log.d(TAG, "AM I HERE THOOOOO");
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + user_email + "/invites");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
@@ -90,9 +94,9 @@ public class PendingEvents extends AppCompatActivity {
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
                 jsonObject = new JSONObject(EntityUtils.toString(httpEntity));
-                Log.d("http", "json_string: " + jsonObject);
+                Log.d(TAG, "json_string: " + jsonObject);
             } catch (Exception e) {
-                Log.e("Error", "I caught some exception.", e);
+                Log.e(TAG, "I caught some exception.", e);
             }
             return jsonObject;
         }
@@ -102,23 +106,30 @@ public class PendingEvents extends AppCompatActivity {
             if(jsonObject.has("events")){
                 JSONObject cur;
                 String id, name, creator, length;
+                Log.d(TAG, "AM I HERE THOOOOO22222222222222222222");
                 try {
                     JSONArray jsonArray = jsonObject.getJSONArray("events");
-                    for(int i = 0; i < jsonArray.length(); i++){
-                        cur = jsonArray.getJSONObject(i);
-                        id = cur.getString("id");
-                        name = cur.getString("name");
-                        creator = cur.getString("creatorEmail");
-                        length = cur.getString("length");
-                        jarvisevent jarvisevent = new jarvisevent(name, id, creator, length);
-                        list_of_invited_events.add(jarvisevent);
+                    if(jsonArray == null){
+                        Toast.makeText(PendingEvents.this, "Something went wrong with retrieving info...", Toast.LENGTH_LONG).show();
+                    }else if(jsonArray.length() == 0){
+                        Toast.makeText(PendingEvents.this, "You have no invitations", Toast.LENGTH_LONG).show();
+                    }else {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            cur = jsonArray.getJSONObject(i);
+                            id = cur.getString("id");
+                            name = cur.getString("name");
+                            creator = cur.getString("creatorEmail");
+                            length = cur.getString("length");
+                            jarvisevent jarvisevent = new jarvisevent(name, id, creator, length);
+                            list_of_invited_events.add(jarvisevent);
+                        }
+                        Toast.makeText(PendingEvents.this, "You got some invitations!", Toast.LENGTH_LONG).show();
+                        PendingEventsAdapter pendingEventsAdapter = new PendingEventsAdapter(list_of_invited_events,
+                                PendingEvents.this,
+                                idToken, user_email);
+                        pendingEventsAdapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(pendingEventsAdapter);
                     }
-                    Toast.makeText(PendingEvents.this, "You got some invitations!", Toast.LENGTH_LONG).show();
-                    PendingEventsAdapter pendingEventsAdapter = new PendingEventsAdapter(list_of_invited_events,
-                            PendingEvents.this,
-                            idToken, user_email);
-                    pendingEventsAdapter.notifyDataSetChanged();
-                    recyclerView.setAdapter(pendingEventsAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
