@@ -70,96 +70,46 @@ to see logs, run `docker logs <container id>`, where `container id` is the id of
 ## User: `/user/`
 All of these commands needs to have the user's google api key, since that's how our server will check if it is actually the user
  - create new user
-    `POST /user`
-    expects:
-    ```json
-    {
-        "email":"<email",
-        "jwt_token":"<token>",
-        "username":"<username>"
-    }
-    ```
-    returns:
-    ```json
-    {
-        "response":{
-            "id":"<id>"
-        }
-    }
-    ```
-
  - add friend
-    `POST /user/<id>/friend_request
-    expects:
-    ```json
-    {
-        "from":"<user_id>"
-    }
-    ```
-    backend needs to validate from person
-    returns 
-    ```json
-    {
-        "response": "pending"
-    }
-    ```
-
  - see friends
-    `GET /user/<id>/friends`
-    returns
-    ```json
-    {
-        "response":[
-            "<id>","<id>"...
-        ]
-    }
-    ```
 
- - see events
-    `GET /user/<id>/events`
+ - see admin events
+    `GET /user/<id>/admin`
     returns (maybe shouldn't be as detailed, maybe user id should be returned instead):
     ```json
     {
-        "response":[
+        "events": [
             {
-                "id":"<id>",
-                "name":"",
-                "start_time":"<unix timestamp>",
-                "duration":"<duration in seconds>",
-                "status": "pending, active, passed",
-                "owner":"<email>",
-                "accepted":["<email>"...],
-                "invited": ["<email>", "<email>", ...],
-                "chat_url":"<url>"
-            },
-            ...
+                "invitees": [
+                    "jarviscpen321@gmail.com"
+                ],
+                "responses": [
+                    {
+                        "timeslots": [
+                            {
+                                "startTime": "11-30, 2019 04:49",
+                                "endTime": "11-09, 2019 04:49"
+                            }
+                        ],
+                        "email": "jarviscpen321@gmail.com",
+                        "declined": null
+                    }
+                ],
+                "_id": "5dd9dd91b49ea1179df8e795",
+                "name": "Test 8",
+                "deadline": "2019-10-26",
+                "length": "2:0",
+                "creatorEmail": "jarviscpen321.1@gmail.com",
+                "id": "36db52100e5a11eabf5a49b660b53dd6",
+                "__v": 1
+            }
         ]
     }
+    ```
 
  - user information
-    `GET /user/<id>` OR `GET /user/<id>/schedule`
-    ```json
-    {
-        "response":{
-            "id":"<id>",
-            "username":"<name>",
-            "schedule":[
-                {
-                    (a bunch of events)
-                }
-            ]
-        }
-    }
-    ```
-    returns generic user information
 
  - logout (invalidate token)
-    `PUT /user/<id>/logout`
-    ```json
-    {
-        "response": "success"
-    }
-    ```
 
 ## Chat
  - send message
