@@ -65,6 +65,4 @@ public class SelectTime extends AppCompatActivity {
         Intent intent = new Intent(SelectTime.this, Home.class);
         startActivity(intent);
     }
-
-
 }

@@ -59,7 +59,6 @@ public class EventFragment extends Fragment {
 
     private void initEvents() {
         Log.i("Events", "Initializing Events");
-
     }
 
     @Override
@@ -83,12 +82,6 @@ public class EventFragment extends Fragment {
 
         new GetEventIDs(idToken, email).execute();
 
-//
-//        mAdapter = new CustomAdapter(mEvents, getActivity());
-//
-//        recyclerView.setAdapter(mAdapter);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         return view;
     }
 
@@ -107,6 +100,7 @@ public class EventFragment extends Fragment {
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse httpResponse;
             JSONArray jsonArray = new JSONArray();
+
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
@@ -115,7 +109,8 @@ public class EventFragment extends Fragment {
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String json_string = EntityUtils.toString(httpEntity);
                 Log.d("http", "json_string: " + json_string);
-                jsonArray = new JSONArray(json_string);
+                JSONObject jsonObject = new JSONObject(json_string);
+                jsonArray = jsonObject.getJSONArray("events");
             } catch (ClientProtocolException e) {
                 Log.e("Error", "Error sending ID token to backend.", e);
             } catch (IOException e) {
@@ -131,8 +126,8 @@ public class EventFragment extends Fragment {
             super.onPostExecute(jsonArray);
             JSONObject cur;
             String name, eventid, creator;
-            if(jsonArray == null ){
-                Toast.makeText(getActivity(), "!!couldn't get jsonarray!!", Toast.LENGTH_LONG).show();
+            if(jsonArray == null){
+                Toast.makeText(getActivity(), "Something went wrong while retrieving information.", Toast.LENGTH_LONG).show();
             }else if(jsonArray.length() == 0){
                 Toast.makeText(getActivity(), "You have no events.", Toast.LENGTH_LONG).show();
             }
@@ -141,8 +136,7 @@ public class EventFragment extends Fragment {
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        //TODO: Double check with Charles about the schema
-                        name = cur.getString("name");
+                        name = cur.getString("summary");
                         eventid = cur.getString("id");
                         creator = cur.getString("creatorEmail");
                         jarvisevent event = new jarvisevent(name, eventid, creator);

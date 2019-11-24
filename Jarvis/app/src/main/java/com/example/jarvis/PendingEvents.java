@@ -61,9 +61,6 @@ public class PendingEvents extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //Test Pending Event
-        list_of_invited_events.add(new jarvisevent("Test Invitation", "Fake eventid", "Jason", "2:00"));
-
         PendingEventsAdapter pendingEventsAdapter = new PendingEventsAdapter(list_of_invited_events, PendingEvents.this,
                 idToken, user_email);
         pendingEventsAdapter.notifyDataSetChanged();
@@ -89,7 +86,7 @@ public class PendingEvents extends AppCompatActivity {
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + user_email + "/invites");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
-                //TODO: Assuming this is the only header I need.
+                httpGet.addHeader("Content-Type", "application/json");
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
                 jsonObject = new JSONObject(EntityUtils.toString(httpEntity));

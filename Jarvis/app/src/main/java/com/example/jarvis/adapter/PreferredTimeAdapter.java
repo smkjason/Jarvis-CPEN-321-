@@ -10,10 +10,8 @@ import android.widget.TextView;
 import com.example.jarvis.R;
 import com.example.jarvis.jarvis_types.jarvis_pt;
 
-import java.text.DateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,16 +46,16 @@ public class PreferredTimeAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Date startTime_, endTime_;
+        String startTime_, endTime_;
         jarvis_pt preferredTime;
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM-dd, yyyy h:mm");
 
         preferredTime = List_of_preferredTimes.get(position);
-        startTime_ = preferredTime.getStarttime();
-        endTime_ = preferredTime.getEndtime();
+        startTime_ = preferredTime.getStartDatenTime();
+        endTime_ = preferredTime.getEndDatenTime();
 
-        String first = DateFormat.getDateInstance().format(startTime_);
-        String second = DateFormat.getDateInstance().format(endTime_);
+        String first = startTime_;
+        String second = endTime_;
 
         Log.d(TAG, "starttime: " + first);
         Log.d(TAG, "endtime: " + second);

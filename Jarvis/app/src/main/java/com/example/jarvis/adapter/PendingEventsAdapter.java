@@ -2,6 +2,8 @@ package com.example.jarvis.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,16 @@ import com.example.jarvis.ChoosePreferredTime;
 import com.example.jarvis.R;
 import com.example.jarvis.jarvis_types.jarvisevent;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -80,17 +92,17 @@ public class PendingEventsAdapter extends RecyclerView.Adapter{
                 intent.putExtra("email", user_email);
                 intent.putExtra("idToken", idToken);
                 mContext.startActivity(intent);
-                //TODO: Notify Backend
             }
         });
 
         ((PendingEVH) holder).Decline_bttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Invitation Accepted!", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Invitation Declined!", Toast.LENGTH_LONG).show();
+                new notifyDecline(user_email, idToken, eventid).execute();
                 list_of_invited_events.remove(position);
                 notifyItemRemoved(position);
-                //TODO: Notify Backend
+
             }
         });
     }
@@ -98,6 +110,52 @@ public class PendingEventsAdapter extends RecyclerView.Adapter{
     @Override
     public int getItemCount() {
         return (list_of_invited_events == null) ? 0 : list_of_invited_events.size();
+    }
+
+    private class notifyDecline extends AsyncTask<Void, Void, Void> {
+
+        String email;
+        String idToken;
+        String eventid;
+
+        notifyDecline(String email, String idToken, String eventid){
+            this.email = email;
+            this.idToken = idToken;
+            this.eventid =eventid;
+        }
+
+        @Override
+        protected Void doInBackground(Void... v) {
+            JSONObject createresponse = new JSONObject();
+            try {
+                //TODO: Debug this... it doesn't print the Log in here...
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/"
+                        + eventid + "?decline=true");
+                JSONObject json = new JSONObject();
+                httpPost.setEntity(new StringEntity(json.toString()));
+                httpPost.setHeader("Authorization", "Bearer " + idToken);
+                httpPost.setHeader("Content-Type", "application/json");
+                Log.d(TAG, "Am I here...?");
+                HttpResponse response = httpClient.execute(httpPost);
+                final String responseBody = EntityUtils.toString(response.getEntity());
+                createresponse = new JSONObject(responseBody);
+                Log.i("Information", "Signed in as: " + responseBody);
+            } catch (ClientProtocolException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (IOException e) {
+                Log.e("Error", "Error sending ID token to backend.", e);
+            } catch (Exception e) {
+                Log.e("Error", "I caught some exception.", e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            Toast.makeText(mContext, "Invitation Successfully Declined.", Toast.LENGTH_LONG).show();
+            super.onPostExecute(v);
+        }
     }
 
 
