@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.jarvis.adapter.SearchFriendAdapter;
@@ -62,8 +63,6 @@ public class SearchFriends extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Invite Friends");
 
-        new getUsernames(idToken).execute();
-
         mRecyclerView = findViewById(R.id.search_recyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
@@ -72,12 +71,21 @@ public class SearchFriends extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new SearchFriendAdapter.OnItemClickListener() {
+        new getUsernames(idToken).execute();
+
+        mAdapter.setOnItemClickListener(new SearchFriendAdapter.ClickListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemClick(int position, View v) {
+                Log.d(TAG, "I'm Clicked!");
                 addedFriend(position);
             }
         });
+//        mAdapter.setOnItemClickListener(new SearchFriendAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemCLick(int position) {
+//                addedFriend(position);
+//            }
+//        });
     }
 
     @Override
@@ -94,11 +102,19 @@ public class SearchFriends extends AppCompatActivity {
         if (!addedList.contains(friendList.get(position).getFriend())) {
             addedList.add(friendList.get(position).getFriend());
         }
-        Toast.makeText(SearchFriends.this , "Friend " + position + "added!", LENGTH_LONG).show();
-        friendList.remove(position);
-        mAdapter.notifyItemRemoved(position);
-    }
 
+        Toast.makeText(SearchFriends.this , "Friend " + position + " added!", Toast.LENGTH_LONG).show();
+        
+        friendList.remove(position);
+        if(friendList.size() == 0){
+            onBackPressed();
+        }else {
+            mAdapter.notifyItemRemoved(position);
+            SearchFriendAdapter chatBoxAdapter = new SearchFriendAdapter(friendList);
+            chatBoxAdapter.notifyDataSetChanged();
+            mRecyclerView.setAdapter(chatBoxAdapter);
+        }
+    }
 
     private class getUsernames extends AsyncTask<Void, Void, JSONArray> {
 

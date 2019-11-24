@@ -278,7 +278,6 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                     finish();
                 }else {
                     Toast.makeText(CreateEvent.this, "Invitations sent!", Toast.LENGTH_LONG).show();
-                    //TODO: Make sure the invitees gets notification
                     eventid = jsonObject.getString("id");
                     finish();
                 }
