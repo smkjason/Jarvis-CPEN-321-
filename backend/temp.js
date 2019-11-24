@@ -13,6 +13,11 @@ socket.on('invite', function(data){
 
 socket.emit('authenticate', {message: 'something'})
 
+socket.on('test_echo', function(data){
+    console.log(data)
+})
+socket.emit('test', {data: 'hello'})
+
 // var admin = require('firebase-admin')
 // var serviceAccount = require('./firebasecred.json')
 

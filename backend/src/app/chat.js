@@ -1,16 +1,15 @@
 var io = require('socket.io')
-const relatedEvents = require('../app/event').relatedEvents
-const auth = require('../util/google').auth
-const User = require('../data/schema').UserModel
-const Event = require('../data/schema').EventModel
-const Chat = require('../data/schema').ChatModel
+const EventFunctions = require('../app/event')
+const Google = require('../util/google')
+const Models = require('../data/schema')
+const Event = Models.EventModel
+const Chat = Models.ChatModel
 
 async function getMessages(eventid, email, tbefore){
     //check to see if user is part of this event first
     var event = await Event.findOne({id: eventid}).exec()
     if(!event || (event.creatorEmail != email && !event.attendees.includes(email))) return []
 
-    console.log(eventid)
     var messages
     if(tbefore){
         messages = await Chat.find({event: eventid, timestamp: {$lt: tbefore}}).exec()
@@ -31,7 +30,7 @@ function socketSetup(server){
 
     //and should have the email field
     base.on('connection', async function(socket){
-        socket.on("authenticate", async function(data){
+        socket.on('authenticate', async function(data){
             console.log('authenticate event')
             console.log(data)
             //make it look like an http request
@@ -39,18 +38,23 @@ function socketSetup(server){
                 headers: {},
                 body: data
             }
-            var email = await auth(request)
+            var email = await Google.auth(request)
             if(email) socket.email = email
 
             //we will now set up all the other event messages
             await setupEvents(socket)
             //await sendEventNotifications(socket)
         })
-        socket.email = null
+        
+        socket.on('test', function(data){
+            socket.emit("test_echo", data)
+            socket.broadcast.emit('test_echo', data)
+        })
     })
 
     base.on("test", function(data){
         socket.emit("test_echo", data)
+        socket.broadcast.emit('test_echo', data)
     })
 }
 
@@ -59,13 +63,12 @@ async function setupEvents(socket){
     if(!socket.email) return socket.emit('error', {msg: 'user does not have a record in the db'})
     
     //   all event handlers
-    console.log(relatedEvents)
-    var events = await relatedEvents(socket.email)
+    var events = await EventFunctions.relatedEvents(socket.email)
     for(const event of events){
         console.log('registering event handler with id: ' + event.id)
 
         socket.on(event.id + ".send", async function(data){
-            data.timestamp = (new Date()).getTime()
+            data.timestamp = Date.now() / 1000
             data.event = event.id
             data.sender = socket.email
 
@@ -74,6 +77,7 @@ async function setupEvents(socket){
             await chat.save()
             
             socket.broadcast.emit(event.id + ".message", data)
+            socket.emit(event.id + ".message", data)
         })
     }
 }

@@ -55,10 +55,8 @@ async function addToCalendar(user, event){
 /*
     test for notification
 */
-async function sendNotification(email, title, body){
-    var user = await User.findOne({email: email}).exec()
+async function sendNotification(user, title, body){
     //send notification
-    
     var packet = {
         notification: {
             title: title,
