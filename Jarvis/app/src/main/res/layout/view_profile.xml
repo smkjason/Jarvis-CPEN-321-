@@ -13,89 +13,54 @@
         android:id="@+id/Userphoto"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="224dp"
-        android:layout_marginBottom="68dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.452"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="196dp"
+        android:layout_marginBottom="119dp"
+        app:layout_constraintBottom_toTopOf="@+id/Revoke"
+        app:layout_constraintEnd_toStartOf="@+id/username"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/username"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
         android:text="Name: Username"
         app:layout_constraintBottom_toTopOf="@+id/usergmail"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.448"
-        app:layout_constraintLeft_toLeftOf="@id/usergmail"
-        app:layout_constraintRight_toRightOf="@id/usergmail"
-        app:layout_constraintStart_toEndOf="@+id/Userphoto" />
+        app:layout_constraintStart_toEndOf="@+id/Userphoto"
+        app:layout_constraintTop_toTopOf="@+id/Userphoto"
+        android:textSize="25dp"/>
 
     <TextView
         android:id="@+id/usergmail"
-        android:layout_width="221dp"
-        android:layout_height="22dp"
-        android:layout_marginBottom="116dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="25dp"
         android:text="Gmail: Usermail"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/urlconnection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="104dp"
-        android:onClick="SendMessage"
-        android:text="Send"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
-    <!--    <Button-->
-    <!--        android:id="@+id/Revoke"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_alignParentStart="true"-->
-    <!--        android:layout_alignParentTop="true"-->
-    <!--        android:layout_marginStart="34dp"-->
-    <!--        android:layout_marginTop="42dp"-->
-    <!--        android:text="Revoke" />-->
-
-    <Button
-        android:id="@+id/CreateEvent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create"
-        app:layout_constraintBottom_toTopOf="@+id/Revoke"
+        app:layout_constraintBottom_toBottomOf="@+id/Userphoto"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/Userphoto"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!--    <android.support.v7.widget.Toolbar-->
-    <!--        android:id="@+id/friends_bar"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="?attr/actionBarSize"-->
-    <!--        android:background="?attr/colorPrimary"-->
-    <!--        android:elevation="4dp"-->
-    <!--        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
-    <!--        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
+        app:layout_constraintHorizontal_bias="0.11"
+        app:layout_constraintStart_toEndOf="@+id/Userphoto"
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:layout_constraintVertical_bias="0.593"
+        android:textSize="18dp"/>
 
     <Button
         android:id="@+id/Revoke"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="REVOKE"
-        app:layout_constraintBottom_toTopOf="@+id/urlconnection"
+        android:layout_marginBottom="100dp"
+        android:onClick="SendMessage"
+        android:text="Revoke Access"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Userphoto" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

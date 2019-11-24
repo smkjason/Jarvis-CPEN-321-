@@ -14,6 +14,11 @@
         android:title="Refresh Events">
     </item>
     <item
+        android:id="@+id/revoke"
+        app:showAsAction="never"
+        android:title="Revoke">
+    </item>
+    <item
         android:title="Log Out"
         android:id="@+id/Log_out_menu"
         app:showAsAction="never"

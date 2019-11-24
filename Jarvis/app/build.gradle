@@ -98,7 +98,7 @@ dependencies {
     //hdodenhof
     implementation 'de.hdodenhof:circleimageview:3.0.1'
 
-    //   implementation 'com.github.nkzawa:socket.io-client:0.6.0'
+       implementation 'com.github.nkzawa:socket.io-client:0.6.0'
 
 //socket.io
     implementation('io.socket:socket.io-client:1.0.0') {

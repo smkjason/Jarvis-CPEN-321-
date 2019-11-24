@@ -51,20 +51,13 @@ public class ViewProfile extends AppCompatActivity {
         UserPhoto = findViewById(R.id.Userphoto);
         Username = findViewById(R.id.username);
         Useremail = findViewById(R.id.usergmail);
-        CreateEvent = findViewById(R.id.CreateEvent);
         Revoke = findViewById(R.id.Revoke);
-
-        CreateEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToCreateEvent();
-            }
-        });
 
         Revoke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 revokeAccess();
+                finish();
             }
         });
 
@@ -78,20 +71,9 @@ public class ViewProfile extends AppCompatActivity {
             Useremail.setText(personEmail);
             Glide.with(this).load(String.valueOf(personPhoto)).into(UserPhoto);
             }
-
-
-//        Toolbar myToolbar = (Toolbar) findViewById(R.id.friends_bar);
-//        setSupportActionBar(myToolbar);
     }
 
     private void revokeAccess() {
-        mAuth.getCurrentUser().delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(ViewProfile.this, "User Removed", Toast.LENGTH_LONG).show();
-                    }
-                });
         mGoogleSignInClient.revokeAccess()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
