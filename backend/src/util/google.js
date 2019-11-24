@@ -2,6 +2,13 @@ const {OAuth2Client} = require('google-auth-library')
 const google = require('googleapis')
 const configs = require('../configs')
 
+const admin = require('firebase-admin')
+const serviceAccount = require('../../firebasecred.json')
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://jarvis-cpen321.firebaseio.com"
+})
+
 function getUserCalendar(user){
     var client = new OAuth2Client({clientId: configs.CLIENT_ID, clientSecret: configs.CLIENT_SECRET})
     client.setCredentials({
@@ -45,8 +52,28 @@ async function addToCalendar(user, event){
     })
 }
 
+/*
+    test for notification
+*/
+async function sendNotification(email, title, body){
+    var user = await User.findOne({email: email}).exec()
+    //send notification
+    
+    var packet = {
+        notification: {
+            title: title,
+            body: body
+        },
+        token: user.fcm_token
+    }
+
+    var response = await admin.messaging().send(packet)
+    return response
+}
+
 module.exports = {
     getUserCalendar,
     auth,
-    addToCalendar
+    addToCalendar,
+    sendNotification
 }

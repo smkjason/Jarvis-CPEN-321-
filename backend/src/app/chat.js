@@ -1,16 +1,9 @@
 var io = require('socket.io')
+const relatedEvents = require('../app/event').relatedEvents
 const auth = require('../util/google').auth
 const User = require('../data/schema').UserModel
 const Event = require('../data/schema').EventModel
 const Chat = require('../data/schema').ChatModel
-const EventFunctions = require('./event')
-
-const admin = require('firebase-admin')
-const serviceAccount = require('../../firebasecred.json')
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://jarvis-cpen321.firebaseio.com"
-})
 
 async function getMessages(eventid, email, tbefore){
     //check to see if user is part of this event first
@@ -61,31 +54,13 @@ function socketSetup(server){
     })
 }
 
-/*
-    test for notification
-*/
-async function sendNotification(email, title, body){
-    var user = await User.findOne({email: email}).exec()
-    //send notification
-    
-    var packet = {
-        notification: {
-            title: title,
-            body: body
-        },
-        token: user.fcm_token
-    }
-
-    var response = await admin.messaging().send(packet)
-    return response
-}
-
 /*private functions ----------------- */
 async function setupEvents(socket){
     if(!socket.email) return socket.emit('error', {msg: 'user does not have a record in the db'})
     
     //   all event handlers
-    var events = await EventFunctions.relatedEvents(socket.email)
+    console.log(relatedEvents)
+    var events = await relatedEvents(socket.email)
     for(const event of events){
         console.log('registering event handler with id: ' + event.id)
 
@@ -106,5 +81,4 @@ async function setupEvents(socket){
 module.exports = {
     socketSetup,
     getMessages,
-    sendNotification
 }

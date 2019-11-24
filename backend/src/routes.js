@@ -162,16 +162,8 @@ function routes(app){
         res.send({
             timeslots:[
                 {
-                    startTime: "2019-11-25 12:00",
-                    endTime: "2019-11-25 4:00"
-                },
-                {
-                    startTime: "2019-11-24 1:00",
-                    endTime: "2019-11-24 3:00"
-                },
-                {
-                    startTime: "2019-11-23 9:00",
-                    endTime: "2019-11-23 11:30"
+                    startTime: "2019-11-23 00:00",
+                    endTime: "2019-12-31 23:59"
                 }
             ]
         })
