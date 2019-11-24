@@ -16,6 +16,7 @@ import com.example.jarvis.MapActivity;
 import com.example.jarvis.PendingEvents;
 import com.example.jarvis.R;
 import com.example.jarvis.SelectTime;
+import com.example.jarvis.TentativeEvents;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -97,7 +98,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //The events that this user is admin
-                Intent intent = new Intent(getActivity(), SelectTime.class);
+                Intent intent = new Intent(getActivity(), TentativeEvents.class);
                 startActivity(intent);
                 //TODO: See all the responses? OR something
             }

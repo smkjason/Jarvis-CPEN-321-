@@ -41,6 +41,7 @@ public class SearchFriends extends AppCompatActivity {
     ArrayList<String> addedList;
     GoogleSignInAccount acct;
     String myemail;
+    String idToken;
 
 
     @Override
@@ -50,6 +51,7 @@ public class SearchFriends extends AppCompatActivity {
 
         acct = GoogleSignIn.getLastSignedInAccount(this);
         myemail = acct.getEmail();
+        idToken = acct.getIdToken();
 
         Intent intent = getIntent();
         addedList = intent.getStringArrayListExtra("Added Friends");
@@ -110,7 +112,7 @@ public class SearchFriends extends AppCompatActivity {
             JSONArray jsonArray = new JSONArray();
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user?q=");
             try {
-//                httpGet.addHeader("Authorization", "Bearer " + idToken);
+                httpGet.addHeader("Authorization", "Bearer " + idToken);
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String usernames = EntityUtils.toString(httpEntity);
