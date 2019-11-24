@@ -109,7 +109,7 @@ describe('getEvent', () => {
 
 describe('createEvent', () => {
     test('creates event with uuid', async () => {
-        var event = await EventFunctions.createEvent(EMAIL, {name: 'test event'})
+        var event = await EventFunctions.createEvent(EMAIL, {name: 'test event', invitees: []})
         expect(Models.TentativeEventModel).toHaveBeenCalledTimes(1)
 
         expect(event.creatorEmail).toBe(EMAIL)
