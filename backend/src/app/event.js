@@ -6,6 +6,14 @@ const clone = require('lodash/cloneDeep')
 const uuid = require('uuid/v1')
 const moment = require('moment')
 
+function getFreeTime(email){
+    var 
+
+
+
+
+
+}
 /*
     - finds preferred time slots 
     **Current output is one slot where every attendee can attend
@@ -295,5 +303,7 @@ module.exports = {
     respondEvent,
     activateEvent,
     getEvent,
-    userLocations
+    userLocations,
+    getPreferredTime,
+    getFreeTime
 }

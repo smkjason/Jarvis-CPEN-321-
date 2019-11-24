@@ -52,7 +52,7 @@ function calculateBestTimeslot(eventId){
 	var prefertime = new TEventModel();
 
 	//this converts responses from YYYY-MM-DD hh:mm into just hhmm for free slots calc
-	for(var a = 0; a < Object.keys(eventId.responses.timeslots).length; a++){
+	for(var a = 0; a < Object.keys(eventId.responses[1].timeslots).length; a++){
 		//start and end rn in the form of YYYY-MM-DD hh:mm
 		//need to convert to hhmm
 		//then need to approx to hh
