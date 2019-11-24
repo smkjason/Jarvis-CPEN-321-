@@ -68,7 +68,7 @@
     <!--        android:layout_marginStart="34dp"-->
     <!--        android:layout_marginTop="42dp"-->
     <!--        android:text="Revoke" />-->
-    
+
     <Button
         android:id="@+id/CreateEvent"
         android:layout_width="wrap_content"

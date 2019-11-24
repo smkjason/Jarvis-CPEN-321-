@@ -51,17 +51,8 @@ public class ViewProfile extends AppCompatActivity {
         UserPhoto = findViewById(R.id.Userphoto);
         Username = findViewById(R.id.username);
         Useremail = findViewById(R.id.usergmail);
-        View_Calendar = findViewById(R.id.button);
-        backendMessage = findViewById(R.id.backendMessage);
         CreateEvent = findViewById(R.id.CreateEvent);
         Revoke = findViewById(R.id.Revoke);
-
-        View_Calendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToCalendar();
-            }
-        });
 
         CreateEvent.setOnClickListener(new View.OnClickListener() {
             @Override
