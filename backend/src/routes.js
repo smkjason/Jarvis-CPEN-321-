@@ -100,6 +100,15 @@ function routes(app){
     })
 
     /*
+        sendNotification
+    */
+    app.get('/user/:email/notify', async function(req, res){
+        log(req)
+        var response = await ChatFunctions.sendNotification(await auth(req, req.params.email))
+        res.send(response)
+    })
+
+    /*
         view the status of an event
     */
     app.get('/events/:id', async function(req, res){
@@ -133,6 +142,15 @@ function routes(app){
         log(req)
         var msgs = await ChatFunctions.getMessages(req.params.id, await auth(req), req.query.before)
         res.send(msgs)
+    })
+
+    /*
+        returns available time slot for ALL invitees to attend 
+    */
+    app.get('/events/:id/preferred', async function(req,res){
+        log(req)
+        var response = await EventFunctions.getPreferredTime(req.params.id, await auth(req, req.params.email))
+        res.send(response)
     })
 }
 

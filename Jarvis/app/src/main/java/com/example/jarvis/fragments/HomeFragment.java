@@ -47,9 +47,15 @@ public class HomeFragment extends Fragment {
 
     private GoogleSignInAccount acct;
 
+    private String idToken;
+    private String user_email;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        idToken = acct.getIdToken();
+        user_email = acct.getEmail();
     }
 
     @Override
@@ -108,6 +114,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), CreateEvent.class);
+                //TODO: I need to get tentative eventid from this
+                intent.putExtra("idToken", idToken);
                 startActivity(intent);
             }
         });
@@ -116,6 +124,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PendingEvents.class);
+                intent.putExtra("idToken", idToken);
+                intent.putExtra("email", user_email);
                 startActivity(intent);
             }
         });

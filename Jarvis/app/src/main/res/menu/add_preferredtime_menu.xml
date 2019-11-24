@@ -9,4 +9,10 @@
         android:icon="@mipmap/send_button_new">
     </item>
 
+    <item
+        android:title="Finish"
+        app:showAsAction="always"
+        android:id="@+id/finish_pt_bttn">
+    </item>
+
 </menu>

@@ -7,6 +7,35 @@ const uuid = require('uuid/v1')
 const moment = require('moment')
 
 /*
+    - finds preferred time slots 
+    **Current output is one slot where every attendee can attend
+    ^^need to tweak to allow for multiple timeslots
+
+    - only admin can see the output
+
+    ??get user input times from respondEvent??
+
+    if frontend puts response correctly, the preferred times (responses) will be stored in the database
+    now HOW TO access these responses? (using the event id?)
+
+*/
+function getPreferredTime(eventId, email){
+    var event = await TEventModel.findOne({id:eventId}).exec()
+    if(!event) return {error: 'no event with eventId' + eventId}
+
+    if(email != event.creatorEmail) return{error: `${email} is not the admin`}
+    if(!event.invitees.includes(email)) return{error: `${email} not invited`}
+
+    
+    var prefertime = new TEventModel()
+    //now input the responses into the scheduling algorithm 
+    prefertime.responses.timeslots = calculateBestTimeslot(eventId)
+
+    //the responses in this var should include the prefer timeslots
+    return prefertime
+}
+
+/*
     gets a single event
 
     TODO: add checking if the user can view the event
@@ -79,10 +108,10 @@ async function syncEvents(user){
     get the events that the user is attending or created
 */
 async function getEvents(email){
-    var tevents = await relatedTEvents(email)
+    //var tevents = await relatedTEvents(email)
     var events = await relatedEvents(email)
 
-    return {events: tevents.concat(events)}
+    return {events: events}
 }
 
 async function relatedEvents(email){

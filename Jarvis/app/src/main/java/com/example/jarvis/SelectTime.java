@@ -143,6 +143,4 @@ public class SelectTime extends AppCompatActivity {
             }
         }
     }
-
-
 }

@@ -145,8 +145,8 @@ public class PTDialog extends AppCompatDialogFragment {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        String date = year + "-" + month + "-" + dayOfMonth;
-                        Date.setText(date); //TODO: Apprently Date is null.
+                        String date = year + "-" + ++month + "-" + dayOfMonth;
+                        Date.setText(date);
                         if (CODE == START){
                             try {
                                 starttime = dateformat.parse(date);
