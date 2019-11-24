@@ -32,7 +32,7 @@ function routes(app){
     */
     app.post('/user', async function(req, res){
         log(req)
-        var user = await UserFunctions.authCreateUser(await auth(req), req.body.code)
+        var user = await UserFunctions.authCreateUser(await auth(req), req.body)
         res.send(user)
     })
 

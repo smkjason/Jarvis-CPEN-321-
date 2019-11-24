@@ -3,7 +3,14 @@ const auth = require('../util/google').auth
 const User = require('../data/schema').UserModel
 const Event = require('../data/schema').EventModel
 const Chat = require('../data/schema').ChatModel
-const EventFunctions = require('../app/event')
+const EventFunctions = require('./event')
+
+const admin = require('firebase-admin')
+const serviceAccount = require('../../firebasecred.json')
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://jarvis-cpen321.firebaseio.com"
+})
 
 async function getMessages(eventid, email, tbefore){
     //check to see if user is part of this event first
@@ -57,22 +64,19 @@ function socketSetup(server){
 /*
     test for notification
 */
-async function sendNotification(email){
+async function sendNotification(email, title, body){
+    var user = await User.findOne({email: email}).exec()
     //send notification
-    var admin = require('firebase-admin')
-    var serviceAccount = require('../../firebasecred.json')
-
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-      databaseURL: "https://jarvis-cpen321.firebaseio.com"
-    })
-
-    var message = {
-        data: {message: 'hello world can you hear me'},
-        token: "token"
+    
+    var packet = {
+        notification: {
+            title: title,
+            body: body
+        },
+        token: user.fcm_token
     }
 
-    var response = await admin.messaging().send(message)
+    var response = await admin.messaging().send(packet)
     return response
 }
 
@@ -80,7 +84,7 @@ async function sendNotification(email){
 async function setupEvents(socket){
     if(!socket.email) return socket.emit('error', {msg: 'user does not have a record in the db'})
     
-    //register all event handlers
+    //   all event handlers
     var events = await EventFunctions.relatedEvents(socket.email)
     for(const event of events){
         console.log('registering event handler with id: ' + event.id)
@@ -97,22 +101,6 @@ async function setupEvents(socket){
             socket.broadcast.emit(event.id + ".message", data)
         })
     }
-}
-
-async function sendEventNotifications(socket){
-    if(!socket.email) return socket.emit('error', {msg: 'user does not have a record in the db'})
-
-    var tevents = await EventFunctions.relatedTEvents(socket.email)
-    console.log(tevents)
-    for(const event of tevents){
-        var responseEmails = event.responses.map(function(res){return res.email})
-        if(!responseEmails.includes(socket.email)){
-            console.log(`user ${socket.email} was invited to event ${event.name}`)
-            //we need to send a notification for the user select a time
-            socket.emit("invite", event)
-        }
-    }
-    
 }
 
 module.exports = {

@@ -41,6 +41,7 @@ let userModel = new Schema({
     name: String,
     google_token: String,
     refresh_token: String,
+    fcm_token: String,
     email: {type: String, index: true},
     friends: [String],
     new_events: [String],
