@@ -14,7 +14,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -192,9 +192,11 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
             jarvis_pt pt;
             String startT, endT;
             Log.d(TAG, "Here?");
+            Log.d(TAG, "email: " + email);
+            Log.d(TAG, "idToken: " + idToken);
             try {
                 HttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/"
+                HttpPut httpPut = new HttpPut("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/"
                         + eventid + "?decline=false");
                 JSONArray timeslots = new JSONArray();
                 for(int i = 0; i < list_of_pt_final.size(); i++){
@@ -210,11 +212,12 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
                 }
                 JSONObject send = new JSONObject();
                 send.put("timeslots", timeslots);
-                httpPost.setEntity(new StringEntity(send.toString()));
-                httpPost.setHeader("Authorization", "Bearer " + idToken);
-                httpPost.setHeader("Content-Type", "application/json");
-                HttpResponse response = httpClient.execute(httpPost);
+                httpPut.setEntity(new StringEntity(send.toString()));
+                httpPut.setHeader("Authorization", "Bearer " + idToken);
+                httpPut.setHeader("Content-Type", "application/json");
+                HttpResponse response = httpClient.execute(httpPut);
                 final String responseBody = EntityUtils.toString(response.getEntity());
+                Log.d(TAG, "Response: " + responseBody);
                 createresponse = new JSONObject(responseBody);
                 Log.i("Information", "Signed in as: " + responseBody);
             } catch (ClientProtocolException e) {
@@ -230,13 +233,14 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
+
             try {
+                Log.d(TAG, jsonObject.getString("status"));
                 if (!jsonObject.getString("status").equals("success")) {
                     Toast.makeText(ChoosePreferredTime.this, "Something went wrong with invitation", Toast.LENGTH_LONG).show();
                     finish();
                 }else {
                     Toast.makeText(ChoosePreferredTime.this, "Invitations sent!", Toast.LENGTH_LONG).show();
-                    eventid = jsonObject.getString("id");
                     finish();
                 }
             }catch (JSONException e){

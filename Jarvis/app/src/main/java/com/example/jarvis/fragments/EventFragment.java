@@ -48,12 +48,10 @@ public class EventFragment extends Fragment {
 
     private GoogleSignInAccount acct;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i("Events", "Started events");
-
         acct = GoogleSignIn.getLastSignedInAccount(getActivity());
     }
 
