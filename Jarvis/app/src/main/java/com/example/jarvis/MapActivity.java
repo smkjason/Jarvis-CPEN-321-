@@ -89,6 +89,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             //mHandlerTask.run();
             //getDeviceLocation();
             refLocation = true;
+            new getLocationOfUsers().execute();
 
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);

@@ -52,7 +52,7 @@ public class TentativeEvents extends AppCompatActivity {
         acct = GoogleSignIn.getLastSignedInAccount(this);
         myemail = acct.getEmail();
 
-        mEventsList.add(new TentativeEventItem("Event title", "Deadline time", "eventId"));
+//        mEventsList.add(new TentativeEventItem("Event title", "Deadline time", "eventId"));
 
 
         mRecyclerView = findViewById(R.id.tentative_recyclerView);
@@ -103,14 +103,15 @@ public class TentativeEvents extends AppCompatActivity {
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse httpResponse;
             JSONArray jsonArray = new JSONArray();
-            HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + myemail + "/invites");
+            HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + myemail + "/admin");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + acct.getIdToken());
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
-                String jsonObjects = EntityUtils.toString(httpEntity);
-                Log.d("Get Tentative Events", jsonObjects);
-                jsonArray = new JSONArray(jsonObjects);
+                String jsonString = EntityUtils.toString(httpEntity);
+                Log.d("Get Tentative Events", jsonString);
+                JSONObject jsonObject = new JSONObject(jsonString);
+                jsonArray = jsonObject.getJSONArray("events");
             } catch (Exception e) {
                 Log.e("Error", "I caught some exception.", e);
             }
@@ -122,16 +123,15 @@ public class TentativeEvents extends AppCompatActivity {
             super.onPostExecute(jsonArray);
             JSONObject cur;
             if(jsonArray == null || jsonArray.length() == 0){
+                Log.d("TentativeEvents", "No events found");
                 //Toast.makeText(TentativeEvents.this, "No Events to finalize", Toast.LENGTH_LONG).show();
             }
             else{
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        if (myemail.equals(cur.getString("creatorEmail"))) {
-                            mEventsList.add(new TentativeEventItem(cur.getString("name"), cur.getString("deadline"), cur.getString("id")));
-                        }
-                        Log.d("Email",cur.getString("email"));
+                        mEventsList.add(new TentativeEventItem(cur.getString("name"), cur.getString("deadline"), cur.getString("id")));
+                        Log.d("TentativeEvents",cur.getString("name"));
                     }catch(JSONException e){
                         e.printStackTrace();
                         Log.e("TentativeEvents", "Reading info from JSONObject: JSONException", e);

@@ -104,7 +104,7 @@ public class SearchFriends extends AppCompatActivity {
         }
 
         Toast.makeText(SearchFriends.this , "Friend " + position + " added!", Toast.LENGTH_LONG).show();
-        
+
         friendList.remove(position);
         if(friendList.size() == 0){
             onBackPressed();
