@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.jarvis.adapter.SearchFriendAdapter;
@@ -30,6 +31,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 public class SearchFriends extends AppCompatActivity {
     private static final String TAG = "SearchFriends";
 
@@ -41,6 +44,7 @@ public class SearchFriends extends AppCompatActivity {
     ArrayList<String> addedList;
     GoogleSignInAccount acct;
     String myemail;
+    String idToken;
 
 
     @Override
@@ -50,6 +54,7 @@ public class SearchFriends extends AppCompatActivity {
 
         acct = GoogleSignIn.getLastSignedInAccount(this);
         myemail = acct.getEmail();
+        idToken = acct.getIdToken();
 
         Intent intent = getIntent();
         addedList = intent.getStringArrayListExtra("Added Friends");
@@ -57,8 +62,6 @@ public class SearchFriends extends AppCompatActivity {
         toolbar = findViewById(R.id.searchfriends_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Invite Friends");
-
-        new getUsernames().execute();
 
         mRecyclerView = findViewById(R.id.search_recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -68,12 +71,21 @@ public class SearchFriends extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new SearchFriendAdapter.OnItemClickListener() {
+        new getUsernames(idToken).execute();
+
+        mAdapter.setOnItemClickListener(new SearchFriendAdapter.ClickListener() {
             @Override
-            public void onItemCLick(int position) {
+            public void onItemClick(int position, View v) {
+                Log.d(TAG, "I'm Clicked!");
                 addedFriend(position);
             }
         });
+//        mAdapter.setOnItemClickListener(new SearchFriendAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemCLick(int position) {
+//                addedFriend(position);
+//            }
+//        });
     }
 
     @Override
@@ -86,22 +98,30 @@ public class SearchFriends extends AppCompatActivity {
         finish();
     }
 
-    public void newSearch(){
-        friendList.removeAll(friendList);
-        mAdapter.notifyDataSetChanged();
-    }
-
     public void addedFriend(int position){
         if (!addedList.contains(friendList.get(position).getFriend())) {
             addedList.add(friendList.get(position).getFriend());
         }
-        Toast.makeText(SearchFriends.this , "Friend " + position + "added!", Toast.LENGTH_LONG).show();
+
+        Toast.makeText(SearchFriends.this , "Friend " + position + " added!", Toast.LENGTH_LONG).show();
+        
         friendList.remove(position);
-        mAdapter.notifyItemRemoved(position);
+        if(friendList.size() == 0){
+            onBackPressed();
+        }else {
+            mAdapter.notifyItemRemoved(position);
+            SearchFriendAdapter chatBoxAdapter = new SearchFriendAdapter(friendList);
+            chatBoxAdapter.notifyDataSetChanged();
+            mRecyclerView.setAdapter(chatBoxAdapter);
+        }
     }
 
-
     private class getUsernames extends AsyncTask<Void, Void, JSONArray> {
+
+        String idTokn;
+        getUsernames(String idToken){
+            this.idTokn = idToken;
+        }
 
         @Override
         protected JSONArray doInBackground(Void... v) {
@@ -110,7 +130,9 @@ public class SearchFriends extends AppCompatActivity {
             JSONArray jsonArray = new JSONArray();
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user?q=");
             try {
-//                httpGet.addHeader("Authorization", "Bearer " + idToken);
+                httpGet.addHeader("Authorization", "Bearer " + idTokn);
+                httpGet.addHeader("Content-Type", "application/json");
+
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String usernames = EntityUtils.toString(httpEntity);
@@ -131,21 +153,26 @@ public class SearchFriends extends AppCompatActivity {
             super.onPostExecute(jsonArray);
             JSONObject cur;
             if(jsonArray == null || jsonArray.length() == 0){
-                Toast.makeText(SearchFriends.this, "No users with those characters", Toast.LENGTH_LONG).show();
+                Toast.makeText(SearchFriends.this, "No users with those characters", LENGTH_LONG).show();
             }
             else{
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        if (!myemail.equals(cur.getString("email"))) {
-                            friendList.add(new FriendItem(R.drawable.ic_android, cur.getString("email")));
+                        if (!myemail.equals(cur.getString("name"))) {
+                            friendList.add(new FriendItem(R.drawable.ic_android, cur.getString("name")));
                         }
-                        Log.d("Email",cur.getString("email"));
+                        Log.d("Email",cur.getString("name"));
                     }catch(JSONException e){
                         e.printStackTrace();
                         Log.e("Find Users", "SearchFriends(): JSONException", e);
                     }
                 }
+
+                SearchFriendAdapter chatBoxAdapter = new SearchFriendAdapter(friendList);
+                chatBoxAdapter.notifyDataSetChanged();
+                mRecyclerView.setAdapter(chatBoxAdapter);
+
                 Log.d("My Email", myemail);
                 mAdapter.notifyDataSetChanged();
             }

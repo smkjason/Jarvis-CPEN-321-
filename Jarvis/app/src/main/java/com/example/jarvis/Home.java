@@ -8,7 +8,9 @@ import android.widget.Toast;
 
 import com.example.jarvis.fragments.EventFragment;
 import com.example.jarvis.fragments.HomeFragment;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
@@ -39,8 +41,6 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-//        mAuth.addAuthStateListener(mAuthListener); moving...
     }
 
     @Override
@@ -57,6 +57,11 @@ public class Home extends AppCompatActivity {
         viewPager = findViewById(R.id.viewpager_id);
 
         mSocket = ((jarvis) this.getApplication()).getmSocket();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mAuth = FirebaseAuth.getInstance();
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Jarvis");

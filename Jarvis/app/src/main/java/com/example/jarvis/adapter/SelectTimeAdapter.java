@@ -21,7 +21,7 @@ public class SelectTimeAdapter extends RecyclerView.Adapter<SelectTimeAdapter.Se
     private String event_id;
 
     public interface OnItemClickListener {
-        void onItemCLick(int position);
+        void onItemClick(int position);
     }
     public void setOnItemClickListener(SelectTimeAdapter.OnItemClickListener listener){
         mListener = listener;
@@ -43,7 +43,7 @@ public class SelectTimeAdapter extends RecyclerView.Adapter<SelectTimeAdapter.Se
                     if(listener != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemCLick(position);
+                            listener.onItemClick(position);
                         }
                     }
                 }
@@ -53,10 +53,9 @@ public class SelectTimeAdapter extends RecyclerView.Adapter<SelectTimeAdapter.Se
 
     private ArrayList<SelectTimeItem> mTimesList;
 
-    public SelectTimeAdapter(ArrayList<SelectTimeItem> timesList, Context mContext, String eventID) {
+    public SelectTimeAdapter(ArrayList<SelectTimeItem> timesList, Context mContext) {
         this.mContext = mContext;
         mTimesList = timesList;
-        event_id = eventID;
     }
 
     @Override

@@ -273,12 +273,11 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
             try {
-                if (!jsonObject.getString("status").equals("success")) {
+                if (!jsonObject.has("id")) {
                     Toast.makeText(CreateEvent.this, "Something went wrong with invitation", Toast.LENGTH_LONG).show();
                     finish();
                 }else {
                     Toast.makeText(CreateEvent.this, "Invitations sent!", Toast.LENGTH_LONG).show();
-                    //TODO: Make sure the invitees gets notification
                     eventid = jsonObject.getString("id");
                     finish();
                 }

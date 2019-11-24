@@ -18,7 +18,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Popup"></activity>
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+
+        <activity android:name=".Popup" />
         <activity android:name=".GroupChatActivity" />
 
         <meta-data
@@ -36,8 +50,7 @@
         <activity android:name=".PendingEvents" />
         <activity android:name=".ViewProfile" />
         <activity android:name=".FriendList" />
-        <activity android:name=".ChoosePreferredTime"/>
-        <!-- <intent-filter> -->
+        <activity android:name=".ChoosePreferredTime" /> <!-- <intent-filter> -->
         <!-- <action android:name="android.intent.action.SEARCH" /> -->
         <!-- </intent-filter> -->
         <!-- <meta-data android:name="android.app.searchable" -->
@@ -54,6 +67,7 @@
         </activity>
         <activity android:name=".SearchFriends" />
         <activity android:name=".SelectTime" />
+        <activity android:name=".TentativeEvents" />
     </application>
 
 </manifest>
