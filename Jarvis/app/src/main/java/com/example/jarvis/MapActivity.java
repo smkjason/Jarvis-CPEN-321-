@@ -110,6 +110,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Intent intent = getIntent();
         eventId = intent.getStringExtra("eventId"); //if id not found cannot find other use locations
+        Log.d("MapActivity", eventId);
 
         acct = GoogleSignIn.getLastSignedInAccount(this);
         myemail = acct.getEmail();
@@ -268,6 +269,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 httpPut.setEntity(new StringEntity(json.toString()));
                 httpPut.setHeader("Authorization", "Bearer " + acct.getIdToken());
+                httpPut.addHeader("Content-Type", "application/json");
 
                 HttpResponse response = httpClient.execute(httpPut);
                 final String responseBody = EntityUtils.toString(response.getEntity());
@@ -284,21 +286,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private class getLocationOfUsers extends AsyncTask<Void, Void, JSONArray> {
-
+        boolean early = false;
 
         @Override
         protected JSONArray doInBackground(Void... v) {
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse httpResponse;
             JSONArray jsonArray = new JSONArray();
-            HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/events/");// + eventId + "/locations");
+            HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/events/" + eventId + "/locations");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + acct.getIdToken());
+                httpGet.addHeader("Content-Type", "application/json");
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String json_string = EntityUtils.toString(httpEntity);
-                Log.d("http", "json_string: " + json_string);
-                jsonArray = new JSONArray(json_string);
+                Log.d("MapActivity", "json_string: " + json_string);
+                JSONObject jsonObject = new JSONObject(json_string);
+                if(jsonObject.getString("error").equals("event time not close")) {
+                    early = true;
+                }
+                else {
+                    jsonArray = jsonObject.getJSONArray("locations");
+                }
             } catch (Exception e) {
                 Log.e("Error", "I caught some exception.", e);
             }
@@ -308,8 +317,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
             JSONObject cur;
-            if(jsonArray == null || jsonArray.length() == 0){
-                Toast.makeText(MapActivity.this, "!!couldn't get jsonarray!!", Toast.LENGTH_LONG).show();
+            if (early) {Toast.makeText(MapActivity.this, "Too Early to get other people's locations!", Toast.LENGTH_LONG).show();}
+            else if(jsonArray == null || jsonArray.length() == 0){
+                Toast.makeText(MapActivity.this, "Couldn't get location", Toast.LENGTH_LONG).show();
             }
             else{
                 Log.d(TAG, "jsonArray: " + jsonArray);
@@ -345,8 +355,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
+            mMap.clear();
             new getLocationOfUsers().execute();
-            Toast.makeText(MapActivity.this, "Refreshing Locations of Users", Toast.LENGTH_LONG).show();
+            //Toast.makeText(MapActivity.this, "Refreshing Locations of Users", Toast.LENGTH_LONG).show();
             return true;
         }
 
