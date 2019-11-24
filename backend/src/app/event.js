@@ -174,13 +174,13 @@ async function activateEvent(id, email, timeSlot){
         user.new_events = (user.new_events || []).concat([eventId])
     }
     await TEventModel.deleteOne({id: event.id}).exec()
+    return googleEvent
 }
 
 async function userLocations(id, email){
     var event = await EventModel.findOne({id: id}).exec()
     if(!event) return {error: "event not found", status: "error"}
-    console.log(Date.now() / 1000)
-    console.log(moment(event.start.dateTime).unix() - 3600)
+
     if((Date.now() / 1000) < (moment(event.start.dateTime).unix() - 3600) || 
         (Date.now() / 1000) > moment(event.end.dateTime).unix()) {
         return {error: "event time not close"}

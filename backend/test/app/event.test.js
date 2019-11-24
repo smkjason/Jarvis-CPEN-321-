@@ -6,6 +6,7 @@ jest.mock('../../src/data/schema')
 jest.mock('../../src/util/google')
 const Models = require('../../src/data/schema')
 const Google = require('../../src/util/google')
+const moment = require('moment')
 
 /* mock functions*/
 var TEventFindOne = jest.fn((s) => {
@@ -16,7 +17,19 @@ var TEventFindOne = jest.fn((s) => {
     }
 })
 var EventFindOne = jest.fn((s) => {
-    return {exec: () => { return s.id == "def" ? Promise.resolve({name: 'event'}) : Promise.resolve(null)}}
+    return {
+        exec: () => { 
+            return s.id == "def" ? 
+                Promise.resolve({
+                    name: 'event', 
+                    start: {dateTime: '2019-11-25 10:00'},
+                    end: {dateTime: '2019-11-25 11:00'},
+                    creatorEmail: EMAIL,
+                    attendees: []
+                }) : 
+                Promise.resolve(null);
+        }
+    }
 })
 var EventFind = jest.fn((s) => {
     return s['$or'] ? {exec: () => Promise.resolve([{summary: 'event1'}])} : {exec: () => Promise.resolve([])}
@@ -26,6 +39,9 @@ var TEventFind = jest.fn((s) => {
 })
 var TEventDeleteOne = jest.fn((s) => {
     return {exec: () => Promise.resolve({})}
+})
+var UserFind = jest.fn(() => {
+    return {exec: () => Promise.resolve([{email: EMAIL, lat: '12.23', lon: '23.23'}])}
 })
 
 var GoogleGetCalendar = jest.fn(() => ({
@@ -58,9 +74,11 @@ Models.TentativeEventModel.mockImplementation((data) => {
 
 Models.TentativeEventModel.findOne = TEventFindOne
 Models.TentativeEventModel.find = TEventFind
+Models.TentativeEventModel.deleteOne = TEventDeleteOne
 Models.EventModel.findOne = EventFindOne
 Models.EventModel.find = EventFind
 Models.UserModel.findOne = UserFindOne
+Models.UserModel.find = UserFind
 
 Google.getUserCalendar = GoogleGetCalendar
 Google.addToCalendar = GoogleAdd
@@ -144,19 +162,33 @@ describe('respondEvent', () => {
 
 describe('activateEvent', () => {
     test('activates event', async () => {
-        var response = await EventFunctions.activateEvent('abc', EMAIL, {startTime: '2019-11-25 0:00', endTime: '2019-11-25 23:59'})
-        console.log(response)
+        await EventFunctions.activateEvent('abc', EMAIL, {startTime: '2019-11-25 00:00', endTime: '2019-11-25 23:59'})
 
         expect(GoogleAdd).toHaveBeenCalledTimes(1)
+        expect(Models.EventModel).toHaveBeenCalledTimes(1)
     })
 
-    test('checks if admin', () => {
-        
+    test('checks if admin', async () => {
+        var response = await EventFunctions.activateEvent('abc', 'invalid', {startTime: '2019-11-25 00:00', endTime: '2019-11-25 23:59'})
+
+        expect(response.error).not.toBe(null)
     })
 })
 
 describe('userLocations', () => {
-    test('uploads locations event', () => {
-        
+    test('uploads locations event', async () => {
+        Date.now = jest.fn(() => {
+            return 1574701200*1000  
+        })
+        await EventFunctions.userLocations('def', EMAIL)
+
+        expect(UserFind).toHaveBeenCalledTimes(1)
+    })
+
+    test('does not show time if not close to event', async () => {
+        Date.now = jest.fn(() => {
+            return (new Date('2018-11-25 10:00')).getMilliseconds()
+        })
+        expect(UserFind).toHaveBeenCalledTimes(0)
     })
 })
