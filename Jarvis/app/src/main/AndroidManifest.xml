@@ -67,6 +67,7 @@
         </activity>
         <activity android:name=".SearchFriends" />
         <activity android:name=".SelectTime" />
+        <activity android:name=".TentativeEvents" />
     </application>
 
 </manifest>

@@ -53,10 +53,9 @@ public class SelectTimeAdapter extends RecyclerView.Adapter<SelectTimeAdapter.Se
 
     private ArrayList<SelectTimeItem> mTimesList;
 
-    public SelectTimeAdapter(ArrayList<SelectTimeItem> timesList, Context mContext, String eventID) {
+    public SelectTimeAdapter(ArrayList<SelectTimeItem> timesList, Context mContext) {
         this.mContext = mContext;
         mTimesList = timesList;
-        event_id = eventID;
     }
 
     @Override

@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/select_time_ToolBar"
+        android:id="@+id/tentativeEvents_ToolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimaryDark"
@@ -14,21 +14,21 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
         <TextView
-            android:id="@+id/select_time_title"
+            android:id="@+id/Toolbar_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Title of Event"
+            android:text="Events to Finalize"
             android:textColor="@color/colorAccent"
             android:textSize="25dp">
         </TextView>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/select_recyclerView"
+        android:id="@+id/tentative_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="4dp"
         android:scrollbars="vertical"
-        android:layout_below="@id/select_time_ToolBar"
+        android:layout_below="@id/tentativeEvents_ToolBar"
         android:background="@android:color/darker_gray"/>
 </RelativeLayout>
