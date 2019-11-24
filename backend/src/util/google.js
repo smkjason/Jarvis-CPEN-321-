@@ -39,10 +39,11 @@ async function addToCalendar(user, event){
     delete eventJson.__v
     delete eventJson.creatorEmail
     delete eventJson.googleEvent
+    console.log(eventJson)
 
     await calendar.events.insert({
         calendarId: "primary",
-        requestBody: event,
+        requestBody: eventJson,
     })
 }
 

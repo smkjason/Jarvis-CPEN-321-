@@ -1,30 +1,20 @@
 package com.example.jarvis.jarvis_types;
 
 
-import java.util.Date;
-
 //Preferred Period the user wants the event to happen
 public class jarvis_pt {
-    private Date startD, starttime, endD, endtime;
+    private String startDatenTime, endDatenTime;
 
-    public jarvis_pt(Date starttime, Date endtime) {
-        this.starttime = starttime;
-        this.endtime = endtime;
+    public jarvis_pt(String startDatenTime, String endDatenTime) {
+        this.startDatenTime = startDatenTime;
+        this.endDatenTime = endDatenTime;
     }
 
-    public Date getStarttime() {
-        return starttime;
+    public String getStartDatenTime() {
+        return startDatenTime;
     }
 
-    public void setStarttime(Date starttime) {
-        this.starttime = starttime;
-    }
-
-    public Date getEndtime() {
-        return endtime;
-    }
-
-    public void setEndtime(Date endtime) {
-        this.endtime = endtime;
+    public String getEndDatenTime() {
+        return endDatenTime;
     }
 }

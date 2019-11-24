@@ -14,35 +14,32 @@ import java.util.ArrayList;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapter.SearchFriendViewHolder> {
-    private OnItemClickListener mListener;
-    public interface OnItemClickListener {
-        void onItemCLick(int position);
-    }
-    public void setOnItemClickListener(OnItemClickListener listener){
-        mListener = listener;
-    }
+    private static ClickListener mListener;
 
-    public static class SearchFriendViewHolder extends RecyclerView.ViewHolder {
+    public static class SearchFriendViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView mImageView;
         public TextView mUsername;
 
-        public SearchFriendViewHolder(View itemView, final OnItemClickListener listener) {
+
+        public SearchFriendViewHolder(View itemView, final ClickListener listener) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageView);
             mUsername = itemView.findViewById(R.id.username);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(listener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemCLick(position);
-                        }
-                    }
-                }
-            });
+            itemView.setOnClickListener(this);
         }
+
+
+        @Override
+        public void onClick(View v) {
+            mListener.onItemClick(getAdapterPosition(), v);
+        }
+    }
+
+    public void setOnItemClickListener(ClickListener clickListener) {
+        SearchFriendAdapter.mListener = clickListener;
+    }
+    public interface ClickListener {
+        void onItemClick(int position, View v);
     }
 
     private ArrayList<FriendItem> mfriendList;

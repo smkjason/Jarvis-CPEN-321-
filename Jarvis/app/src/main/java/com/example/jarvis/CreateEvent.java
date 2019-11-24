@@ -241,12 +241,10 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         protected JSONObject doInBackground(Void... v) {
             JSONObject createresponse = new JSONObject();
             try {
-                Log.d(TAG, "am I here...?");
                 HttpClient httpClient = new DefaultHttpClient();
-                Log.d(TAG, "email: " + admin_email);
-                Log.d(TAG, "idToken: " + idToken);
-                Log.d(TAG, "deadline: " + deadline);
-                Log.d(TAG, "length: " + length);
+
+                Log.d(TAG, "email: " + admin_email);Log.d(TAG, "idToken: " + idToken);Log.d(TAG, "deadline: " + deadline);Log.d(TAG, "length: " + length);
+
                 HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + admin_email + "/events/");
                 Log.d(TAG, "\nThe year: " + year + "\nThe month: " + month + "\nThe day" + day);
                 JSONObject json = new JSONObject();
@@ -258,7 +256,6 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                 httpPost.setHeader("Authorization", "Bearer " + idToken);
                 httpPost.setHeader("Content-Type", "application/json");
                 HttpResponse response = httpClient.execute(httpPost);
-                Log.d(TAG, "Did it send?");
                 final String responseBody = EntityUtils.toString(response.getEntity());
                 createresponse = new JSONObject(responseBody);
                 Log.i(TAG, "Created... " + responseBody);
@@ -274,15 +271,13 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
-//            Toast.makeText(CreateEvent.this, "Event Successfully Created", Toast.LENGTH_LONG).show();
             super.onPostExecute(jsonObject);
             try {
-                if (!jsonObject.getString("status").equals("success")) {
+                if (!jsonObject.has("id")) {
                     Toast.makeText(CreateEvent.this, "Something went wrong with invitation", Toast.LENGTH_LONG).show();
                     finish();
                 }else {
                     Toast.makeText(CreateEvent.this, "Invitations sent!", Toast.LENGTH_LONG).show();
-                    //TODO: Need to pass information back
                     eventid = jsonObject.getString("id");
                     finish();
                 }

@@ -100,6 +100,15 @@ function routes(app){
     })
 
     /*
+        sendNotification
+    */
+    app.get('/user/:email/notify', async function(req, res){
+        log(req)
+        var response = await ChatFunctions.sendNotification(await auth(req, req.params.email))
+        res.send(response)
+    })
+
+    /*
         view the status of an event
     */
     app.get('/events/:id', async function(req, res){

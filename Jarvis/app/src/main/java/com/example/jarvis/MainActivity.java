@@ -22,6 +22,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -40,7 +43,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private static final String TAG = "MainActivity";
 
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+
+    private String idToken;
 
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -139,11 +144,11 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("Info", "firebaseAuthWithGoogle:" + acct.getId());
 
-        final String idToken = acct.getIdToken();
+        idToken = acct.getIdToken();
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
 
-        new CommunicateBackend(idToken, authCode).execute();
+
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -161,7 +166,48 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String FCMToken = task.getResult().getToken();
+
+                        // Log and toast
+                        String msg = "I got the token!" + FCMToken;
+                        new CommunicateBackend(idToken, authCode, FCMToken).execute();
+                        Log.d(TAG, msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+
+//                    /**
+//                     * Called if InstanceID token is updated. This may occur if the security of
+//                     * the previous token had been compromised. Note that this is called when the InstanceID token
+//                     * is initially generated so this is where you would retrieve the token.
+//                     */
+//                    @Override
+//                    public void onNewToken(String FCMToken) {
+//                        Log.d(TAG, "Refreshed token: " + FCMToken);
+//
+//                        // If you want to send messages to this application instance or
+//                        // manage this apps subscriptions on the server side, send the
+//                        // Instance ID token to your app server.
+//                        new sendRegistrationToServer(FCMToken, idToken);
+//                    }
+                });
+
+
     }
+
+
+
 
     /* Goes to home activity */
     private void sendUsertoHomeActivity(){
@@ -173,10 +219,12 @@ public class MainActivity extends AppCompatActivity {
 
         String idToken;
         String authCode;
+        String fcmToken;
 
-        CommunicateBackend(String idToken, String authCode) {
+        CommunicateBackend(String idToken, String authCode, String FCMToken) {
             this.idToken = idToken;
             this.authCode = authCode;
+            this.fcmToken = FCMToken;
         }
 
         @Override
@@ -189,11 +237,12 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject();
                 json.put("idToken", idToken);
                 json.put("code", authCode);
+                json.put("FCMToken", fcmToken);
                 Log.i("Information", "idToken is: " + idToken);
                 Log.i("Information", "authCode is: " + authCode);
+                Log.i(TAG, "FCMToken is: " + fcmToken);
                 httpPost.setEntity(new StringEntity(json.toString()));
                 httpPost.setHeader("Content-Type", "application/json");
-
                 HttpResponse response = httpClient.execute(httpPost);
                 retval = response.getStatusLine().getStatusCode();
                 final String responseBody = EntityUtils.toString(response.getEntity());
@@ -232,10 +281,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mSocket.disconnect();
     }
+
+
 
 }

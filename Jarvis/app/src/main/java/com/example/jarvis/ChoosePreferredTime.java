@@ -15,6 +15,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -71,7 +72,7 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choosepreferredtime);
-        //getIncomingIntent();
+        getIncomingIntent();
         initialize();
     }
 
@@ -79,7 +80,7 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
         toolbar = findViewById(R.id.choosept_toolbar);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Choose Preferred TImes");
+        getSupportActionBar().setTitle("Choose Preferred Times");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         recyclerView = findViewById(R.id.preferredtimes_recyclerv);
@@ -109,69 +110,59 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
         if(item.getItemId() == R.id.add_pt_bttn){
             PTDialog ptDialog = new PTDialog();
             ptDialog.show(getSupportFragmentManager(), "Preferred Time D");
-//            Intent intent = new Intent(getApplicationContext(), Popup.class);
-//            startActivityForResult(intent, 1);
         }
         if(item.getItemId() == R.id.finish_pt_bttn){
             new sendPT(list_of_pt, user_email, eventid, idToken).execute();
+            Log.d(TAG, "Sending...");
         }
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if(requestCode == Activity.RESULT_OK){
-//            //TODO: add a new adapter
-//        }else if(requestCode == Activity.RESULT_CANCELED){
-//            //TODO:
-//        }
-//    }
-
     @Override
     public void applyTexts(Date startdate, Date starttime, Date enddate, Date endtime) {
 
-        DateFormat dateTimeFormatter = new SimpleDateFormat("MM-dd, yyyy h:mm");
+        DateFormat dateTimeFormatter = new SimpleDateFormat("MM-dd, yyyy hh:mm");
         DateFormat parseDate = new SimpleDateFormat("MM-dd, yyyy");
         DateFormat parseTime = new SimpleDateFormat("hh:mm");
-
-
-        // Need to combine Date and Time
-
-        //For start PT
+        // [Parse StartDate]
         String parsed_date = parseDate.format(startdate);
         String parsed_time = parseTime.format(starttime);
 
         Log.d(TAG, "parseddate: " + parsed_date);
         Log.d(TAG, "parsed_time: " + parsed_time);
 
+        String together = parsed_date + " " + parsed_time;
         try {
-            startdate = dateTimeFormatter.parse(parsed_date + parsed_time);
+            startdate = dateTimeFormatter.parse(together);
         }catch(ParseException e){
             Log.e(TAG, "Couldn't parse dates", e);
         }
 
-        Log.d(TAG, "Full Parsing: Start Date: " + startdate);
+        String startdate_to_send = dateTimeFormatter.format(startdate);
 
+        Log.d(TAG, "Full Parsing: Start Date: " + startdate_to_send);
+        // [Parse Finished]
 
-        //For END PT
+        // [Parse EndDate]
         parsed_date = parseDate.format(enddate);
         parsed_time = parseTime.format(endtime);
 
         Log.d(TAG, "parseddate: " + parsed_date);
         Log.d(TAG, "parsed_time: " + parsed_time);
 
+        together = parsed_date + " " + parsed_time;
         try {
-            enddate = dateTimeFormatter.parse(parsed_date + parsed_time);
+            enddate = dateTimeFormatter.parse(together);
         }catch(ParseException e){
             Log.e(TAG, "Couldn't parse dates", e);
         }
 
-        Log.d(TAG, "Full Parsing: End Date: " + enddate);
+        String enddate_to_send = dateTimeFormatter.format(enddate);
+
+        Log.d(TAG, "Full Parsing: End Date: " + enddate_to_send);
 
         //Add the adapter
-        jarvis_pt pt = new jarvis_pt(startdate, enddate);
+        jarvis_pt pt = new jarvis_pt(startdate_to_send, enddate_to_send);
 
         list_of_pt.add(pt);
 
@@ -185,7 +176,6 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
         ArrayList<jarvis_pt> list_of_pt_final;
         String email;
         String eventid;
-        DateFormat dateTimeFormatter = new SimpleDateFormat("YYYY-MM-DD hh:mm");
         String idToken;
 
 
@@ -199,8 +189,9 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
         @Override
         protected JSONObject doInBackground(Void... v) {
             JSONObject createresponse = new JSONObject();
-            jarvis_pt jarvis_pt;
+            jarvis_pt pt;
             String startT, endT;
+            Log.d(TAG, "Here?");
             try {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/"
@@ -208,9 +199,9 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
                 JSONArray timeslots = new JSONArray();
                 for(int i = 0; i < list_of_pt_final.size(); i++){
                     JSONObject jsonObject = new JSONObject();
-                    jarvis_pt = list_of_pt_final.get(i);
-                    startT = dateTimeFormatter.format(jarvis_pt.getStarttime());
-                    endT = dateTimeFormatter.format(jarvis_pt.getEndtime());
+                    pt = list_of_pt_final.get(i);
+                    startT = pt.getStartDatenTime();
+                    endT = pt.getEndDatenTime();
                     Log.d(TAG, "StartTime is: " + startT);
                     Log.d(TAG, "endTime is: " + endT);
                     jsonObject.put("startTime", startT);
@@ -219,6 +210,7 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
                 }
                 JSONObject send = new JSONObject();
                 send.put("timeslots", timeslots);
+                httpPost.setEntity(new StringEntity(send.toString()));
                 httpPost.setHeader("Authorization", "Bearer " + idToken);
                 httpPost.setHeader("Content-Type", "application/json");
                 HttpResponse response = httpClient.execute(httpPost);
@@ -237,7 +229,6 @@ public class ChoosePreferredTime extends AppCompatActivity implements PTDialog.P
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
-//            Toast.makeText(CreateEvent.this, "Event Successfully Created", Toast.LENGTH_LONG).show();
             super.onPostExecute(jsonObject);
             try {
                 if (!jsonObject.getString("status").equals("success")) {
