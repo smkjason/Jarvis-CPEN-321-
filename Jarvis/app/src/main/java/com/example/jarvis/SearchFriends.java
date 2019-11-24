@@ -31,6 +31,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 public class SearchFriends extends AppCompatActivity {
     private static final String TAG = "SearchFriends";
 
@@ -100,7 +102,9 @@ public class SearchFriends extends AppCompatActivity {
         if (!addedList.contains(friendList.get(position).getFriend())) {
             addedList.add(friendList.get(position).getFriend());
         }
+
         Toast.makeText(SearchFriends.this , "Friend " + position + " added!", Toast.LENGTH_LONG).show();
+
         friendList.remove(position);
         if(friendList.size() == 0){
             onBackPressed();
@@ -149,7 +153,7 @@ public class SearchFriends extends AppCompatActivity {
             super.onPostExecute(jsonArray);
             JSONObject cur;
             if(jsonArray == null || jsonArray.length() == 0){
-                Toast.makeText(SearchFriends.this, "No users with those characters", Toast.LENGTH_LONG).show();
+                Toast.makeText(SearchFriends.this, "No users with those characters", LENGTH_LONG).show();
             }
             else{
                 for(int index = 0; index < jsonArray.length(); index++){

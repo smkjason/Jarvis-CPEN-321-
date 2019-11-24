@@ -17,6 +17,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
     private static ClickListener mListener;
 
     public static class SearchFriendViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         public ImageView mImageView;
         public TextView mUsername;
 

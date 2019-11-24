@@ -1,13 +1,11 @@
 //const UserFunctions = require("./app/event");
-const mongoose = require("mongoose");
-const schema = require("../data/schema");
+const TEventModel = require('../data/schema').TentativeEventModel
 const moment = require("moment");
 
 
 var starttime = [];
 var endtime = [];
 var starttoend = [];
-
 
 var temp = [[],[],[],[],[],[],[]];
 var temp_day = ""
@@ -21,7 +19,7 @@ var start = 0;
 //TO DO:
 //change set into an array of size 7 to store result for each day
 
-var set = {};
+var set = [[],[],[],[],[],[],[]];
 
 //24 hours 
 var sum = [0,0,0,0,0,0,0,0,0,0,
@@ -29,6 +27,10 @@ var sum = [0,0,0,0,0,0,0,0,0,0,
 		   0,0,0,0];
 
 var sum_total = [[],[],[],[],[],[],[]];
+
+var initial_sunday_date = ""
+var convert_back_start = ""
+var convert_back_end = ""
 			
 //logic should work something like this
 // Student A: 11100000111111100000
@@ -47,13 +49,15 @@ var sum_total = [[],[],[],[],[],[],[]];
 
 function calculateBestTimeslot(eventId){
 
+	var prefertime = new TEventModel();
+
 	//this converts responses from YYYY-MM-DD hh:mm into just hhmm for free slots calc
 	for(var a = 0; a < Object.keys(eventId.responses.timeslots).length; a++){
 		//start and end rn in the form of YYYY-MM-DD hh:mm
 		//need to convert to hhmm
 		//then need to approx to hh
-		temp_start = eventId.responses[1].timeslots[a].starttitme
-		temp_end = eventId.responses[1].timeslots[a].endtime
+		temp_start = eventId.responses[1].timeslots[a].starttitme;
+		temp_end = eventId.responses[1].timeslots[a].endtime;
 
 		temp_day = moment(temp_start).format('LL');
 
@@ -65,11 +69,13 @@ function calculateBestTimeslot(eventId){
 		//want to round up/down the minutes into hours 
 
 		day = new Date(temp_day)
-
+		if(day.getDay() == 0){
+			initial_sunday_date = moment(temp_day).format('YYYY-MM-DD');
+		}
 		//adds slots from a day in week to that specific day in week
 		//get.Day() returns day of week, so corresponding start and end time gets stored correctly
 		//temp[0] is Sunday, temp[1] is Monday, etc
-		temp[day.getDay()].push([temp_start,temp_end])
+		temp[day.getDay()].push([temp_start,temp_end]);
 
 		//temp will look like this 
 		//temp[[[SUNDAY_start1,SUNDAY_end1],[SUNDAY_start2,SUNDAY_end2]],
@@ -82,7 +88,7 @@ function calculateBestTimeslot(eventId){
 	}
 
 	// incrementing through each user to get each user's start/end time
-for(var day_count = 0; daycount < 7; daycount++){
+for(var day_count = 0; day_count < 7; day_count++){
 	for(var x = 0; x < temp[day_count].length; x++){
 
 		//index 0 is start time, 1 is end time
@@ -115,19 +121,26 @@ for(var i = 1; i < sum_total[day_count].length; i++){
 		//ending a sequence
 		if(sum_total[day_count][i-1] === total){
 			//take all the 0s from start - i-1
-			set[start] = i - 1;
+			(set[day_count])[start] = i - 1;
 		}
 	}
 }
 if(sum_total[day_count][sum_total[day_count].length-1] === total){
-	set[start] = sum_total[day_count].length - 1;
+	(set[day_count])[start] = sum_total[day_count].length - 1;
 }
+
+//converting integer back to strings for TEventModel
+convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (set[day_count])[0] + ':00'
+convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (set[day_count])[1] + ':00'
+
+//store the result into JSON object
+prefertime.responses[1].timeslots[day_count].push(convert_back_start);
+prefertime.responses[1].timeslots[day_count].push(convert_back_end);
 }//daycount loop ends here
 
-// console.log(sum);
-// console.log(set);
 
-return set;
+// return set;
+return prefertime
 }
 
 module.exports = {
