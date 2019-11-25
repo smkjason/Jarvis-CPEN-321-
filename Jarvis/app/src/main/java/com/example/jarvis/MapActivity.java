@@ -289,6 +289,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private class getLocationOfUsers extends AsyncTask<Void, Void, JSONArray> {
         boolean early = false;
         boolean first;
+        boolean noLocation = false;
 
         getLocationOfUsers(boolean first) {
             this.first = first;
@@ -307,14 +308,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String json_string = EntityUtils.toString(httpEntity);
                 Log.d("MapActivity", "json_string: " + json_string);
-                jsonArray = new JSONArray(json_string);
-//                JSONObject jsonObject = new JSONObject(json_string);
-//                if(jsonObject.getString("error").equals("event time not close")) {
-//                    early = true;
-//                }
-//                else {
-//                    jsonArray = jsonObject.getJSONArray("locations");
-//                }
+//                jsonArray = new JSONArray(json_string);
+//                Log.d("MapActivity",jsonArray.getJSONObject(0).getString("user"));
+                JSONObject jsonObject = new JSONObject(json_string);
+                if(jsonObject.has("error")) {
+                    early = true;
+                }
+                else {
+                    jsonArray = jsonObject.getJSONArray("locations");
+                }
             } catch (Exception e) {
                 Log.e("Error", "I caught some exception.", e);
             }
@@ -333,13 +335,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        LatLng userLocation = new LatLng(Double.parseDouble(cur.getString("lat")), Double.parseDouble(cur.getString("lon")));
-                        mMap.addMarker(new MarkerOptions().position(userLocation)
-                                .title(cur.getString("user")));
+                        if (!cur.has("lat") || !cur.has("lon")) {
+                            noLocation = true;
+                        } else {
+                            LatLng userLocation = new LatLng(Double.parseDouble(cur.getString("lat")), Double.parseDouble(cur.getString("lon")));
+                            mMap.addMarker(new MarkerOptions().position(userLocation)
+                                    .title(cur.getString("user")));
+                        }
                     }catch(JSONException e){
                         e.printStackTrace();
                         Log.e(TAG, "Something wrong with retrieved JSONObject", e);
                     }
+                }
+                if (noLocation) {
+                    Toast.makeText(MapActivity.this, "Some users have not shared their locations",Toast.LENGTH_LONG).show();
                 }
             }
         }

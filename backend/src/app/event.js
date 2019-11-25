@@ -1,7 +1,6 @@
 const EventModel = require('../data/schema').EventModel
 const TEventModel = require('../data/schema').TentativeEventModel
 const UserModel = require('../data/schema').UserModel
-const sendNotification = require('./chat').sendNotification
 const Google = require('../util/google')
 const clone = require('lodash/cloneDeep')
 const uuid = require('uuid/v1')
@@ -57,7 +56,8 @@ async function createEvent(email, data){
     data.creatorEmail = email
     data.id = uuid().replace(/-/g, '')
     for(const attendee of data.invitees){
-        sendNotification(attendee, 'Event Invite', 'You got a new invite to ' + data.name)
+        user = await UserModel.findOne({email: attendee}).exec()
+        Google.sendNotification(user, 'Event Invite', 'You got a new invite to ' + data.name)
     }
     var tevent = new TEventModel(data)
     return await tevent.save()
@@ -158,6 +158,7 @@ async function activateEvent(id, email, timeSlot){
     //save the event to the mongoDB db
     var googleEvent = finalizeEvent(event, timeSlot)
     var eventId = googleEvent.id;
+    console.log(googleEvent)
     await googleEvent.save()
 
     //save to the goole calendar event

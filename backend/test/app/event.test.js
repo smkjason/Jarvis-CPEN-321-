@@ -6,7 +6,6 @@ jest.mock('../../src/data/schema')
 jest.mock('../../src/util/google')
 const Models = require('../../src/data/schema')
 const Google = require('../../src/util/google')
-const moment = require('moment')
 
 /* mock functions*/
 var TEventFindOne = jest.fn((s) => {

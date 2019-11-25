@@ -65,7 +65,6 @@ async function invitedEvents(email){
 
     var toRespond = []
     var tevents = await EventFunctions.relatedTEvents(email)
-    console.log(tevents)
     for(const event of tevents){
         var responseEmails = event.responses.map(function(res){return res.email})
         if(!responseEmails.includes(email)) toRespond.push(event)
@@ -94,25 +93,9 @@ async function updateLocation(email, location){
     return {status: "success"}
 }
 
-async function getFriends(email){
-    var user = await User.findOne({email: email}).exec()
-    return user.friends
-}
-
-async function removeFriend(email, friend){
-
-}
-
-async function addFriend(email, friend){
-
-}
-
 module.exports = {
     authCreateUser,
     getUser,
-    getFriends, 
-    removeFriend, 
-    addFriend,
     getUsers,
     updateLocation,
     invitedEvents,

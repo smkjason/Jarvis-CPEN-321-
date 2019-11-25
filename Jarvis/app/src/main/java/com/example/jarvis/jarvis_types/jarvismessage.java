@@ -1,11 +1,5 @@
 package com.example.jarvis.jarvis_types;
 
-import android.widget.CalendarView;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 public class jarvismessage {
     private String message;
     private String sender;
@@ -13,12 +7,11 @@ public class jarvismessage {
     private Boolean is_mine = false;
 
 
-    public jarvismessage(String sender, String message){
-        this.sender = sender;
+    public jarvismessage(String message, String sender, String time, Boolean is_mine) {
         this.message = message;
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh: mm");
-        this.time = timeFormat.format(Calendar.getInstance().getTime());
-        is_mine = true;
+        this.sender = sender;
+        this.time = time;
+        this.is_mine = is_mine;
     }
 
     public jarvismessage(String message, String sender, String time) {
