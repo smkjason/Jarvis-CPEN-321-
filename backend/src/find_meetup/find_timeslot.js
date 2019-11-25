@@ -29,7 +29,7 @@ var sum = [0,0,0,0,0,0,0,0,0,0,
 		   0,0,0,0,0,0,0,0,0,0,
 		   0,0,0,0,0,0,0,0];
 
-var sum_total = [[],[],[],[],[],[],[]];
+var sum_total = [];
 
 var initial_sunday_date = ""
 var convert_back_start = ""
@@ -52,14 +52,25 @@ var convert_back_end = ""
 
 function calculateBestTimeslot(eventId){
 
-	var prefertime = new TEventModel();
+	var prefertime = [];
+	var deadlinedays = get_deadline_days(eventId);
+	var meetup_duration = parseInt(moment(eventId.length).format('HHmm'))/50;
+	var member_count = eventId.responses.length;
+	
+	var cur_seq_count = 0
+	var new_seq_start = 0
+	var old_seq_start = 0
+
 	//this converts responses from YYYY-MM-DD hh:mm into just hhmm for free slots calc
-	for(var a = 0; a < Object.keys(eventId.responses[1].timeslots).length; a++){
+for(var a = 0; a < eventId.responses.length; a++){
+	for(b = 0; b < eventId.responses[a].timeslots.length; b++){
+
+		
 		//start and end rn in the form of YYYY-MM-DD hh:mm
 		//need to convert to hhmm
 		//then need to approx to hh
-		temp_start = eventId.responses[1].timeslots[a].starttitme;
-		temp_end = eventId.responses[1].timeslots[a].endtime;
+		temp_start = eventId.responses[a].timeslots[b].startTime;
+		temp_end = eventId.responses[a].timeslots[b].endTime;
 
 		temp_day = moment(temp_start).format('LL');
 
@@ -107,14 +118,15 @@ function calculateBestTimeslot(eventId){
 		//temp[[[SUNDAY_start1,SUNDAY_end1],[SUNDAY_start2,SUNDAY_end2]],
 		//		[MONDAY_start1,MONDAY_end1],[MONDAY_start2,MONDAY_end2], [TUESDAY slots], [WEDENSDAY SLOTS]...]
 	}
+}
 
 	//create sum total for all days in the week
-	for(var a = 0; a < 7; a++){
+	for(var a = 0; a < deadlinedays; a++){
 		sum_total[a].push(sum);
 	}
 
 	// incrementing through each user to get each user's start/end time
-for(var day_count = 0; day_count < 7; day_count++){
+for(var day_count = 0; day_count < deadlinedays; day_count++){
 	for(var x = 0; x < temp[day_count].length; x++){
 
 		//index 0 is start time, 1 is end time
@@ -138,47 +150,95 @@ for(var day_count = 0; day_count < 7; day_count++){
 
 
 // console.log(sum)
+//weight calc => (available ppl / total) * 0.75
 
-for(var i = 1; i < sum_total[day_count].length; i++){
-	if(sum_total[day_count][i] === total){
-		//starting a new sequence
-		if(sum_total[day_count][i-1] !== total){
-			start = i;
-		}
-	} else {
-		//ending a sequence
-		if(sum_total[day_count][i-1] === total){
-			//take all the 0s from start - i-1
-			(set[day_count])[start] = i - 1;
-		}
+for(var i = 0; i < sum_total[day_count].length; i++){
+
+	var temp_num = (sum_total[day_count])[i]
+
+	if(temp_num == (sum_total[day_count])[i+1]){
+		//start new sequence
+		temp_num = (sum_total[day_count])[i+1]
+		cur_seq_count++; 
+		old_seq_start = i 
+
+	}else{
+		new_seq_start = old_seq_start - cur_seq_count + 1
+		temp_num = (sum_total[day_count])[i+1]
+		//end sequence
+		test_array.push({
+			size: cur_seq_count + 1,
+			num: (sum_total[day_count])[i-1],
+			start: new_seq_start
+		})
+		cur_seq_count = 0
 	}
 }
-if(sum_total[day_count][sum_total[day_count].length-1] === total){
-	(set[day_count])[start] = sum_total[day_count].length - 1;
+
+//console.log(test_array);
+
+for(var i = 0; i < test_array.length; i++){	
+	if(test_array[i].num > member_count/2 && test_array[i].size > meetup_duration){
+		result_array.push({
+			size: test_array[i].size,
+			num: test_array[i].num,
+			start: test_array[i].start})
+	}
 }
 
+//TODO 
+// check with duration of meeting time
+for(var i = 0; i < result_array.length; i++){
 //converting integer back to strings for TEventModel
-if((set[day_count])[0] % 2){
-	convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + ((set[day_count])[0])/2 + ':00'	
+if((parseInt(result_array[i].start) % 2)){
+	convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + result_array[0].start/2 - 0.5 + ':30'
 }else{
-	convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + ((set[day_count])[0])/2 - 0.5 + ':30'
+	convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + result_array[0].start/2 + ':00'
 }
 
-if((set[day_count])[1] % 2){
-	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + ((set[day_count])[1])/2 + ':00'
+if((result_array[i].start + result_array[i].size)%2){
+	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (result_array[0].start + result_array[0].size)/2 - 0.5 + ':30'
 }else{
-	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + ((set[day_count])[1])/2 - 0.5 + ':30'
+	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (result_array[0].start + result_array[0].size)/2 + ':00'
 }
 
-//store the result into JSON object
-prefertime.responses[1].timeslots[day_count].push(convert_back_start);
-prefertime.responses[1].timeslots[day_count].push(convert_back_end);
+// //store the result into JSON object
+// prefertime.responses[1].timeslots[day_count].push(convert_back_start);
+// prefertime.responses[1].timeslots[day_count].push(convert_back_end);
+
+prefertime.push({start_time: moment(convert_back_start).unix(),
+				end_time: moment(convert_back_end).unix(),
+				weight: weight
+				});
+			}//result_array loop ends here
 }//daycount loop ends here
 
 
 // return set;
 return prefertime
 }
+
+
+
+function get_deadline_days(eventId){
+	var deadline_date =  event.deadline;
+
+    var today = new Date();
+    var cur_date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+
+    deadline_date = parseDate(deadline_date);
+    cur_date = parseDate(cur_date);
+
+    //this gets how much time between today and deadline
+    var diffintime = deadline_date.getTime() - cur_date.getTime();
+
+    //this converts the time ^^^ to days
+    var deadline_days = (diffintime / (1000 * 3600 * 24));
+
+	return deadline_days;
+}
+
+
 
 module.exports = {
 	calculateBestTimeslot

@@ -34,8 +34,6 @@ function getFreeTime(event){
 
             deadline_count++;
         }
-
-
     }
 
 

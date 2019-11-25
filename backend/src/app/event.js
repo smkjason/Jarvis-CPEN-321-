@@ -6,9 +6,9 @@ const clone = require('lodash/cloneDeep')
 const uuid = require('uuid/v1')
 const moment = require('moment')
 
-function getFreeTime(eventId){
+async function getFreeTime(eventId){
     var invitees_freetime = [];
-    var event = await TEventModel.findOne({id: eventId}).exec();
+    event = await TEventModel.findOne({id: eventId}).exec();
     if(!event) return {error: 'no event with eventId' + eventId};
 
     invitees_freetime = getFreeTime(event);
@@ -38,7 +38,7 @@ function getFreeTime(eventId){
     
 //     var prefertime = new TEventModel()
 //     //now input the responses into the scheduling algorithm 
-//     prefertime.responses[1].timeslots = calculateBestTimeslot(eventId)
+//     prefertime.responses[1].timeslots = calculateBestTimeslot(event)
 
 //     //the responses in this var should include the prefer timeslots
 //     return prefertime
