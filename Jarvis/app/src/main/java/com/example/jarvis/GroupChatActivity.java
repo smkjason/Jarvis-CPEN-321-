@@ -76,15 +76,19 @@ public class GroupChatActivity extends AppCompatActivity {
 
         notificationManagerCompat = NotificationManagerCompat.from(this);
 
-        Log.d("GroupChat", "CurrentEvent Name: " + currentEvent);
-
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
 
         mSocket = ((jarvis) getApplication()).getmSocket();
 
+        if(!mSocket.connected()){
+            Toast.makeText(GroupChatActivity.this, "Socket connection failed.", Toast.LENGTH_LONG).show();
+        }
+
         initializeFields();
-        new load_old_messages(eventid, idToken);
+        load(eventid, idToken);
+
+        Log.d("GroupChat", "CurrentEvent Name: " + currentEvent);
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,22 +105,30 @@ public class GroupChatActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Toast.makeText(GroupChatActivity.this, "Am I getting messages?", Toast.LENGTH_LONG).show();
                         String gotmessage = "";
                         String sender = "";
+                        String time = "";
                         JSONObject jsonObject = (JSONObject) args[0];
+                        Log.d(TAG, "The new message object: " + jsonObject);
                         try{
                             gotmessage = jsonObject.getString("message");
                             sender = jsonObject.getString("sender");
+                            time = jsonObject.getString("time");
                         }catch (JSONException e){
                             Log.e("json", "debugging json");
                         }
-                        jarvismessage newmsg = new jarvismessage(sender, gotmessage);
+                        jarvismessage newmsg;
+                        if(sender == currentUserName) {
+                            newmsg = new jarvismessage(gotmessage, sender, time);
+                        }else{
+                            newmsg = new jarvismessage(gotmessage, sender, time, true);
+                        }
                         MessageList.add(newmsg);
                         ChatBoxAdapter chatBoxAdapter = new ChatBoxAdapter(MessageList);
                         chatBoxAdapter.notifyDataSetChanged();
                         myRecylerView.setAdapter(chatBoxAdapter);
                         myRecylerView.scrollToPosition(MessageList.size()-1);
-                        int size = MessageList.size();
                         Toast.makeText(GroupChatActivity.this, "Getting messages: " + gotmessage, Toast.LENGTH_LONG).show();
                         sendMessageNotification(++message_id, gotmessage);
                     }
@@ -124,6 +136,11 @@ public class GroupChatActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void load(String eventid, String idToken) {
+        Log.d(TAG, "I am loading old messages...");
+        new load_old_messages(eventid, idToken).execute();
     }
 
     private void initializeFields()
@@ -147,7 +164,6 @@ public class GroupChatActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(currentEvent);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
     }
 
     private void sendMessageInfoToDatabase()
@@ -177,7 +193,7 @@ public class GroupChatActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 Log.e("Error", "Failed making json object");
             }
-            Toast.makeText(GroupChatActivity.this, "Message sending to server... ", Toast.LENGTH_LONG).show();
+            Toast.makeText(GroupChatActivity.this, "This Message was sent: " + message, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -185,7 +201,8 @@ public class GroupChatActivity extends AppCompatActivity {
     {
         Log.d("GroupChat", "getIncomingIntent from EventFragment");
         if(getIntent().hasExtra("Name")){
-            Log.d("GroupChat", "Has Extras");
+            Log.d(TAG, "Has Extras");
+            this.currentEvent = getIntent().getStringExtra("Name");
         }
 
         if(getIntent().hasExtra("eventid")){
@@ -202,7 +219,7 @@ public class GroupChatActivity extends AppCompatActivity {
         String eventid;
         String idToken;
 
-        public load_old_messages(String eventid, String idToken) {
+        load_old_messages(String eventid, String idToken) {
             this.eventid = eventid;
             this.idToken = idToken;
         }
@@ -215,10 +232,12 @@ public class GroupChatActivity extends AppCompatActivity {
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/events/" + eventid + "/messages/");
             try{
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
+                httpGet.addHeader("Content-Type", "application/json");
                 httpResponse = httpClient.execute(httpGet);
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String json_string = EntityUtils.toString(httpEntity);
                 jsonArray = new JSONArray(json_string);
+                Log.d(TAG, "Getting..." + jsonArray);
             } catch (IOException e){
                 Log.e(TAG, "IOException caught", e);
             } catch (JSONException e){
@@ -231,6 +250,7 @@ public class GroupChatActivity extends AppCompatActivity {
         protected void onPostExecute(JSONArray jsonArray) {
             super.onPostExecute(jsonArray);
             JSONObject cur;
+            Toast.makeText(GroupChatActivity.this, "loading old messages...", Toast.LENGTH_LONG).show();
             if(jsonArray == null || jsonArray.length() == 0){
                 Toast.makeText(GroupChatActivity.this, "something wrong with jsonArray", Toast.LENGTH_LONG).show();
             }
@@ -238,8 +258,14 @@ public class GroupChatActivity extends AppCompatActivity {
                 for(int index = 0; index < jsonArray.length(); index++)
                 {
                     try{
+                        jarvismessage message;
                         cur = jsonArray.getJSONObject(index);
-                        jarvismessage message = new jarvismessage(cur.getString("sender"), cur.getString("message"));
+                        if(cur.getString("sender") == currentUserName) {
+                            message = new jarvismessage(cur.getString("message"), cur.getString("sender"), cur.getString("timestamp"));
+                        }else{
+                            message = new jarvismessage(cur.getString("message"), cur.getString("sender"), cur.getString("timestamp"), true);
+                        }
+                        Log.d(TAG, "Loaded this: " + message.getMessage());
                         MessageList.add(message);
                     }catch (JSONException e){
                         Log.e(TAG, "JSONException caught", e);
@@ -254,6 +280,7 @@ public class GroupChatActivity extends AppCompatActivity {
     }
 
     public void sendMessageNotification(int msg_id, String message){
+        Log.d(TAG, "Got notification... " + message);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(GroupChatActivity.this, MSG_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("New Message")
