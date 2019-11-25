@@ -72,7 +72,7 @@ async function userFreeTime(email, deadline){
 }
 
 /*
-    slots1 & slots2 look like:
+    slotPref, slotCal look like:
     [
         {
             startTime: "unix number",
@@ -80,6 +80,14 @@ async function userFreeTime(email, deadline){
             weight: "float"
         },
         {}
+    ]
+    period is tevent.length in seconds
+
+    returns: 
+    [
+        {startTime: unixTimestamp, endTime: unixTimestamp},
+        {startTime: unixTimestamp, endTime: unixTimestamp},
+        {startTime: unixTimestamp, endTime: unixTimestamp}
     ]
 */
 function mergeTimes(slotPref, slotCal, period){
