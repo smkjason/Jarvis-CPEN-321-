@@ -46,15 +46,6 @@ function routes(app){
     })
 
     /*
-        see friends
-    */
-    app.get('/user/:email/friends', async function(req, req){
-        log(req)
-        var friends = await UserFunctions.getFriends(auth(req, req.params.email))
-        res.send(friends)
-    })
-
-    /*
         returns a user's events
     */
     app.get('/user/:email/events', async function(req, res){
@@ -109,20 +100,12 @@ function routes(app){
     })
 
     /*
-        sendNotification
-    */
-    app.get('/user/:email/notify', async function(req, res){
-        log(req)
-        var response = await ChatFunctions.sendNotification(await auth(req, req.params.email))
-        res.send(response)
-    })
-
-    /*
         view the status of an event
     */
     app.get('/events/:id', async function(req, res){
         log(req)
         var response = await EventFunctions.getEvent(req.params.id, await auth(req))
+        //ChatFunctions.newEvent(response)
         res.send(response)
     })
 
@@ -141,6 +124,7 @@ function routes(app){
     app.post('/events/:id/activate', async function(req, res){
         log(req)
         var response = await EventFunctions.activateEvent(req.params.id, await auth(req, req.params.email), req.body)
+        ChatFunctions.newEvent(response)
         res.send(response)
     })
 

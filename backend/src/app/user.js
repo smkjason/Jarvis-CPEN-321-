@@ -34,13 +34,17 @@ async function verifyAndRetrieveToken(email, body){
     if(!user) user = new User({email: email, name: email})
 
     if(body.code){
-        var response = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
-            code: body.code,
-            client_id: configs.CLIENT_ID,
-            client_secret: configs.CLIENT_SECRET,
-            grant_type: 'authorization_code',
-            access_type: 'offline'
-        })
+        try{
+            var response = await axios.post('https://www.googleapis.com/oauth2/v4/token', {
+                code: body.code,
+                client_id: configs.CLIENT_ID,
+                client_secret: configs.CLIENT_SECRET,
+                grant_type: 'authorization_code',
+                access_type: 'offline'
+            })
+        } catch(e) {
+            console.log(e)
+        }
         
         user.refresh_token = response.data.refresh_token || user.refresh_token
         user.google_token = response.data.google_token || user.google_token

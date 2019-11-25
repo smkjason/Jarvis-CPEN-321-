@@ -179,6 +179,7 @@ async function activateEvent(id, email, timeSlot){
         user.new_events = (user.new_events || []).concat([eventId])
     }
     await TEventModel.deleteOne({id: event.id}).exec()
+    googleEvent.id = eventId
     return googleEvent
 }
 
@@ -203,7 +204,7 @@ async function userLocations(id, email){
             lon: user.lon
         })
     }
-    return locations
+    return {locations: locations}
 }
 
 /* private functions  ----------- */
