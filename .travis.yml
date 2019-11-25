@@ -104,4 +104,4 @@ before_install:
 before_script:
   - cd Jarvis
 script:
-   - ./gradlew build connectedCheck
+ - chmod +x ./gradlew build connectedCheck
