@@ -2,20 +2,24 @@ package com.example.jarvis;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.jarvis.fragments.EventFragment;
 import com.example.jarvis.fragments.HomeFragment;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -27,7 +31,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import io.socket.client.Socket;
+
+//import io.socket.client.Socket;
+
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 
 
 public class Home extends AppCompatActivity {
@@ -77,7 +85,7 @@ public class Home extends AppCompatActivity {
         EventFragment eventFragment = new EventFragment();
         HomeFragment homeFragment = new HomeFragment();
         adapter.addFragment(homeFragment, "Home");
-        adapter.addFragment(eventFragment, "Events");
+        adapter.addFragment(eventFragment, "CHAT");
         //adapter setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -117,6 +125,10 @@ public class Home extends AppCompatActivity {
             initializeFrags();
         }
 
+        if(item.getItemId() == R.id.revoke){
+            revokeAccess();
+        }
+
         if(item.getItemId() == R.id.Log_out_menu){
             signOut();
         }
@@ -124,6 +136,26 @@ public class Home extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void revokeAccess() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted.");
+                        }
+                    }
+                });
+        mGoogleSignInClient.revokeAccess()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(Home.this, "Revoked", Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
 
         class ViewPagerAdapter extends FragmentPagerAdapter {
 
@@ -158,4 +190,5 @@ public class Home extends AppCompatActivity {
             return titles.get(position);
         }
     }
+
 }

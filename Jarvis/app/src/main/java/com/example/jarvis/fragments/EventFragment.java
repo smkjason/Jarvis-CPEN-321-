@@ -102,7 +102,6 @@ public class EventFragment extends Fragment {
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse httpResponse;
             JSONArray jsonArray = new JSONArray();
-
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
