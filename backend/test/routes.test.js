@@ -1,4 +1,5 @@
 const EMAIL = 'charlesbai321@gmail.com'
+global.console = {log: jest.fn(), warn: jest.fn()}
 
 jest.mock('../src/app/event')
 jest.mock('../src/app/user')
@@ -56,7 +57,7 @@ describe('routes', () => {
         expect(urls['/env']).toBe('GET')
 
         expect(urls).toHaveProperty('/user')
-        expect(urls['/user']).toBe('GET')
+        expect(urls['/user']).toBe('POST')
         expect(UserFunctions.getUsers).toHaveBeenCalledTimes(1)
 
         expect(urls).toHaveProperty('/user/:email')
@@ -68,8 +69,36 @@ describe('routes', () => {
         expect(UserFunctions.getAdminEvents).toHaveBeenCalledTimes(1)
 
         expect(urls).toHaveProperty('/user/:email/events')
-        expect(urls['/user/:email/events']).toBe('GET')
+        expect(urls['/user/:email/events']).toBe('POST')
         expect(EventFunctions.getEvents).toHaveBeenCalledTimes(1)
+
+        expect(urls).toHaveProperty('/user/:email/invites')
+        expect(urls['/user/:email/invites']).toBe('GET')
+        expect(UserFunctions.invitedEvents).toHaveBeenCalledTimes(1)
+
+        expect(urls).toHaveProperty('/user/:email/events/:id')
+        expect(urls['/user/:email/events/:id']).toBe('PUT')
+        expect(EventFunctions.respondEvent).toHaveBeenCalledTimes(1)
+
+        expect(urls).toHaveProperty('/user/:email/location')
+        expect(urls['/user/:email/location']).toBe('PUT')
+        expect(UserFunctions.updateLocation).toHaveBeenCalledTimes(1)
+
+        expect(urls).toHaveProperty('/events/:id')
+        expect(urls['/events/:id']).toBe('GET')
+        expect(EventFunctions.getEvents).toHaveBeenCalledTimes(1)
+
+        expect(urls).toHaveProperty('/events/:id/locations')
+        expect(urls['/events/:id/locations']).toBe('GET')
+        expect(UserFunctions.updateLocation).toHaveBeenCalledTimes(1)
+
+        expect(urls).toHaveProperty('/events/:id/activate')
+        expect(urls['/events/:id/activate']).toBe('POST')
+        expect(EventFunctions.activateEvent).toHaveBeenCalledTimes(1)
+
+        expect(urls).toHaveProperty('/events/:id/messages')
+        expect(urls['/events/:id/messages']).toBe('GET')
+        expect(ChatFunctions.getMessages).toHaveBeenCalledTimes(1)
     })
 })
 
