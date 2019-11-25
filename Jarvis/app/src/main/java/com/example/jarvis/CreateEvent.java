@@ -158,7 +158,8 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         minute = calendar.get(Calendar.MINUTE);
         TimePickerDialog mTimePicker;
-        mTimePicker = new TimePickerDialog(CreateEvent.this, R.style.Theme_AppCompat_DayNight_Dialog_MinWidth,
+        mTimePicker = new TimePickerDialog(CreateEvent.this,
+                android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth,
                 new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -171,7 +172,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                 }
             }
         },  hour, minute, true);
-        mTimePicker.setTitle("Select Time");
+        mTimePicker.setTitle("Select the Length of the Event");
         mTimePicker.show();
     }
 
@@ -184,7 +185,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
         Toast.makeText(CreateEvent.this, "Clicked!", Toast.LENGTH_LONG).show();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 CreateEvent.this,
-                R.style.Theme_AppCompat_DayNight_Dialog,
+                android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth,
                 CreateEvent.this,
                 year, month, day);
         datePickerDialog.show();

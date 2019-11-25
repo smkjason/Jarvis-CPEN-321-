@@ -83,9 +83,6 @@ public class Popup extends AppCompatActivity {
 
             }
         });
-
-        //TODO: Allow user to input date and time
-        //TODO: Dont forget to finish
     }
 
     private void initializeFields() {
@@ -108,7 +105,8 @@ public class Popup extends AppCompatActivity {
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         minute = calendar.get(Calendar.MINUTE);
         TimePickerDialog mTimePicker;
-        mTimePicker = new TimePickerDialog(getApplicationContext(), R.style.Theme_AppCompat_DayNight_Dialog_MinWidth, //doublecheck getApplicationContext()
+        mTimePicker = new TimePickerDialog(getApplicationContext(),
+                R.style.Theme_AppCompat_DayNight_Dialog_MinWidth, //doublecheck getApplicationContext()
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -143,7 +141,7 @@ public class Popup extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Clicked!", Toast.LENGTH_LONG).show();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getApplicationContext(),
-                R.style.Theme_AppCompat_DayNight_Dialog,
+                android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
