@@ -6,15 +6,15 @@ const clone = require('lodash/cloneDeep')
 const uuid = require('uuid/v1')
 const moment = require('moment')
 
-function getFreeTime(eventId){
-    var invitees_freetime = [];
-    var event = await TEventModel.findOne({id: eventId}).exec();
-    if(!event) return {error: 'no event with eventId' + eventId};
+// function getFreeTime(eventId){
+//     var invitees_freetime = [];
+//     var event = await TEventModel.findOne({id: eventId}).exec();
+//     if(!event) return {error: 'no event with eventId' + eventId};
 
-    invitees_freetime = getFreeTime(event);
+//     invitees_freetime = getFreeTime(event);
     
-    return invitees_freetime;
-}
+//     return invitees_freetime;
+// }
 /*
     - finds preferred time slots 
     **Current output is one slot where every attendee can attend
@@ -303,6 +303,4 @@ module.exports = {
     activateEvent,
     getEvent,
     userLocations,
-    getPreferredTime,
-    getFreeTime
 }
