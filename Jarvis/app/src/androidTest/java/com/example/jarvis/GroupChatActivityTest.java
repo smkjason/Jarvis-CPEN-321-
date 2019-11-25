@@ -31,7 +31,7 @@ public class GroupChatActivityTest {
     @Before
     public void setUp() throws Exception {
 
-        Socket mSocket = ((jarvis) activityActivityTestRule.getActivity().getApplication()).getmSocket();
+       // Socket mSocket = ((jarvis) activityActivityTestRule.getActivity().getApplication()).getmSocket();
     }
 
     @Test
