@@ -250,7 +250,7 @@ function finalizeEvent(tevent, time){
     var secs = temp[0] * 3600 + temp[1] * 60
 
     //max time period
-    if( moment.duration(endTime.diff(startTime)) > moment.duration(secs, 'seconds')){
+    if( moment.duration(endTime.diff(startTime)).as('seconds') > moment.duration(secs, 'seconds').as('seconds')){
         endTime = startTime.add(moment.duration(secs, 'seconds'))
     }
     eventJson.status = "confirmed"
