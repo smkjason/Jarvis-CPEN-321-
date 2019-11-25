@@ -163,7 +163,7 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                 new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                timeselected = hourOfDay + ":" + minute;
+                timeselected = String.format("%02d:%02d", hourOfDay, minute);
                 lengthshow.setText(timeselected);
                 try {
                     Date length = lengthformat.parse(timeselected);

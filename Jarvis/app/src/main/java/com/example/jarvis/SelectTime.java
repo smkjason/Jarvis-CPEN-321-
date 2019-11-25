@@ -33,7 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mortbay.util.ajax.JSON;
 
-//List of events that this user created (Admin)
+
 public class SelectTime extends AppCompatActivity {
     private static final String TAG = "SelectTime";
 
@@ -66,7 +66,7 @@ public class SelectTime extends AppCompatActivity {
         selectTimeTitle.setText(intent.getStringExtra("Event Title"));
         eventId = intent.getStringExtra("Event Id");
 
-        timesList.add(new SelectTimeItem("2019-11-24 17:00", "2019-11-24 18:00"));
+        timesList.add(new SelectTimeItem("2019, 11, 26", 1));
 //        timesList.add(new SelectTimeItem("2019-12-05 03:00", "2019-12-05 10:00"));
 //        timesList.add(new SelectTimeItem("2019-12-24 12:00", "2019-12-25 12:00"));
 
@@ -134,7 +134,7 @@ public class SelectTime extends AppCompatActivity {
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        timesList.add(new SelectTimeItem(cur.getString("startTime"), cur.getString("endTime")));
+                        timesList.add(new SelectTimeItem(cur.getString("startTime"), index));
                     }catch(JSONException e){
                         e.printStackTrace();
                         Log.e("SelectTime", "Reading info from JSONObject: JSONException", e);
