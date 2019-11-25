@@ -6,15 +6,15 @@ const clone = require('lodash/cloneDeep')
 const uuid = require('uuid/v1')
 const moment = require('moment')
 
-function getFreeTime(eventId){
-    var invitees_freetime = [];
-    var event = await TEventModel.findOne({id: eventId}).exec();
-    if(!event) return {error: 'no event with eventId' + eventId};
+// function getFreeTime(eventId){
+//     var invitees_freetime = [];
+//     var event = await TEventModel.findOne({id: eventId}).exec();
+//     if(!event) return {error: 'no event with eventId' + eventId};
 
-    invitees_freetime = getFreeTime(event);
+//     invitees_freetime = getFreeTime(event);
     
-    return invitees_freetime;
-}
+//     return invitees_freetime;
+// }
 /*
     - finds preferred time slots 
     **Current output is one slot where every attendee can attend
@@ -244,16 +244,25 @@ async function saveGoogleEvents(email, events){
 
 function finalizeEvent(tevent, time){
     var eventJson = {}
+    var startTime = moment(time.startTime)
+    var endTime = moment(time.endTime)
+    var temp = tevent.length.split(':')
+    var secs = temp[0] * 3600 + temp[1] * 60
+
+    //max time period
+    if( moment.duration(endTime.diff(startTime)) > moment.duration(secs, 'seconds')){
+        endTime = startTime.add(moment.duration(secs, 'seconds'))
+    }
     eventJson.status = "confirmed"
     eventJson.created = (new Date()).toISOString()
     eventJson.creatorEmail = tevent.creatorEmail
     eventJson.start = {
         timeZone: "America/Vancouver",
-        dateTime: moment(time.startTime).toISOString().replace(/\.000Z/, '-08:00')
+        dateTime: startTime.toISOString().replace(/\.000Z/, '-08:00')
     }
     eventJson.end = {
         timeZone: "America/Vancouver",
-        dateTime: moment(time.endTime).toISOString().replace(/\.000Z/, '-08:00')
+        dateTime: endTime.toISOString().replace(/\.000Z/, '-08:00')
     }
     eventJson.attendees = getAttendees(tevent)
     eventJson.recurrence = []
@@ -303,6 +312,4 @@ module.exports = {
     activateEvent,
     getEvent,
     userLocations,
-    getPreferredTime,
-    getFreeTime
 }
