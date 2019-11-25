@@ -149,6 +149,22 @@ function routes(app){
             timeslots:[
                 {
                     startTime: "2019-11-23 00:00",
+                    endTime: "2019-11-23 01:00"
+                },
+                {
+                    startTime: "2019-11-23 02:00",
+                    endTime: "2019-11-23 03:00"
+                },
+                {
+                    startTime: "2019-11-23 03:00",
+                    endTime: "2019-11-23 04:00"
+                },
+                {
+                    startTime: "2019-11-23 04:00",
+                    endTime: "2019-11-23 05:00"
+                },
+                {
+                    startTime: "2019-11-25 14:00",
                     endTime: "2019-12-31 23:59"
                 }
             ]

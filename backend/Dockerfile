@@ -4,6 +4,8 @@ WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json /usr/src/app/
+# RUN rm -rf node_modules package-lock.json && npm cache clear --force
+# RUN npm uninstall *
 RUN npm install
 
 # Bundle app source

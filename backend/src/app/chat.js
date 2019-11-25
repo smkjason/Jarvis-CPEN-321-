@@ -79,7 +79,7 @@ async function setupEvents(socket){
     //   all event handlers
     var events = await EventFunctions.relatedEvents(socket.email)
     for(const event of events){
-        attachEvent(socket, event)
+        if(event.googleEvent) attachEvent(socket, event)
     }
 }
 
