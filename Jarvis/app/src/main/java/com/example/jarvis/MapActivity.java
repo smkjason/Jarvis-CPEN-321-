@@ -50,6 +50,7 @@ import androidx.core.content.ContextCompat;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private static final String TAG = "MapActivity";
+    private static final boolean FIRST = true;
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -75,7 +76,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG,"onMapReady: Map is ready");
         mMap = googleMap;
 
@@ -84,9 +85,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if(mLocationPermissionsGranted) {
             //mHandlerTask.run();
-            //getDeviceLocation();
+            getDeviceLocation();
             refLocation = true;
-            new getLocationOfUsers().execute();
+            new getLocationOfUsers(FIRST).execute();
 
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -130,7 +131,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     if (prevLat != location.getLatitude() || prevLon != location.getLongitude()) { //update status only if location has changed
                         new updateLocation(Double.toString(location.getLatitude()), Double.toString(location.getLongitude())).execute(); //update server
 
-                        moveCamera(new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM); //update UI
+                        //moveCamera(new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM); //update UI
                         prevLat = location.getLatitude();
                         prevLon = location.getLongitude();
                     }
@@ -284,6 +285,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private class getLocationOfUsers extends AsyncTask<Void, Void, JSONArray> {
         boolean early = false;
+        boolean first;
+        boolean noLocation = false;
+
+        getLocationOfUsers(boolean first) {
+            this.first = first;
+        }
 
         @Override
         protected JSONArray doInBackground(Void... v) {
@@ -298,8 +305,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String json_string = EntityUtils.toString(httpEntity);
                 Log.d("MapActivity", "json_string: " + json_string);
+//                jsonArray = new JSONArray(json_string);
+//                Log.d("MapActivity",jsonArray.getJSONObject(0).getString("user"));
                 JSONObject jsonObject = new JSONObject(json_string);
-                if(jsonObject.getString("error").equals("event time not close")) {
+                if(jsonObject.has("error")) {
                     early = true;
                 }
                 else {
@@ -314,23 +323,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
             JSONObject cur;
-            if (early) {Toast.makeText(MapActivity.this, "Too Early to get other people's locations!", Toast.LENGTH_LONG).show();}
-            else if(jsonArray == null || jsonArray.length() == 0){
-                Toast.makeText(MapActivity.this, "Couldn't get location", Toast.LENGTH_LONG).show();
+            if (early && !first) {Toast.makeText(MapActivity.this, "Too Early to get other people's locations!", Toast.LENGTH_LONG).show();}
+            else if((jsonArray == null || jsonArray.length() == 0) && !first){
+                Toast.makeText(MapActivity.this, "Couldn't get location at this time", Toast.LENGTH_LONG).show();
             }
             else{
                 Log.d(TAG, "jsonArray: " + jsonArray);
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);
-                        LatLng userLocation = new LatLng(Double.parseDouble(cur.getString("lat")), Double.parseDouble(cur.getString("lon")));
-                        mMap.addMarker(new MarkerOptions().position(userLocation)
-                                .title(cur.getString("user")));
-                        Log.d(TAG, "jsonobj: " + cur.getString("summary"));
+                        if (!cur.has("lat") || !cur.has("lon")) {
+                            noLocation = true;
+                        } else {
+                            LatLng userLocation = new LatLng(Double.parseDouble(cur.getString("lat")), Double.parseDouble(cur.getString("lon")));
+                            mMap.addMarker(new MarkerOptions().position(userLocation)
+                                    .title(cur.getString("user")));
+                        }
                     }catch(JSONException e){
                         e.printStackTrace();
                         Log.e(TAG, "Something wrong with retrieved JSONObject", e);
                     }
+                }
+                if (noLocation) {
+                    Toast.makeText(MapActivity.this, "Some users have not shared their locations",Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -353,7 +368,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
             mMap.clear();
-            new getLocationOfUsers().execute();
+            new getLocationOfUsers(!FIRST).execute();
             //Toast.makeText(MapActivity.this, "Refreshing Locations of Users", Toast.LENGTH_LONG).show();
             return true;
         }
