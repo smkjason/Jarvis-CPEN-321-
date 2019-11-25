@@ -3,6 +3,8 @@ const EventFunctions = require('./app/event')
 const ChatFunctions = require('./app/chat')
 const auth = require('./util/google').auth
 
+const test = require('./find_meetup/freetime').userFreeTime
+
 function routes(app){
     //all our routes can go here
     app.get('/', function(req, res) {
@@ -151,6 +153,10 @@ function routes(app){
                 }
             ]
         })
+    })
+
+    app.get('/test/:email', async function(req, res){
+        res.send(await test(req.params.email, '2019-11-26'))
     })
 }
 

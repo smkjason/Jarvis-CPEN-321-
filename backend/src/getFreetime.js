@@ -22,7 +22,7 @@ function getFreeTime(event){
 
     //array of arrays, with length of number of invitees plus admin
     var FreeTimeModel = new TEventModel();
-    var freetimeslots = [];
+    var freetimeslots = 
     //for each attendee, calc their free time
     //need to use deadline
     for(var i = 0; i < event.responses.length; i++){
@@ -34,6 +34,8 @@ function getFreeTime(event){
 
             deadline_count++;
         }
+
+
     }
 
 

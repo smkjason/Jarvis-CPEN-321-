@@ -74,20 +74,26 @@ public class PTDialog extends AppCompatDialogFragment {
                             Toast.makeText(getActivity(), "What day?", Toast.LENGTH_LONG).show();
                         }else if(tv4.getText().toString().isEmpty()){
                             Toast.makeText(getActivity(), "What time?", Toast.LENGTH_LONG).show();
-                        }else{
-                            try {
-                                Date StartD = dateformat.parse(tv1.getText().toString());
-                                Date StartT= timeformat.parse(tv2.getText().toString());
-                                Date EndD = dateformat.parse(tv3.getText().toString());
-                                Date EndT = timeformat.parse(tv4.getText().toString());
-                                Toast.makeText(getActivity(), "Successfully created PT!", Toast.LENGTH_LONG).show();
-                                listener.applyTexts(StartD, StartT, EndD, EndT);
-                            }catch(ParseException e){
-                                Log.e(TAG, "Parsing Date Failed", e);
-                            }
-
+                        }else {
+//                            if (startdate.after(enddate)) {
+//                                Toast.makeText(getContext(), "Double check your start and end date", Toast.LENGTH_LONG).show();
+//                                Log.d(TAG, "Dates were wrong... ");
+//                            }else if(startdate.equals(enddate) && starttime.after(endtime)){
+//                                Toast.makeText(getContext(), "Double check your start and end time", Toast.LENGTH_LONG).show();
+//                                Log.d(TAG, "Time were invalid... ");
+//                            }else {
+                                try {
+                                    Date StartD = dateformat.parse(tv1.getText().toString());
+                                    Date StartT = timeformat.parse(tv2.getText().toString());
+                                    Date EndD = dateformat.parse(tv3.getText().toString());
+                                    Date EndT = timeformat.parse(tv4.getText().toString());
+                                    Toast.makeText(getActivity(), "Successfully created PT!", Toast.LENGTH_LONG).show();
+                                    listener.applyTexts(StartD, StartT, EndD, EndT);
+                                } catch (ParseException e) {
+                                    Log.e(TAG, "Parsing Date Failed", e);
+                                }
+                          //  }
                         }
-
                     }
                 });
 
@@ -138,10 +144,10 @@ public class PTDialog extends AppCompatDialogFragment {
         month = calendar.get(Calendar.MONTH);
         dayofMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
-        Toast.makeText(getActivity(), "Clicked!", Toast.LENGTH_LONG).show();
+       Toast.makeText(getContext(), "Clicked!", Toast.LENGTH_LONG).show();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getActivity(),
-                R.style.Theme_AppCompat_DayNight_Dialog,
+                android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -156,7 +162,12 @@ public class PTDialog extends AppCompatDialogFragment {
                             }
                         }else if (CODE == END){
                             try {
-                                endtime = dateformat.parse(date);
+                                if(endtime.before(starttime)){
+                                    Toast.makeText(getContext(), "The end date can't be before start date!", Toast.LENGTH_LONG).show();
+                                    dismiss();
+                                }else {
+                                    endtime = dateformat.parse(date);
+                                }
                             } catch (ParseException e) {
                                 Log.d(TAG, "endtime: " + endtime);
                                 Log.e(TAG, "dateformat exception", e);
@@ -173,11 +184,12 @@ public class PTDialog extends AppCompatDialogFragment {
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         minute = calendar.get(Calendar.MINUTE);
         TimePickerDialog mTimePicker;
-        mTimePicker = new TimePickerDialog(getActivity(), R.style.Theme_AppCompat_DayNight_Dialog_MinWidth, //doublecheck getApplicationContext()
+        mTimePicker = new TimePickerDialog(getActivity(),
+                android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth, //doublecheck getApplicationContext()
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String timeselected = hourOfDay + ":" + minute;
+                        String timeselected = String.format("%02d:%02d", hourOfDay, minute);
                         Time.setText(timeselected);
                         if(CODE == START) {
                             try {

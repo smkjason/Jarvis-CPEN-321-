@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.example.jarvis.adapter.ChatBoxAdapter;
 import com.example.jarvis.jarvis_types.jarvismessage;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.apache.http.HttpEntity;
@@ -27,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.acl.Group;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,7 +80,8 @@ public class GroupChatActivity extends AppCompatActivity {
         notificationManagerCompat = NotificationManagerCompat.from(this);
 
         mAuth = FirebaseAuth.getInstance();
-        currentUserID = mAuth.getCurrentUser().getUid();
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(GroupChatActivity.this);
+        currentUserName = acct.getEmail();
 
         mSocket = ((jarvis) getApplication()).getmSocket();
 
@@ -90,6 +94,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
         Log.d("GroupChat", "CurrentEvent Name: " + currentEvent);
         Log.d(TAG, "EventId: " + eventid);
+        Log.d(TAG, "CurrentUserName: " + currentUserName);
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +125,7 @@ public class GroupChatActivity extends AppCompatActivity {
                             Log.e("json", "debugging json");
                         }
                         jarvismessage newmsg;
-                        if(sender.equals(currentUserName)) {
+                        if(!(sender.equals(currentUserName))) {
                             newmsg = new jarvismessage(gotmessage, sender, time);
                         }else{
                             newmsg = new jarvismessage(gotmessage, sender, time, true);
