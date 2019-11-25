@@ -6,6 +6,15 @@ const clone = require('lodash/cloneDeep')
 const uuid = require('uuid/v1')
 const moment = require('moment')
 
+// function getFreeTime(eventId){
+//     var invitees_freetime = [];
+//     var event = await TEventModel.findOne({id: eventId}).exec();
+//     if(!event) return {error: 'no event with eventId' + eventId};
+
+//     invitees_freetime = getFreeTime(event);
+    
+//     return invitees_freetime;
+// }
 /*
     - finds preferred time slots 
     **Current output is one slot where every attendee can attend
@@ -29,7 +38,7 @@ const moment = require('moment')
     
 //     var prefertime = new TEventModel()
 //     //now input the responses into the scheduling algorithm 
-//     prefertime.responses.timeslots = calculateBestTimeslot(eventId)
+//     prefertime.responses[1].timeslots = calculateBestTimeslot(eventId)
 
 //     //the responses in this var should include the prefer timeslots
 //     return prefertime
@@ -179,6 +188,7 @@ async function activateEvent(id, email, timeSlot){
         user.new_events = (user.new_events || []).concat([eventId])
     }
     await TEventModel.deleteOne({id: event.id}).exec()
+    googleEvent.id = eventId
     return googleEvent
 }
 
@@ -203,7 +213,7 @@ async function userLocations(id, email){
             lon: user.lon
         })
     }
-    return locations
+    return {locations: locations}
 }
 
 /* private functions  ----------- */
@@ -292,5 +302,5 @@ module.exports = {
     respondEvent,
     activateEvent,
     getEvent,
-    userLocations
+    userLocations,
 }

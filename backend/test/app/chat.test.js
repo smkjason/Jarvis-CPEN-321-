@@ -1,4 +1,6 @@
 const EMAIL = 'charlesbai321@gmail.com'
+global.console = {log: jest.fn(), warn: jest.fn()}
+
 jest.mock('../../src/data/schema')
 jest.mock('../../src/util/google')
 jest.mock('../../src/app/event')
@@ -40,9 +42,12 @@ var mockSocket = {
     emit: () => ({})
 }
 
-io.listen = jest.fn(() => ({on: (s, f) => {
-    if(s == 'connection') f(mockSocket)
-}}))
+io.listen = jest.fn(() => ({
+    on: (s, f) => {
+        if(s == 'connection') f(mockSocket)
+    },
+    use: () => {}
+}))
 
 beforeEach(() => {
     jest.clearAllMocks()

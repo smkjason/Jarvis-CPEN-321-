@@ -12,6 +12,7 @@ var temp_day = ""
 var day = ""
 var temp_start = ""
 var temp_end = ""
+var temp_min
 
 var start = 0;
 
@@ -24,7 +25,9 @@ var set = [[],[],[],[],[],[],[]];
 //24 hours 
 var sum = [0,0,0,0,0,0,0,0,0,0,
 		   0,0,0,0,0,0,0,0,0,0,
-		   0,0,0,0];
+		   0,0,0,0,0,0,0,0,0,0,
+		   0,0,0,0,0,0,0,0,0,0,
+		   0,0,0,0,0,0,0,0];
 
 var sum_total = [[],[],[],[],[],[],[]];
 
@@ -50,9 +53,8 @@ var convert_back_end = ""
 function calculateBestTimeslot(eventId){
 
 	var prefertime = new TEventModel();
-
 	//this converts responses from YYYY-MM-DD hh:mm into just hhmm for free slots calc
-	for(var a = 0; a < Object.keys(eventId.responses.timeslots).length; a++){
+	for(var a = 0; a < Object.keys(eventId.responses[1].timeslots).length; a++){
 		//start and end rn in the form of YYYY-MM-DD hh:mm
 		//need to convert to hhmm
 		//then need to approx to hh
@@ -61,12 +63,36 @@ function calculateBestTimeslot(eventId){
 
 		temp_day = moment(temp_start).format('LL');
 
-		temp_start = moment(temp_start).format('hhmm');
-		temp_end = moment(temp_end).format('hhmm');
+		temp_start = moment(temp_start).format('HHmm');
+		temp_end = moment(temp_end).format('HHmm');
 		
-		//TODO:
-		//right now, it is hhmm, but need hh
-		//want to round up/down the minutes into hours 
+		temp_min = parseInt(moment(temp_start).format('mm'))
+			if(temp_min < 15){
+				//round down to 2:00
+				temp_start = moment(temp_start).format('HH') + '00'
+			}else if(temp_min < 30){
+				//no round keep it 2:30
+				temp_start = moment(temp_start).format('HH') + '50'
+			}else if(temp_min < 45){
+				temp_start = moment(temp_start).format('HH') + '50'
+			}else{
+				temp_start = moment(temp_start).add(1,'hours').format('HH') + '00'
+				//round up to 3:00
+			}
+
+		temp_min = parseInt(moment(temp_end).format('mm'))
+		if(temp_min < 15){
+			//round down to 2:00
+			temp_end = moment(temp_end).format('HH') + '00'
+		}else if(temp_min < 30){
+			//no round keep it 2:30
+			temp_end = moment(temp_end).format('HH') + '50'
+		}else if(temp_min < 45){
+			temp_end = moment(temp_end).format('HH') + '50'
+		}else{
+			temp_end = moment(temp_end).add(1,'hours').format('HH') + '00'
+			//round up to 3:00
+		}
 
 		day = new Date(temp_day)
 		if(day.getDay() == 0){
@@ -75,7 +101,7 @@ function calculateBestTimeslot(eventId){
 		//adds slots from a day in week to that specific day in week
 		//get.Day() returns day of week, so corresponding start and end time gets stored correctly
 		//temp[0] is Sunday, temp[1] is Monday, etc
-		temp[day.getDay()].push([temp_start,temp_end]);
+		temp[day.getDay()].push([parseInt(temp_start),parseInt(temp_end)]);
 
 		//temp will look like this 
 		//temp[[[SUNDAY_start1,SUNDAY_end1],[SUNDAY_start2,SUNDAY_end2]],
@@ -92,8 +118,10 @@ for(var day_count = 0; day_count < 7; day_count++){
 	for(var x = 0; x < temp[day_count].length; x++){
 
 		//index 0 is start time, 1 is end time
-        starttime[x] =  ((temp[day_count])[x])[0]; 
-        endtime[x] = ((temp[day_count])[x])[1];
+		starttime[x] =  ((temp[day_count])[x])[0];  //number like 250 == 2:30, 650 == 6:30
+		starttime[x] = starttime[x] / 50;
+		endtime[x] = ((temp[day_count])[x])[1];
+		endtime[x] = endtime[x] / 50;
 
 		//need this to calc intervals
         starttoend[x] = endtime[x] - starttime[x];
@@ -103,13 +131,13 @@ for(var day_count = 0; day_count < 7; day_count++){
 	for(var y = 0; y < starttoend.length; y++){
 			while(starttoend[y] >= 0){
 				(sum_total[day_count])[starttime[y]] += 1;
-				starttoend[y]--;
+				starttoend[y]-= 0.5;
 				starttime[y]++;
 			}
 	}
 
 
-console.log(sum)
+// console.log(sum)
 
 for(var i = 1; i < sum_total[day_count].length; i++){
 	if(sum_total[day_count][i] === total){
@@ -130,8 +158,17 @@ if(sum_total[day_count][sum_total[day_count].length-1] === total){
 }
 
 //converting integer back to strings for TEventModel
-convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (set[day_count])[0] + ':00'
-convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (set[day_count])[1] + ':00'
+if((set[day_count])[0] % 2){
+	convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + ((set[day_count])[0])/2 + ':00'	
+}else{
+	convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + ((set[day_count])[0])/2 - 0.5 + ':30'
+}
+
+if((set[day_count])[1] % 2){
+	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + ((set[day_count])[1])/2 + ':00'
+}else{
+	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + ((set[day_count])[1])/2 - 0.5 + ':30'
+}
 
 //store the result into JSON object
 prefertime.responses[1].timeslots[day_count].push(convert_back_start);

@@ -1,3 +1,4 @@
+global.console = {log: jest.fn(), warn: jest.fn()}
 const EMAIL = 'charlesbai321@gmail.com'
 
 /* creating them */

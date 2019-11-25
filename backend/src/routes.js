@@ -3,6 +3,8 @@ const EventFunctions = require('./app/event')
 const ChatFunctions = require('./app/chat')
 const auth = require('./util/google').auth
 
+const test = require('./getFreetime').userFreeTime
+
 function routes(app){
     //all our routes can go here
     app.get('/', function(req, res) {
@@ -43,15 +45,6 @@ function routes(app){
         log(req)
         var user = await UserFunctions.getUser(await auth(req, req.params.email))
         res.send(user)
-    })
-
-    /*
-        see friends
-    */
-    app.get('/user/:email/friends', async function(req, req){
-        log(req)
-        var friends = await UserFunctions.getFriends(auth(req, req.params.email))
-        res.send(friends)
     })
 
     /*
@@ -109,20 +102,12 @@ function routes(app){
     })
 
     /*
-        sendNotification
-    */
-    app.get('/user/:email/notify', async function(req, res){
-        log(req)
-        var response = await ChatFunctions.sendNotification(await auth(req, req.params.email))
-        res.send(response)
-    })
-
-    /*
         view the status of an event
     */
     app.get('/events/:id', async function(req, res){
         log(req)
         var response = await EventFunctions.getEvent(req.params.id, await auth(req))
+        //ChatFunctions.newEvent(response)
         res.send(response)
     })
 
@@ -141,6 +126,7 @@ function routes(app){
     app.post('/events/:id/activate', async function(req, res){
         log(req)
         var response = await EventFunctions.activateEvent(req.params.id, await auth(req, req.params.email), req.body)
+        ChatFunctions.newEvent(response)
         res.send(response)
     })
 
@@ -167,6 +153,10 @@ function routes(app){
                 }
             ]
         })
+    })
+
+    app.get('/test/:email', async function(req, res){
+        res.send(await test(req.params.email, '2019-11-26'))
     })
 }
 
