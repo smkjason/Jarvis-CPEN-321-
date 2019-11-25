@@ -18,20 +18,21 @@ function getFreeTime(event){
 
     //this converts the time ^^^ to days
     var deadline_days = (diffintime / (1000 * 3600 * 24));
-    var deadline_count;
+    var deadline_count = 0;
+
     //array of arrays, with length of number of invitees plus admin
-    var freetime = [];
-    
+    var FreeTimeModel = new TEventModel();
+    var freetimeslots = [];
     //for each attendee, calc their free time
     //need to use deadline
     for(var i = 0; i < event.responses.length; i++){
         deadline_count = deadline_days;
-        freetime.push(event.responses[i].email);
+        FreeTimeModel.responses[i].email.push(event.responses[i].email);
 
-        while(deadline_days > 0){
-            
+        while(deadline_count < deadline_days){
+            FreeTimeModel.responses[i].timeslots.push()
 
-            deadline_days--;
+            deadline_count++;
         }
 
 
@@ -50,3 +51,7 @@ function parseDate(input) {
 	// new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
 	return new Date(parts[0], parts[1]-1, parts[2]); // months are 0-based
   }
+
+function sort(tobesorted){
+    
+}
