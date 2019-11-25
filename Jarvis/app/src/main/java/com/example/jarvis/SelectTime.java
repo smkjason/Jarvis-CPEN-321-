@@ -66,7 +66,7 @@ public class SelectTime extends AppCompatActivity {
         selectTimeTitle.setText(intent.getStringExtra("Event Title"));
         eventId = intent.getStringExtra("Event Id");
 
-        timesList.add(new SelectTimeItem("2019-11-23 20:30", "2019-11-30 21:00"));
+        timesList.add(new SelectTimeItem("2019-11-24 17:00", "2019-11-24 18:00"));
 //        timesList.add(new SelectTimeItem("2019-12-05 03:00", "2019-12-05 10:00"));
 //        timesList.add(new SelectTimeItem("2019-12-24 12:00", "2019-12-25 12:00"));
 

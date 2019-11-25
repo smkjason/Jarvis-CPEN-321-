@@ -9,10 +9,12 @@ import android.widget.Toast;
 
 import com.example.jarvis.fragments.EventFragment;
 import com.example.jarvis.fragments.HomeFragment;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
@@ -29,7 +31,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import io.socket.client.Socket;
+
+//import io.socket.client.Socket;
+
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 
 
 public class Home extends AppCompatActivity {
@@ -79,7 +85,7 @@ public class Home extends AppCompatActivity {
         EventFragment eventFragment = new EventFragment();
         HomeFragment homeFragment = new HomeFragment();
         adapter.addFragment(homeFragment, "Home");
-        adapter.addFragment(eventFragment, "Events");
+        adapter.addFragment(eventFragment, "CHAT");
         //adapter setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -147,7 +153,6 @@ public class Home extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(Home.this, "Revoked", Toast.LENGTH_LONG).show();
-                        finish();
                     }
                 });
     }
@@ -185,4 +190,5 @@ public class Home extends AppCompatActivity {
             return titles.get(position);
         }
     }
+
 }

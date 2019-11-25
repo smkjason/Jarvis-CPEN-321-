@@ -3,19 +3,19 @@ var io = require('socket.io-client')
 
 var socket = io('http://localhost:3000')
 
-socket.on('login_response', function(data){
-    console.log('response recieved:')
-    console.log(data)
-})
-socket.on('invite', function(data){
-    console.log(data)
-})
-
-socket.emit('authenticate', {message: 'something'})
+socket.emit('authenticate', {debugName: 'jarviscpen321.1@gmail.com'})
 
 socket.on('test_echo', function(data){
     console.log(data)
 })
+
+socket.on('event', function(data){
+    console.log(data)
+    setTimeout(() => socket.emit(data.msg + '.send', {message: 'hello'}), 5000)
+    // socket.emit(data.msg + '.send', {message: 'hello'})
+    console.log(`emited ${data.msg}`)
+})
+
 socket.emit('test', {data: 'hello'})
 
 // var admin = require('firebase-admin')

@@ -40,8 +40,12 @@ import java.io.IOException;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
+
+//import io.socket.client.Socket;
+//import io.socket.emitter.Emitter;
+
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -107,7 +111,6 @@ public class MainActivity extends AppCompatActivity{
     private Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            Toast.makeText(MainActivity.this, "Connected to socket!", Toast.LENGTH_LONG).show();
             Log.i("socket", "connected!");
         }
     };
@@ -173,7 +176,7 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            Log.w(TAG, "FCM: Something went wrong... Please try again later", task.getException());
                             return;
                         }
 
@@ -184,7 +187,6 @@ public class MainActivity extends AppCompatActivity{
                         String msg = "I got the token!" + FCMToken;
                         new CommunicateBackend(idToken, authCode, FCMToken).execute();
                         Log.d(TAG, msg);
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
 
 //                    /**
@@ -260,19 +262,19 @@ public class MainActivity extends AppCompatActivity{
             if(response == 200) {
                 jarvis app = (jarvis) getApplication();
                 mSocket = app.getmSocket();
-                    Toast.makeText(MainActivity.this, "HTTPREQEUST WORKS.", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this, "HTTPREQEUST WORKS.", Toast.LENGTH_LONG).show();
                 if(mSocket.connected()){
                     try {
                         authenticate_json.put("idToken", idToken);
                         mSocket.emit("authenticate", authenticate_json);
                     }catch(JSONException e){
-                        Toast.makeText(MainActivity.this, "unable to authenticate socket", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "Unable to authenticate socket", Toast.LENGTH_LONG).show();
                     }
                 }else{
-                    Toast.makeText(MainActivity.this, "got 200 back but can't connect", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Socket: Something went wrong, please try again later", Toast.LENGTH_LONG).show();
                 }
             }else{
-                Toast.makeText(MainActivity.this, "response is not 200", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Google API: Something went wrong, please try again later", Toast.LENGTH_LONG).show();
             }
         }
     }
