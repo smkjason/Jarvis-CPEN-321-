@@ -30,6 +30,8 @@ public class GroupChatActivityTest {
     @Before
     public void setUp() throws Exception {
 
+        onView(withId(R.id.sign_in_button))
+                .perform(click());
     }
 
     @Test

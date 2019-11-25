@@ -2,8 +2,8 @@ const EventModel = require('../data/schema').EventModel
 const moment = require('moment');
 
 async function freeCalendarSlots(tevent){
-    var attendees = event.responses.reduce(function(prev, curr){
-        if(!curr.declined && curr.email != event.creatorEmail) {
+    var attendees = tevent.responses.reduce(function(prev, curr){
+        if(!curr.declined) {
             prev.push(curr.email)
         }
 
@@ -11,7 +11,7 @@ async function freeCalendarSlots(tevent){
     }, [])
     var responses = []
     for(const email of attendees){
-        responses.push(userFreeTime(email, tevent.deadline))
+        responses.push(await module.exports.userFreeTime(email, tevent.deadline))
     }
     return responses
 }
@@ -36,7 +36,7 @@ async function userFreeTime(email, deadline){
 
     var d_unix = moment(deadline, 'YYYY-MM-DD').add(1, 'day').unix()
     //this would be all of the free times
-    var currInterval = [moment().unix(), d_unix]
+    var currInterval = [Math.floor(Date.now()/1000), d_unix]
     var negativeIntervals = []
     for(const interval of intervals){
         if(currInterval[0] > d_unix) {

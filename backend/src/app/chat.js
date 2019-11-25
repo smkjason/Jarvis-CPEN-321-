@@ -22,10 +22,8 @@ async function getMessages(eventid, email, tbefore){
 }
 
 function newEvent(event){
-    console.log('attaching event handlers for new event')
     var people = event.attendees.concat([event.creatorEmail])
     var sockets = base.sockets.sockets
-    console.log(people)
     for(const socketid in sockets){
         var socket = sockets[socketid]
         console.log('CHECKING CONNECTED SOCKET ' + socket.email)
@@ -51,10 +49,6 @@ function socketSetup(server){
 
     //and should have the email field
     base.on('connection', async function(socket){
-        socket.on('*', function(packet){
-            console.log(`${socket.email} RECEIVED PACKET: `, packet)
-        })
-
         socket.on('authenticate', async function(data){
             console.log('authenticate event')
             console.log(data)
@@ -75,11 +69,6 @@ function socketSetup(server){
             socket.emit("test_echo", data)
             socket.broadcast.emit('test_echo', data)
         })
-    })
-
-    base.on("test", function(data){
-        socket.emit("test_echo", data)
-        socket.broadcast.emit('test_echo', data)
     })
 }
 
