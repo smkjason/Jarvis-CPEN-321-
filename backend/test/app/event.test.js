@@ -1,5 +1,6 @@
 global.console = {log: jest.fn(), warn: jest.fn()}
 const EMAIL = 'charlesbai321@gmail.com'
+const EMAIL1 = 'charlesbai3211@gmail.com'
 
 /* creating them */
 const EventFunctions = require('../../src/app/event')
@@ -25,7 +26,7 @@ var EventFindOne = jest.fn((s) => {
                     start: {dateTime: '2019-11-25 10:00'},
                     end: {dateTime: '2019-11-25 11:00'},
                     creatorEmail: EMAIL,
-                    attendees: []
+                    attendees: [EMAIL1]
                 }) : 
                 Promise.resolve(null);
         }
