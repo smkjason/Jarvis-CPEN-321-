@@ -12,7 +12,7 @@ const Google = require('../../src/util/google')
 var TEventFindOne = jest.fn((s) => {
     return {
         exec: () => { 
-            return s.id == "abc" ? Promise.resolve({name: 'tevent', invitees: [EMAIL], save: () => Promise.resolve({}), responses: [], creatorEmail: EMAIL}) : Promise.resolve(null)
+            return s.id == "abc" ? Promise.resolve({name: 'tevent', invitees: [EMAIL], save: () => Promise.resolve({}), responses: [], creatorEmail: EMAIL, length: '1:00'}) : Promise.resolve(null)
         }
     }
 })
