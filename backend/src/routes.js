@@ -3,7 +3,7 @@ const EventFunctions = require('./app/event')
 const ChatFunctions = require('./app/chat')
 const auth = require('./util/google').auth
 
-const test = require('./getFreetime').userFreeTime
+const test = require('./find_meetup/freetime').userFreeTime
 
 function routes(app){
     //all our routes can go here
