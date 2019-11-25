@@ -39,8 +39,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 
 /* This is for the chatting (sending and receiving messages */
 public class GroupChatActivity extends AppCompatActivity {
@@ -89,6 +89,7 @@ public class GroupChatActivity extends AppCompatActivity {
         load(eventid, idToken);
 
         Log.d("GroupChat", "CurrentEvent Name: " + currentEvent);
+        Log.d(TAG, "EventId: " + eventid);
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +120,7 @@ public class GroupChatActivity extends AppCompatActivity {
                             Log.e("json", "debugging json");
                         }
                         jarvismessage newmsg;
-                        if(sender == currentUserName) {
+                        if(sender.equals(currentUserName)) {
                             newmsg = new jarvismessage(gotmessage, sender, time);
                         }else{
                             newmsg = new jarvismessage(gotmessage, sender, time, true);
@@ -190,6 +191,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 msgjson.put("date", currentDate);
                 msgjson.put("time", currentTime);
                 mSocket.emit(this.eventid + ".send", msgjson);
+                Log.d(TAG, "emit id: " + this.eventid + ".send = " + msgjson);
             } catch (JSONException e) {
                 Log.e("Error", "Failed making json object");
             }
@@ -260,7 +262,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     try{
                         jarvismessage message;
                         cur = jsonArray.getJSONObject(index);
-                        if(cur.getString("sender") == currentUserName) {
+                        if(!(cur.getString("sender").equals(currentUserName))) {
                             message = new jarvismessage(cur.getString("message"), cur.getString("sender"), cur.getString("timestamp"));
                         }else{
                             message = new jarvismessage(cur.getString("message"), cur.getString("sender"), cur.getString("timestamp"), true);

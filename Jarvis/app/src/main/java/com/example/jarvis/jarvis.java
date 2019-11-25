@@ -5,15 +5,13 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
-//import com.github.nkzawa.socketio.client.IO;
-//import com.github.nkzawa.socketio.client.Socket;
-
-import org.mortbay.jetty.Main;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
 import java.net.URISyntaxException;
-
-import io.socket.client.IO;
-import io.socket.client.Socket;
+//
+//import io.socket.client.IO;
+//import io.socket.client.Socket;
 
 public class jarvis extends Application {
     private static final String URL = "http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/";

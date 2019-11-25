@@ -36,8 +36,9 @@ import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import io.socket.client.Socket;
-
+//import io.socket.client.Socket;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 public class CreateEvent extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
     private static final String TAG = "CreateEvent";
 
@@ -148,10 +149,8 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
                 else {
                     new makeNewEvent(eventName, date_selected, timeselected, friendList, user_email, idToken).execute();
                 }
-
             }
         });
-
     }
 
     private void showTimePiccckerDialog() {

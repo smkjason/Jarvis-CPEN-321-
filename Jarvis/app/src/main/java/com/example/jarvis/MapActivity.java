@@ -73,9 +73,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     Toolbar mMapToolbar;
     private String eventId;
 
-
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
