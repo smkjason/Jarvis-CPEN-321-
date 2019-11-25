@@ -5,16 +5,9 @@ const Google = require('../util/google')
 const clone = require('lodash/cloneDeep')
 const uuid = require('uuid/v1')
 const moment = require('moment')
+const freetime = require('../find_meetup/freetime')
+const calculateBestTimeslot = require('../find_meetup/find_timeslot')
 
-// function getFreeTime(eventId){
-//     var invitees_freetime = [];
-//     var event = await TEventModel.findOne({id: eventId}).exec();
-//     if(!event) return {error: 'no event with eventId' + eventId};
-
-//     invitees_freetime = getFreeTime(event);
-    
-//     return invitees_freetime;
-// }
 /*
     - finds preferred time slots 
     **Current output is one slot where every attendee can attend
@@ -28,21 +21,24 @@ const moment = require('moment')
     now HOW TO access these responses? (using the event id?)
 
 */
-// function getPreferredTime(eventId, email){
-//     var event = await TEventModel.findOne({id:eventId}).exec()
-//     if(!event) return {error: 'no event with eventId' + eventId}
+async function getPreferredTime(eventId, email){
+    var event = await TEventModel.findOne({id:eventId}).exec();
+    if(!event) return {error: 'no event with eventId' + eventId};
 
-//     if(email != event.creatorEmail) return{error: `${email} is not the admin`}
-//     if(!event.invitees.includes(email)) return{error: `${email} not invited`}
+    if(email != event.creatorEmail) return{error: `${email} is not the admin`};
+    if(!event.invitees.includes(email)) return{error: `${email} not invited`};
 
-    
-//     var prefertime = new TEventModel()
-//     //now input the responses into the scheduling algorithm 
-//     prefertime.responses[1].timeslots = calculateBestTimeslot(event)
+    var period = event.length;
 
-//     //the responses in this var should include the prefer timeslots
-//     return prefertime
-// }
+    var user_freetime = {responses: freetime.freeCalendarSlots(event),
+                         deadline: event.deadline};
+
+    var result_user_freetime = calculateBestTimeslot.calculateBestTimeslot(user_freetime);
+
+    var result_input_timeslots = calculateBestTimeslot.calculateBestTimeslot(event);
+
+    return freetime.mergeTimes(result_user_freetime, result_input_timeslots, period);
+}
 
 /*
     gets a single event

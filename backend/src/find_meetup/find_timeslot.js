@@ -1,5 +1,4 @@
 //const UserFunctions = require("./app/event");
-const TEventModel = require('../data/schema').TentativeEventModel
 const moment = require("moment");
 
 
@@ -14,7 +13,7 @@ var temp_start = ""
 var temp_end = ""
 var temp_min
 
-var start = 0;
+// var start = 0;
 
 //need to convert set back to the form in "hh"
 //TO DO:
@@ -55,7 +54,9 @@ function calculateBestTimeslot(eventId){
 	var prefertime = [];
 	var deadlinedays = get_deadline_days(eventId);
 	var meetup_duration = parseInt(moment(eventId.length).format('HHmm'))/50;
-	var member_count = eventId.responses.length;
+	var member_count = eventId.length;
+
+	var weight;
 	
 	var cur_seq_count = 0
 	var new_seq_start = 0
@@ -73,7 +74,7 @@ for(var a = 0; a < eventId.responses.length; a++){
 		temp_end = eventId.responses[a].timeslots[b].endTime;
 
 		temp_day = moment(temp_start).format('LL');
-
+	
 		temp_start = moment(temp_start).format('HHmm');
 		temp_end = moment(temp_end).format('HHmm');
 		
@@ -186,22 +187,22 @@ for(var i = 0; i < test_array.length; i++){
 	}
 }
 
-//TODO 
-// check with duration of meeting time
+
 for(var i = 0; i < result_array.length; i++){
-//converting integer back to strings for TEventModel
-if((parseInt(result_array[i].start) % 2)){
+//converting integer back to strings for return
+if((parseInt(result_array[i].start) % 2) != 0){
 	convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + result_array[0].start/2 - 0.5 + ':30'
 }else{
 	convert_back_start = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + result_array[0].start/2 + ':00'
 }
 
-if((result_array[i].start + result_array[i].size)%2){
-	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (result_array[0].start + result_array[0].size)/2 - 0.5 + ':30'
+if((parseInt(result_array[0].start) + parseInt(result_array[0].size) - 1)%2 != 0){
+	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (parseInt(result_array[0].start) + parseInt(result_array[0].size) - 1)/2 - 0.5 + ':30'
 }else{
-	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (result_array[0].start + result_array[0].size)/2 + ':00'
+	convert_back_end = moment(initial_sunday_date).add(day_count,'days').format('YYYY-MM-DD') + ' ' + (parseInt(result_array[0].start) + parseInt(result_array[0].size) - 1) /2  + ':00'
 }
 
+weight = parseInt(result_array[i].num) / member_count * 0.75;
 // //store the result into JSON object
 // prefertime.responses[1].timeslots[day_count].push(convert_back_start);
 // prefertime.responses[1].timeslots[day_count].push(convert_back_end);
@@ -239,7 +240,7 @@ function get_deadline_days(eventId){
 }
 
 
-
 module.exports = {
 	calculateBestTimeslot
 }
+
