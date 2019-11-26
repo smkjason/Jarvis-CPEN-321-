@@ -102,6 +102,7 @@ public class EventFragment extends Fragment {
             HttpClient httpClient = new DefaultHttpClient();
             HttpResponse httpResponse;
             JSONArray jsonArray = new JSONArray();
+            Log.d(TAG, "email: " + email);
             HttpGet httpGet = new HttpGet("http://ec2-3-14-144-180.us-east-2.compute.amazonaws.com/user/" + email + "/events/");
             try {
                 httpGet.addHeader("Authorization", "Bearer " + idToken);
@@ -127,6 +128,7 @@ public class EventFragment extends Fragment {
             super.onPostExecute(jsonArray);
             JSONObject cur;
             String name, eventid, creator;
+            Boolean googleevent;
             if(jsonArray == null){
                 Toast.makeText(getActivity(), "Something went wrong while retrieving information.", Toast.LENGTH_LONG).show();
             }else if(jsonArray.length() == 0){
@@ -141,8 +143,11 @@ public class EventFragment extends Fragment {
                         name = cur.getString("summary");
                         eventid = cur.getString("id");
                         creator = cur.getString("creatorEmail");
+                        googleevent = cur.getBoolean("googleEvent");
                         jarvisevent event = new jarvisevent(name, eventid, creator);
-                        mEvents.add(event);
+                        if(!googleevent) {
+                            mEvents.add(event);
+                        }
                         Log.d(TAG, "jsonobj: " + cur.getString("summary"));
                     }catch(JSONException e){
                         e.printStackTrace();

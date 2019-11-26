@@ -250,19 +250,23 @@ function finalizeEvent(tevent, time){
     var secs = temp[0] * 3600 + temp[1] * 60
 
     //max time period
-    if( moment.duration(endTime.diff(startTime)) > moment.duration(secs, 'seconds')){
+    if( (endTime.unix() - startTime.unix()) > secs){
         endTime = startTime.add(moment.duration(secs, 'seconds'))
+        //we need to redo the startTime as well because moment.add changes the object
+        startTime = moment(startTime).subtract(moment.duration(secs, 'seconds'))
     }
+
     eventJson.status = "confirmed"
     eventJson.created = (new Date()).toISOString()
     eventJson.creatorEmail = tevent.creatorEmail
     eventJson.start = {
         timeZone: "America/Vancouver",
-        dateTime: startTime.toISOString().replace(/\.000Z/, '-08:00')
+        dateTime: startTime.toISOString().replace(/\.[0-9][0-9][0-9]Z/, '-08:00')
     }
     eventJson.end = {
+        //2019-11-25T14:00:00-08:00
         timeZone: "America/Vancouver",
-        dateTime: endTime.toISOString().replace(/\.000Z/, '-08:00')
+        dateTime: endTime.toISOString().replace(/\.[0-9][0-9][0-9]Z/, '-08:00')
     }
     eventJson.attendees = getAttendees(tevent)
     eventJson.recurrence = []
@@ -281,23 +285,6 @@ function getAttendees(event){
 
         return prev
     }, [])
-}
-
-function parseEvents(json){
-    res = []
-    names = {}
-    var i = 0;
-    for(var j = 0; j < json.length; j++){
-        if(json[j].name in names){
-            res[names[json[j].name]].push(new EventModel(json[j]))
-        } else {
-            //new one
-            res[i] = new Array
-            res[i].push(new EventModel(json))
-            names[json[j].name] = i++;
-        }
-    }
-    return res
 }
 
 module.exports = {

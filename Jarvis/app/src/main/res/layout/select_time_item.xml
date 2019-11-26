@@ -20,8 +20,8 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="2dp"
             android:text="#"
-            android:fontFamily="@font/aclonica"
-            android:textSize="25dp">
+            android:textSize="25dp"
+            android:layout_marginLeft="20dp">
         </TextView>
 
         <TextView
@@ -31,19 +31,10 @@
             android:layout_toRightOf="@+id/Rank"
             android:text="Start Time"
             android:textColor="@color/colorBlack"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/Rank"
-            android:layout_below="@+id/start"
-            android:text="End Time"
-            android:textColor="@color/colorBlack"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp">
+        </TextView>
 
     </RelativeLayout>
 

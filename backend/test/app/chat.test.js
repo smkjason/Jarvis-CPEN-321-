@@ -24,7 +24,7 @@ Models.ChatModel.find = jest.fn(() => ({
     exec: () => Promise.resolve([{message: 'hello'}, {message: 'hello1'}])
 }))
 
-
+NewEvent = jest.fn()
 Google.auth = jest.fn(() => EMAIL)
 
 EventFunctions.relatedEvents = jest.fn(() => Promise.resolve([
@@ -36,6 +36,7 @@ var mockSocket = {
         console.log('called on with ' + s)
         if(s == 'authenticate') await f({idToken: 'TOKEN'})
         if(s == 'id1.send') await f({message: 'hello'})
+        if(s == 'test') f({data: 'data'})
     },
     email: EMAIL,
     broadcast: {emit: jest.fn()},
@@ -46,7 +47,12 @@ io.listen = jest.fn(() => ({
     on: (s, f) => {
         if(s == 'connection') f(mockSocket)
     },
-    use: () => {}
+    use: () => {},
+    sockets: {sockets: {s1: {
+        email: EMAIL, 
+        on: NewEvent,
+        emit: () => ({})
+    }}}
 }))
 
 beforeEach(() => {
@@ -80,8 +86,16 @@ describe('socket setup', () => {
 
         expect(io.listen).toHaveBeenCalledTimes(1)
         expect(Google.auth).toHaveBeenCalledTimes(1)
-        expect(mockSocket.broadcast.emit).toHaveBeenCalledTimes(1)
+        expect(mockSocket.broadcast.emit).toHaveBeenCalledTimes(2)
         expect(Models.ChatModel).toHaveBeenCalledTimes(1)
+    })
+})
+
+describe('attach new event', () => {
+    test('attaches new event handlers', () =>{
+        ChatFunctions.newEvent({attendees: [EMAIL], creatorEmail: 'c'+EMAIL, id: 'id3'})
+        expect(NewEvent).toHaveBeenCalledTimes(1)
+        expect(NewEvent.mock.calls[0][0]).toBe('id3.send')
     })
 })
 

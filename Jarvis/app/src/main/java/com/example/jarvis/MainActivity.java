@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity{
     private FirebaseUser currentUser;
 
     private String idToken;
+    private String FCMToken;
 
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -151,8 +152,6 @@ public class MainActivity extends AppCompatActivity{
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
 
-
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -181,7 +180,7 @@ public class MainActivity extends AppCompatActivity{
                         }
 
                         // Get new Instance ID token
-                        String FCMToken = task.getResult().getToken();
+                        FCMToken = task.getResult().getToken();
 
                         // Log and toast
                         String msg = "I got the token!" + FCMToken;
@@ -204,6 +203,9 @@ public class MainActivity extends AppCompatActivity{
 //                        new sendRegistrationToServer(FCMToken, idToken);
 //                    }
                 });
+
+        Log.d(TAG, "FCMToken: " + FCMToken);
+
     }
 
     /* Goes to home activity */

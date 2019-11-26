@@ -189,7 +189,7 @@ public class PTDialog extends AppCompatDialogFragment {
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String timeselected = hourOfDay + ":" + minute;
+                        String timeselected = String.format("%02d:%02d", hourOfDay, minute);
                         Time.setText(timeselected);
                         if(CODE == START) {
                             try {

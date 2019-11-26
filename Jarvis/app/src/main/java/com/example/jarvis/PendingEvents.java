@@ -53,7 +53,6 @@ public class PendingEvents extends AppCompatActivity {
         setContentView(R.layout.invites);
         getIncomingIntent();
         initializeFields();
-
     }
 
     private void initializeFields() {
@@ -64,7 +63,9 @@ public class PendingEvents extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        PendingEventsAdapter pendingEventsAdapter = new PendingEventsAdapter(list_of_invited_events, PendingEvents.this,
+        PendingEventsAdapter pendingEventsAdapter = new PendingEventsAdapter(
+                list_of_invited_events,
+                PendingEvents.this,
                 idToken, user_email);
         pendingEventsAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(pendingEventsAdapter);

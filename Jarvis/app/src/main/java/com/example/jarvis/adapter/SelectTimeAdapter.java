@@ -29,13 +29,13 @@ public class SelectTimeAdapter extends RecyclerView.Adapter<SelectTimeAdapter.Se
 
     public static class SelectTimeViewHolder extends RecyclerView.ViewHolder {
         public TextView mStart;
-        public TextView mEnd;
+        public TextView rank;
 
 
         public SelectTimeViewHolder(View itemView, final SelectTimeAdapter.OnItemClickListener listener) {
             super(itemView);
             mStart = itemView.findViewById(R.id.start);
-            mEnd = itemView.findViewById(R.id.end);
+            rank = itemView.findViewById(R.id.Rank);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -69,7 +69,7 @@ public class SelectTimeAdapter extends RecyclerView.Adapter<SelectTimeAdapter.Se
     public void onBindViewHolder(SelectTimeAdapter.SelectTimeViewHolder holder, int position) {
         SelectTimeItem currentItem = mTimesList.get(position);
         holder.mStart.setText(currentItem.getStart());
-        holder.mEnd.setText(currentItem.getEnd());
+        holder.rank.setText(String.valueOf(position + 1));
     }
 
     @Override

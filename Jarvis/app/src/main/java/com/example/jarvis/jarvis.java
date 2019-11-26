@@ -42,8 +42,6 @@ public class jarvis extends Application {
             manager.createNotificationChannel(notificationChannel);
         }
 
-
-
         opts.query = "idToken=" + idToken;
 
         try{
