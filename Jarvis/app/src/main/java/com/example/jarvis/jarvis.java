@@ -46,7 +46,9 @@ public class jarvis extends Application {
 
         try{
             mSocket = IO.socket(URL);
-            mSocket.connect();
+            if(!mSocket.connected()) {
+                mSocket.connect();
+            }
         }catch (URISyntaxException e){
             throw new RuntimeException(e);
         }

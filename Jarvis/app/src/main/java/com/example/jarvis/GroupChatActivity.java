@@ -256,8 +256,10 @@ public class GroupChatActivity extends AppCompatActivity {
             super.onPostExecute(jsonArray);
             JSONObject cur;
             Toast.makeText(GroupChatActivity.this, "loading old messages...", Toast.LENGTH_LONG).show();
-            if(jsonArray == null || jsonArray.length() == 0){
+            if(jsonArray == null){
                 Toast.makeText(GroupChatActivity.this, "something wrong with jsonArray", Toast.LENGTH_LONG).show();
+            }else if( jsonArray.length() == 0){
+                Log.d(TAG, "No previous messages");
             }
             else{
                 for(int index = 0; index < jsonArray.length(); index++)
