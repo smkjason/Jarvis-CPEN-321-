@@ -29,6 +29,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 public class MapActivityTest {
@@ -48,71 +49,12 @@ public class MapActivityTest {
         }
 
         onView(isRoot()).perform(waitId(R.id.create_event_bttn, 5000));
-//        onView(withId(R.id.events_recyclerview))
-//             .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-//        onView(withId(R.id.tvDate)).perform(click());
-//        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2019, 11, 26));
-//        onView(withText("OK")).perform(click());
-//        onView(withId(R.id.tvShowLength)).perform(click());
-//        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(1, 30));
-//        onView(withText("OK")).perform(click());
-//        onView(withId(R.id.add_people_to_event)).perform(click());
-//        onView(withId(R.id.search_recyclerView))
-//                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-//        pressBack();
-//        //check textbox??
-//        //onView(withId(R.id.make_event)).perform(click());
-//
-//        onView(withId(R.id.invitations_bttn)).perform(click()); //get to invite dialog
-//        onView(withText("Espresso Test")).check(matches(isDisplayed()));
-//        onView(withId(R.id.rvInvites)).perform(
-//                RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.Accept_pending_bttn)));
-//        onView(withId(R.id.add_pt_bttn)).perform(click());
-//
-//        onView(withId(R.id.choosedate_pop_bttn_st)).perform(click());//select time
-//        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2019, 11, 26));
-//        onView(withText("OK")).perform(click());
-//        onView(withId(R.id.choosetime_pop_bttn_st)).perform(click());
-//        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(1, 30));
-//        onView(withText("OK")).perform(click());
-//        onView(withId(R.id.enddate_bttn)).perform(click());
-//        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(PickerActions.setDate(2019, 11, 26));
-//        onView(withText("OK")).perform(click());
-//        onView(withId(R.id.endtime_bttn)).perform(click());
-//        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(PickerActions.setTime(1, 30));
-//        onView(withText("OK")).perform(click());
-//        onView(withText("OK")).perform(click());
-//        onView(withId(R.id.finish_pt_bttn)).perform(click());
-//
-//        //finalize time
-//        onView(withId(R.id.my_events_bttn)).perform(click());
-//        onView(withText("Espresso Test")).perform(click());
-////        onView(withId(R.id.tentative_recyclerView))
-////                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-//        onView(withId(R.id.select_recyclerView))
-//             .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        pressBack();
+        onView(withText("CHAT")).perform(click());
 
-        //Event is created
+        //gets to chatlist
+        //while (true) {}
 
-       // while (true){}
-
-
-
-
-        //onView(withText("")).inRoot(withDecorView(not(mActivityRule.getActivity().getWindow().getDecorView()))).check(matches(isDisplayed()));
-        //while (true){}
-//        onView(withId(R.id.tvShowLength)).perform(typeText("01:30"));
-//        onView(withId(R.id.make_event)).perform(click());
     }
-    //
-//    @Test
-//    public void checkIfButtonsDisplayed() {
-//        onView(withId(R.id.view_profile_bttn)).check(matches(isDisplayed()));
-//        onView(withId(R.id.Map_bttn)).check(matches(isDisplayed()));
-//        onView(withId(R.id.go_to_chatroom_bttn)).check(matches(isDisplayed()));
-//        onView(withId(R.id.create_event_bttn)).check(matches(isDisplayed()));
-//    }
     public static ViewAction waitId(final int viewId, final long millis) { //wait fo some object to appear wait for a specific time
         return new ViewAction() {
             @Override
