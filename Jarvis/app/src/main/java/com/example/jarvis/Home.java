@@ -98,6 +98,7 @@ public class Home extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(Home.this, "Logged Out", Toast.LENGTH_LONG).show();
+                        mSocket.disconnect();
                         finish();
                     }
                 });
@@ -153,6 +154,7 @@ public class Home extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(Home.this, "Revoked", Toast.LENGTH_LONG).show();
+                        mSocket.disconnect();
                     }
                 });
     }
