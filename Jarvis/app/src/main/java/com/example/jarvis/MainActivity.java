@@ -78,15 +78,6 @@ public class MainActivity extends AppCompatActivity{
         //Firebase
         mAuth = FirebaseAuth.getInstance();
 
-//        mAuthListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                if(firebaseAuth.getCurrentUser() != null){
-//                    sendUsertoHomeActivity();
-//                }
-//            }
-//        };
-
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         String serverClientId = getString(R.string.server_client_id);
@@ -264,7 +255,6 @@ public class MainActivity extends AppCompatActivity{
             if(response == 200) {
                 jarvis app = (jarvis) getApplication();
                 mSocket = app.getmSocket();
-                    //Toast.makeText(MainActivity.this, "HTTPREQEUST WORKS.", Toast.LENGTH_LONG).show();
                 if(mSocket.connected()){
                     try {
                         authenticate_json.put("idToken", idToken);

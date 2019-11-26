@@ -181,8 +181,8 @@ public class PTDialog extends AppCompatDialogFragment {
 
     private void showTimePiccckerDialog(final TextView Time, final int CODE) {
         calendar = Calendar.getInstance();
-        hour = calendar.get(Calendar.HOUR_OF_DAY);
-        minute = calendar.get(Calendar.MINUTE);
+        hour = 0;
+        minute = 0;
         TimePickerDialog mTimePicker;
         mTimePicker = new TimePickerDialog(getActivity(),
                 android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth, //doublecheck getApplicationContext()

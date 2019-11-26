@@ -155,8 +155,8 @@ public class CreateEvent extends AppCompatActivity implements DatePickerDialog.O
 
     private void showTimePiccckerDialog() {
         calendar = Calendar.getInstance();
-        hour = calendar.get(Calendar.HOUR_OF_DAY);
-        minute = calendar.get(Calendar.MINUTE);
+        hour = 0;
+        minute = 0;
         TimePickerDialog mTimePicker;
         mTimePicker = new TimePickerDialog(CreateEvent.this,
                 android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth,

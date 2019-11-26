@@ -91,19 +91,6 @@ public class Home extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    /* Probably not needed anymore because we are now using Firebase login logout */
-    private void signOut() {
-        mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(Home.this, "Logged Out", Toast.LENGTH_LONG).show();
-                        mSocket.disconnect();
-                        finish();
-                    }
-                });
-    }
-
     /* This is for drop down menu */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -130,10 +117,6 @@ public class Home extends AppCompatActivity {
             revokeAccess();
         }
 
-        if(item.getItemId() == R.id.Log_out_menu){
-            signOut();
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -154,7 +137,7 @@ public class Home extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(Home.this, "Revoked", Toast.LENGTH_LONG).show();
-                        mSocket.disconnect();
+                        //mSocket.disconnect();
                     }
                 });
     }
