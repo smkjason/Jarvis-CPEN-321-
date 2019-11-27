@@ -291,4 +291,5 @@ module.exports = {
     activateEvent,
     getEvent,
     userLocations,
+    getPreferredTime
 }
