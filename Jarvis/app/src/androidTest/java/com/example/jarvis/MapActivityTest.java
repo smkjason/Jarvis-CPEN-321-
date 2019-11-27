@@ -6,7 +6,6 @@ import android.view.View;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.util.HumanReadables;
 import androidx.test.espresso.util.TreeIterables;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -20,16 +19,15 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeoutException;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
+import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
 public class MapActivityTest {
@@ -40,7 +38,7 @@ public class MapActivityTest {
 
 
     @Test
-    public void gotoMap() {
+    public void tooEarlyMapTest() {
         onView(withId(R.id.sign_in_button)).perform(click());
         try {
             Thread.sleep(5000);
@@ -50,11 +48,58 @@ public class MapActivityTest {
 
         onView(isRoot()).perform(waitId(R.id.create_event_bttn, 5000));
         onView(withText("CHAT")).perform(click());
+        onView(withText("TooEarlyMap")).perform(click());
+        onView(withId(R.id.btnMap)).perform(click());
 
-        //gets to chatlist
-        //while (true) {}
+        onView(withId(R.id.refresh)).perform(click());
+
+        onView(withText("Too Early to get other people's locations!"))
+                .inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView()))))
+                .check(matches(isDisplayed()));
 
     }
+
+    @Test
+    public void NormalMapTest() {
+        onView(withId(R.id.sign_in_button)).perform(click());
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Log.e("Error", "InterruptedException", e);
+        }
+
+        onView(isRoot()).perform(waitId(R.id.create_event_bttn, 5000));
+        onView(withText("CHAT")).perform(click());
+        onView(withText("NormalMapTest2")).perform(click());
+        onView(withId(R.id.btnMap)).perform(click());
+
+        onView(withId(R.id.refresh)).perform(click());
+
+
+    }
+
+    @Test
+    public void LocationPermissionTest() {
+        onView(withId(R.id.sign_in_button)).perform(click());
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Log.e("Error", "InterruptedException", e);
+        }
+
+        onView(isRoot()).perform(waitId(R.id.create_event_bttn, 5000));
+        onView(withText("CHAT")).perform(click());
+        onView(withText("LocationPermissonTest")).perform(click());
+        onView(withId(R.id.btnMap)).perform(click());
+
+        onView(withId(R.id.refresh)).perform(click());
+
+        onView(withText("Some users have not shared their locations"))
+                .inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView()))))
+                .check(matches((isDisplayed())));
+
+    }
+
     public static ViewAction waitId(final int viewId, final long millis) { //wait fo some object to appear wait for a specific time
         return new ViewAction() {
             @Override
