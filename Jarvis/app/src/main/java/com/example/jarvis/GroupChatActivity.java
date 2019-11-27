@@ -127,6 +127,7 @@ public class GroupChatActivity extends AppCompatActivity {
                         jarvismessage newmsg;
                         if(!(sender.equals(currentUserName))) {
                             newmsg = new jarvismessage(gotmessage, sender, time);
+                            sendMessageNotification(++message_id, gotmessage);
                         }else{
                             newmsg = new jarvismessage(gotmessage, sender, time, true);
                         }
@@ -136,7 +137,6 @@ public class GroupChatActivity extends AppCompatActivity {
                         myRecylerView.setAdapter(chatBoxAdapter);
                         myRecylerView.scrollToPosition(MessageList.size()-1);
                         Toast.makeText(GroupChatActivity.this, "Getting messages: " + gotmessage, Toast.LENGTH_LONG).show();
-                        sendMessageNotification(++message_id, gotmessage);
                     }
                 });
             }
@@ -177,10 +177,8 @@ public class GroupChatActivity extends AppCompatActivity {
         JSONObject msgjson = new JSONObject();
         String message = userMessage.getText().toString();
         //Message is empty
-        if(mSocket.connected()){
+        if(!mSocket.connected()){
             Toast.makeText(GroupChatActivity.this, "SECOND: Socket ready for groupchat", Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(GroupChatActivity.this, "SECOND: !Socket not ready for groupchat!", Toast.LENGTH_LONG).show();
         }
 
         if(TextUtils.isEmpty(message)){
@@ -258,8 +256,10 @@ public class GroupChatActivity extends AppCompatActivity {
             super.onPostExecute(jsonArray);
             JSONObject cur;
             Toast.makeText(GroupChatActivity.this, "loading old messages...", Toast.LENGTH_LONG).show();
-            if(jsonArray == null || jsonArray.length() == 0){
+            if(jsonArray == null){
                 Toast.makeText(GroupChatActivity.this, "something wrong with jsonArray", Toast.LENGTH_LONG).show();
+            }else if( jsonArray.length() == 0){
+                Log.d(TAG, "No previous messages");
             }
             else{
                 for(int index = 0; index < jsonArray.length(); index++)

@@ -127,6 +127,7 @@ public class TentativeEvents extends AppCompatActivity {
                 //Toast.makeText(TentativeEvents.this, "No Events to finalize", Toast.LENGTH_LONG).show();
             }
             else{
+                mEventsList.clear();
                 for(int index = 0; index < jsonArray.length(); index++){
                     try{
                         cur = jsonArray.getJSONObject(index);

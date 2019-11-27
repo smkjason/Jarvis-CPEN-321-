@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity{
     private FirebaseUser currentUser;
 
     private String idToken;
+    private String FCMToken;
 
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -76,15 +77,6 @@ public class MainActivity extends AppCompatActivity{
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
-
-//        mAuthListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                if(firebaseAuth.getCurrentUser() != null){
-//                    sendUsertoHomeActivity();
-//                }
-//            }
-//        };
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -151,8 +143,6 @@ public class MainActivity extends AppCompatActivity{
         final String authCode = acct.getServerAuthCode();
         final String name = acct.getGivenName();
 
-
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -181,7 +171,7 @@ public class MainActivity extends AppCompatActivity{
                         }
 
                         // Get new Instance ID token
-                        String FCMToken = task.getResult().getToken();
+                        FCMToken = task.getResult().getToken();
 
                         // Log and toast
                         String msg = "I got the token!" + FCMToken;
@@ -204,6 +194,9 @@ public class MainActivity extends AppCompatActivity{
 //                        new sendRegistrationToServer(FCMToken, idToken);
 //                    }
                 });
+
+        Log.d(TAG, "FCMToken: " + FCMToken);
+
     }
 
     /* Goes to home activity */
@@ -262,7 +255,6 @@ public class MainActivity extends AppCompatActivity{
             if(response == 200) {
                 jarvis app = (jarvis) getApplication();
                 mSocket = app.getmSocket();
-                    //Toast.makeText(MainActivity.this, "HTTPREQEUST WORKS.", Toast.LENGTH_LONG).show();
                 if(mSocket.connected()){
                     try {
                         authenticate_json.put("idToken", idToken);
